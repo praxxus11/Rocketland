@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 
-#include "manager.hpp"
+#include "manager.h"
 
 int main()
 {

@@ -5,35 +5,61 @@
 
 class Settings {
 public:
-    static int ww;
-    static int wh;  
-    static int floor_hei;  
-    
-    static float pixpmeter;
-    static float siscale;
-    static float gravity;
+    /*
+        these are keeping track of meta-dimensions
+    */
 
-    static sf::Clock clock;
+    static int ww; // UNITS(pixels): width of the screen
+    static int wh; // UNITS(pixels): height of the screen
 
-    static float g_elapsed() {
-        return clock.getElapsedTime().asSeconds();
-    }
-    static void restartc() {
-        clock.restart();
-    }
-    static float time_so_far;
+    /*
+        these are keepin track of dimensions
+    */
+
+    static int floor_hei; // UNITS(pixels): height of the floor
+
+    /*
+        these are responsible for transforming UNITS(meters) => UNITS(pixels)
+    */
+
+    static float pixpmeter; // UNITS(pixels/meter)
+    static sf::Vector2f displ; // UNITS(x: pixels, y: pixels): 
+                        // displacement of origin relative to top left corner
+                        // down: positive, right: positive
 
     // converts real life coordinates (meter, meter) to (pixel, pixel)
-    static std::pair<float,float> convertUnits(const std::pair<float,float>& pr) {
-    
+    static sf::Vector2f convertUnits(const sf::Vector2f& pr) {
+        sf::Vector2f res{};
+        res.x = (pr.x * pixpmeter) + displ.x;
+        res.y = (-pr.y * pixpmeter) + displ.y;
+        return res;
     }
+
+    // converts size (meter, meter) to (pixel, pixel)
+    static sf::Vector2f convertSize(const sf::Vector2f& pr) {
+        return sf::Vector2f(pr.x*pixpmeter, pr.y*pixpmeter);
+    }
+
+    /*
+        scientific constants
+    */
+    static const float gravity; // UNITS(m/s^2): downard acceleration
+    static const float PI;
+
+    /* 
+        handling time
+    */
+
+    static sf::Clock clock;
+    static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
+    static void restartc() { clock.restart(); }
 };
 
 int Settings::ww = 800;
 int Settings::wh = 800;
 int Settings::floor_hei = 100;
-float Settings::siscale = 1.f;
-float Settings::pixpmeter = 6.6;
-float Settings::gravity = -9.8;
-sf::Clock Settings::clock;
-float Settings::time_so_far = 0;
+float Settings::pixpmeter = 0.5;
+const float Settings::gravity = -9.8;
+const float Settings::PI = 3.14159265;
+sf::Clock Settings::clock{};
+sf::Vector2f Settings::displ(Settings::ww/2, Settings::wh - Settings::floor_hei);

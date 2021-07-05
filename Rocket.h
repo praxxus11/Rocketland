@@ -5,8 +5,9 @@
 class Rocket : public sf::Drawable, public sf::Transformable {
 public:
     Rocket() : rotation(0.f),
-        scale(0.3, 0.3),
-        position(20, (Settings::wh - Settings::floor_hei) / Settings::pixpmeter - 100),
+        pixels_tall(1120),
+        scale(50.f * Settings::pixpmeter / pixels_tall, 50.f*Settings::pixpmeter/pixels_tall),
+        position(Settings::convertUnits(sf::Vector2f(0, 1000))),
         vel(0, 0),
         accel(0, 0)
     {
@@ -16,11 +17,12 @@ public:
         texture.setSmooth(true);
         sprite.setTexture(texture);
     }
+    int pixels_tall; // change this code later
     float rotation;
-    std::pair<float, float> scale;
-    std::pair<float, float> position; 
-    std::pair<float, float> vel;
-    std::pair<float, float> accel;
+    sf::Vector2f scale;
+    sf::Vector2f position; 
+    sf::Vector2f vel;
+    sf::Vector2f accel;
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         sf::FloatRect bb = sprite.getGlobalBounds();

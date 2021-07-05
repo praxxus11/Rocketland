@@ -1,1 +1,4 @@
 -> ensure all units are correct
+    -> not consistent pxxpmeter thing
+-> ensure that scaling and chaning units will be consistent
+    -> sometimes it assumes the rocket is normal sized and then it wil go badly
