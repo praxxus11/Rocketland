@@ -4,10 +4,10 @@
 
 class Rocket : public sf::Drawable, public sf::Transformable {
 public:
-    Rocket() : rotation(0.f),
+    Rocket() : rotation(10.f),
         pixels_tall(1120),
         scale(50.f * Settings::pixpmeter / pixels_tall, 50.f * Settings::pixpmeter / pixels_tall),
-        position(0, 300),
+        position(0, 100),
         vel(0, 0),
         accel(0, 0)
     {
@@ -17,6 +17,9 @@ public:
         texture.setSmooth(true);
         sprite.setTexture(texture);
     }
+    sf::FloatRect getGlobalBounds() const {
+        return getTransform().transformRect(sprite.getGlobalBounds());
+    }
     int pixels_tall; // change this code later
     float rotation;
     sf::Vector2f scale;
@@ -25,14 +28,8 @@ public:
     sf::Vector2f accel;
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
-        sf::FloatRect bb = sprite.getGlobalBounds();
         states.transform *= getTransform();
         target.draw(sprite, states);
-        sf::RectangleShape shp (sf::Vector2f(bb.width, bb.height));
-        shp.setFillColor(sf::Color::Transparent);
-        shp.setOutlineColor(sf::Color::Red);
-        shp.setOutlineThickness(9.f);
-        target.draw(shp, states);
     }
     sf::Texture texture;
     sf::Sprite sprite;

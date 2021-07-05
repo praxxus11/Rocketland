@@ -7,13 +7,8 @@ public:
     CollisionManager() {
         clock.restart();
     }
-    bool rocket_floor(Rocket& r, Floor& f) {
-        if (r.position.y - 50 < 0) { 
-            std::cout << clock.getElapsedTime().asSeconds() << std::endl;
-            clock.restart();
-            return true;
-        }
-        return false;
+    bool rocket_floor_collision(Rocket& r, Floor& f) {
+        return r.getGlobalBounds().intersects(f.getGlobalBounds());
     }
 private:
     sf::Clock clock;
