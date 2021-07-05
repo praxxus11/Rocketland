@@ -12,23 +12,29 @@ class Manager {
         }
         void update(sf::RenderWindow& win) {
             float elap = Settings::g_elapsed();
-            r.accel.y = -1 * Settings::gravity;
 
             r.vel.x += r.accel.x*elap;
-            r.vel.y += r.accel.y*elap;
+            r.vel.y += Settings::gravity*elap;
 
+            r.setScale(r.scale.x, r.scale.y);
             r.position.x += r.vel.x*elap;
             r.position.y += r.vel.y*elap;
-            r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
-            r.setPosition(r.position.x*Settings::pixpmeter, r.position.y*Settings::pixpmeter);
+            sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
+            r.setPosition(newPos.x, newPos.y);
             drawAll(win);
+
+            if (cm.rocket_floor(r, f)) {
+                r.vel.y = 0;
+                r.position.y = 300;
+            }
         }
         int get_window_width() const { return Settings::ww; }
         int get_window_height() const { return Settings::wh; }
     private:
         Rocket r;
         Floor f;
+        CollisionManager cm;
 
         void drawAll(sf::RenderWindow& win) {
             win.draw(r);

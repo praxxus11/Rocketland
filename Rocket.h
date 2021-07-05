@@ -6,8 +6,8 @@ class Rocket : public sf::Drawable, public sf::Transformable {
 public:
     Rocket() : rotation(0.f),
         pixels_tall(1120),
-        scale(50.f * Settings::pixpmeter / pixels_tall, 50.f*Settings::pixpmeter/pixels_tall),
-        position(Settings::convertUnits(sf::Vector2f(0, 1000))),
+        scale(50.f * Settings::pixpmeter / pixels_tall, 50.f * Settings::pixpmeter / pixels_tall),
+        position(0, 300),
         vel(0, 0),
         accel(0, 0)
     {
@@ -29,7 +29,6 @@ private:
         states.transform *= getTransform();
         target.draw(sprite, states);
         sf::RectangleShape shp (sf::Vector2f(bb.width, bb.height));
-        shp.setPosition(bb.left, bb.top);
         shp.setFillColor(sf::Color::Transparent);
         shp.setOutlineColor(sf::Color::Red);
         shp.setOutlineThickness(9.f);
