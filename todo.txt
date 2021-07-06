@@ -1,6 +1,11 @@
--> ensure all units are correct
-    -> not consistent pxxpmeter thing
--> ensure that scaling and chaning units will be consistent
-    -> sometimes it assumes the rocket is normal sized and then it wil go badly
 -> add collision between rocket and the floor 
     -> torque, etc.
+-> implement suggestions from https://stackoverflow.com/questions/17910297/inheriting-from-transformable-and-drawable-in-sfml
+-> does the explision make more sense being a member of the rocket itself or of the manager?
+-> focus more on handling coordinates: read on sfml documentation: especially with how coordinates of differeent memebes are affected by transformaiotns
+
+
+// long term changes
+-> add engines
+-> determine the center of mass and intertia of rocket
+-> mass and stuff

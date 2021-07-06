@@ -4,12 +4,13 @@
 
 class Rocket : public sf::Drawable, public sf::Transformable {
 public:
-    Rocket() : rotation(10.f),
+    Rocket() : rotation(0.f),
         pixels_tall(1120),
         scale(50.f * Settings::pixpmeter / pixels_tall, 50.f * Settings::pixpmeter / pixels_tall),
         position(0, 100),
         vel(0, 0),
-        accel(0, 0)
+        accel(0, 0),
+        explosion_anim(128, 3328,26, 3)
     {
         if (!texture.loadFromFile("imgs/ship.png")) {
             std::cout << "Rocket png not loaded";
@@ -33,4 +34,5 @@ private:
     }
     sf::Texture texture;
     sf::Sprite sprite;
+    GIFhandler explosion_anim;
 };

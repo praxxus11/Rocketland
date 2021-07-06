@@ -1,17 +1,15 @@
 #include <iostream>
 
 #include "Settings.h"
+#include "GIFhandler.h"
 #include "Rocket.h"
 #include "Floor.h"
 #include "CollisionManager.h"
-#include "GIFhandler.h"
 
 class Manager {
     public:
-        Manager() : 
-            gh(128, 3328, 26, 0.4)
+        Manager() 
         {
-            gh.setScale(5,5);
         }
         void update(sf::RenderWindow& win) {
             float elap = Settings::g_elapsed();
@@ -22,14 +20,12 @@ class Manager {
                 
                 sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
                 r.setPosition(newPos.x, newPos.y);
-
                 r.position.x += r.vel.x*elap;
                 r.position.y += r.vel.y*elap;
             }
             r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
             drawAll(win);
-            gh.update();
 
         }
         int get_window_width() const { return Settings::ww; }
@@ -38,7 +34,6 @@ class Manager {
         Rocket r;
         Floor f;
         CollisionManager cm;
-        GIFhandler gh;
 
         void drawAll(sf::RenderWindow& win) {
             sf::FloatRect bb = r.getGlobalBounds();
@@ -54,6 +49,5 @@ class Manager {
             sf::Vertex b(sf::Vector2f(Settings::displ.x, 0), sf::Color::White);
             sf::Vertex vert[2] {a, b};
             win.draw(vert, 2, sf::Lines);
-            win.draw(gh);
         }
 };
