@@ -4,14 +4,14 @@
 
 class CollisionManager {
 public:
-    CollisionManager() {
-        clock.restart();
+    CollisionManager() 
+    {
     }
-    bool rocket_floor_collision(Rocket& r, Floor& f) {
-        bool col = r.getGlobalBounds().intersects(f.getGlobalBounds());
-        return col;
+    ~CollisionManager()
+    {
+    }
+    bool rocket_floor_collision(const Rocket& r, const  Floor& f) {
+        return r.getGlobalBounds().intersects(f.getGlobalBounds());
     }
 private:
-    sf::Clock clock;
-    bool played = 0;
 };

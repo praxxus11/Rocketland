@@ -10,6 +10,13 @@ class Manager {
     public:
         Manager() 
         {
+            sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
+            r.setPosition(newPos.x, newPos.y);
+            r.setScale(r.scale.x, r.scale.y);
+            r.setRotation(r.rotation);
+        }
+        ~Manager() 
+        {
         }
         void update(sf::RenderWindow& win) {
             float elap = Settings::g_elapsed();
@@ -23,10 +30,12 @@ class Manager {
                 r.position.x += r.vel.x*elap;
                 r.position.y += r.vel.y*elap;
             }
+            else {
+                r.explode();
+            }
             r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
             drawAll(win);
-
         }
         int get_window_width() const { return Settings::ww; }
         int get_window_height() const { return Settings::wh; }
@@ -35,7 +44,7 @@ class Manager {
         Floor f;
         CollisionManager cm;
 
-        void drawAll(sf::RenderWindow& win) {
+        void drawAll(sf::RenderWindow& win) const {
             sf::FloatRect bb = r.getGlobalBounds();
             sf::RectangleShape rect(sf::Vector2f(bb.width, bb.height));
             rect.setFillColor(sf::Color::Transparent);

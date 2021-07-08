@@ -10,16 +10,20 @@ public:
         position(0, 100),
         vel(0, 0),
         accel(0, 0),
-        explosion_anim(128, 3328,26, 3)
+        explosion_anim(128, 3328, 26, 3)
     {
         if (!texture.loadFromFile("imgs/ship.png")) {
             std::cout << "Rocket png not loaded";
         }
         texture.setSmooth(true);
         sprite.setTexture(texture);
+        explosion_anim.setScale(2,2);
     }
     sf::FloatRect getGlobalBounds() const {
         return getTransform().transformRect(sprite.getGlobalBounds());
+    }
+    void explode() {
+        std::cout << "Called";
     }
     int pixels_tall; // change this code later
     float rotation;

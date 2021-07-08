@@ -26,13 +26,18 @@ public:
             std::cout << "Sprite sheet png not loaded";
         }
     }
+    ~GIFhandler() 
+    {
+    }
     void update() {
-        if (curr_frame >= frames) curr_frame = 0;
-        float req_elapsed = duration / frames;
-        time_elapsed += Settings::g_elapsed();
-        if (time_elapsed > req_elapsed) {
-            curr_frame += time_elapsed / req_elapsed;
-            time_elapsed = 0;
+        if (curr_frame >= frames || curr_frame == -1);
+        else {
+            float req_elapsed = duration / frames;
+            time_elapsed += Settings::g_elapsed();
+            if (time_elapsed > req_elapsed) {
+                curr_frame += time_elapsed / req_elapsed;
+                time_elapsed = 0;
+            }
         }
     }
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
