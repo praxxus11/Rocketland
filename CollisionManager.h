@@ -11,7 +11,8 @@ public:
     {
     }
     bool rocket_floor_collision(const Rocket& r, const  Floor& f) {
-        return r.getGlobalBounds().intersects(f.getGlobalBounds());
+        return (r.getGlobalBounds().intersects(f.getGlobalBounds()) 
+            || r.getPosition().y < f.getPosition().y);
     }
 private:
 };

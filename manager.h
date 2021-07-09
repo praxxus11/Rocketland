@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Settings.h"
-#include "GIFhandler.h"
+#include "Gif.h"
 #include "Rocket.h"
 #include "Floor.h"
 #include "CollisionManager.h"
@@ -10,7 +10,7 @@ class Manager {
     public:
         Manager() 
         {
-            sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
+            sf::Vector2f newPos {Settings::convertUnits<float>(sf::Vector2f(r.position.x, r.position.y))};
             r.setPosition(newPos.x, newPos.y);
             r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
@@ -19,20 +19,12 @@ class Manager {
         {
         }
         void update(sf::RenderWindow& win) {
-            float elap = Settings::g_elapsed();
 
-            if (!cm.rocket_floor_collision(r, f)) {
-                r.vel.x += r.accel.x*elap;
-                r.vel.y += Settings::gravity*elap;
-                
-                sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
-                r.setPosition(newPos.x, newPos.y);
-                r.position.x += r.vel.x*elap;
-                r.position.y += r.vel.y*elap;
-            }
-            else {
-                r.explode();
-            }
+            if (!cm.rocket_floor_collision(r, f)) 
+                r.update(Rocket::Status::Regular);
+            else 
+                r.update(Rocket::Status::Explode); 
+
             r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
             drawAll(win);
@@ -51,9 +43,10 @@ class Manager {
             rect.setOutlineColor(sf::Color::Red);
             rect.setOutlineThickness(3.f);
             rect.setPosition(bb.left, bb.top);
+            win.draw(f);
             win.draw(r);
             win.draw(rect);
-            win.draw(f);
+
             sf::Vertex a(Settings::displ, sf::Color::White);
             sf::Vertex b(sf::Vector2f(Settings::displ.x, 0), sf::Color::White);
             sf::Vertex vert[2] {a, b};

@@ -28,16 +28,18 @@ public:
                         // down: positive, right: positive
 
     // converts real life coordinates (meter, meter) to (pixel, pixel)
-    static sf::Vector2f convertUnits(const sf::Vector2f& pr) {
-        sf::Vector2f res{};
+    template<typename T>
+    static sf::Vector2<T> convertUnits(const sf::Vector2<T>& pr) {
+        sf::Vector2<T> res{};
         res.x = (pr.x * pixpmeter) + displ.x;
         res.y = (-pr.y * pixpmeter) + displ.y;
         return res;
     }
 
     // converts size (meter, meter) to (pixel, pixel)
-    static sf::Vector2f convertSize(const sf::Vector2f& pr) {
-        return sf::Vector2f(pr.x*pixpmeter, pr.y*pixpmeter);
+    template<typename T>
+    static sf::Vector2<T> convertSize(const sf::Vector2<T>& pr) {
+        return sf::Vector2<T>(pr.x*pixpmeter, pr.y*pixpmeter);
     }
 
     /*
