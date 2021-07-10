@@ -6,7 +6,9 @@
 
 class GameObject: public sf::Drawable, public sf::Transformable {
 public:
-    virtual sf::FloatRect getGlobalBounds() const = 0;
+    virtual sf::FloatRect getGlobalBounds() const {
+        return getGlobalBounds();
+    }
     void irlSetPosition(sf::Vector2f cor) {
         position = cor;
         setPosition(Settings::metersToPixels(cor));

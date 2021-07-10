@@ -2,8 +2,7 @@
     -> torque, etc.
 -> implement suggestions from https://stackoverflow.com/questions/17910297/inheriting-from-transformable-and-drawable-in-sfml
     -> needed to convert to a game object
-        -> rocket, floor, gif
--> currently the getGlobalbounds does not match up correctly
+        -> floor, gif
 
 // long term changes
 -> add engines

@@ -31,7 +31,6 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
     }
     void update(Status status) {
-        sf::FloatRect fr = getGlobalBounds();
         switch (status) {
         case Status::Regular: {
             float elap = Settings::g_elapsed();
@@ -45,7 +44,7 @@ public:
         case Status::Explode: {
             if (!explosion_initialized) {
                 const auto globalbnd = getGlobalBounds();
-                explosion_anim.setPosition(globalbnd.left + 0.5*globalbnd.width, globalbnd.top + globalbnd.height);
+                explosion_anim.irlSetPosition(sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height));
                 constexpr float times_bigger = 1.3; // how large explosion is compared to rocket
                 const float scale = (times_bigger * 1120 * getScale().x) / 128;
                 explosion_anim.setScale(scale, scale);
@@ -53,10 +52,9 @@ public:
             }
             explosion_anim.update();
             if (explosion_anim.get_curr() <= explosion_anim.get_frames() && 
-                !(explosion_anim.get_curr() % (explosion_anim.get_frames() / 5)) &&
+                !(explosion_anim.get_curr() % (explosion_anim.get_frames() / 10)) &&
                 explosion_anim.ison_new_frame()) {
-                std::cout << "Hello!!!";
-                irlSetPosition(sf::Vector2f(position.x, position.y / 5));
+                irlSetPosition(sf::Vector2f(position.x, position.y / 1.5));
             }
             break;
         }

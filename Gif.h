@@ -4,9 +4,10 @@
 
 #include "Settings.h"
 
-class Gif : public sf::Drawable, public sf::Transformable {
+class Gif : public GameObject {
 public:
-    Gif(int sw, int sh, int frms, float dur) : 
+    Gif(int sw, int sh, int frms, float dur) :
+        GameObject({0, 0}, {1, 1}, 0), 
         sheet_width(sw),
         sheet_height(sh),
         frames(frms),
