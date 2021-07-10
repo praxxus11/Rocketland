@@ -3,10 +3,13 @@
 #include <utility>
 
 
-class Rocket : public GameObject {
+class Rocket : public sf::Drawable, public sf::Transformable {
 public:
-    Rocket() : GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
+    Rocket() : rotation(10.f),
         pixels_tall(1120),
+        // scale(50.f * Settings::pixpmeter / pixels_tall, 50.f * Settings::pixpmeter / pixels_tall),
+        scale(1,1),
+        position(0, 100),
         vel(0, 0),
         accel(0, 0),
         explosion_anim(128, 3328, 26, 3)
@@ -17,7 +20,6 @@ public:
         texture.setSmooth(true);
         sprite.setTexture(texture);
         explosion_anim.setOrigin(72, 120);
-        std::cout << position.y << ">><<" << position.y << ">>";
     }
     enum class Status {
         Regular, Explode
@@ -60,6 +62,9 @@ public:
         } // end switch (status)
     } 
     int pixels_tall; // change this code later
+    float rotation;
+    sf::Vector2f scale;
+    sf::Vector2f position; 
     sf::Vector2f vel;
     sf::Vector2f accel;
 private:

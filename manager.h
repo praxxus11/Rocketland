@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Settings.h"
+#include "GameObject.h"
 #include "Gif.h"
 #include "Rocket.h"
 #include "Floor.h"
@@ -10,10 +11,11 @@ class Manager {
     public:
         Manager() 
         {
-            sf::Vector2f newPos {Settings::convertUnits<float>(sf::Vector2f(r.position.x, r.position.y))};
+            sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
             r.setPosition(newPos.x, newPos.y);
             r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
+
         }
         ~Manager() 
         {
@@ -28,6 +30,7 @@ class Manager {
             r.setScale(r.scale.x, r.scale.y);
             r.setRotation(r.rotation);
             drawAll(win);
+            // std::cout << r.getPosition().y << " ";
         }
         int get_window_width() const { return Settings::ww; }
         int get_window_height() const { return Settings::wh; }

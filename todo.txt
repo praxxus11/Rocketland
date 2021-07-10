@@ -1,9 +1,8 @@
 -> add collision between rocket and the floor 
     -> torque, etc.
 -> implement suggestions from https://stackoverflow.com/questions/17910297/inheriting-from-transformable-and-drawable-in-sfml
--> does the explision make more sense being a member of the rocket itself or of the manager?
--> focus more on handling coordinates: read on sfml documentation: especially with how coordinates of differeent memebes are affected by transformaiotns
-
+    -> needed to convert to a game object
+        -> rocket, floor, gif
 
 // long term changes
 -> add engines
