@@ -9,7 +9,7 @@ public:
     virtual sf::FloatRect getGlobalBounds() const = 0;
     void irlSetPosition(sf::Vector2f cor) {
         position = cor;
-        setPosition(Settings::convertUnits(cor));
+        setPosition(Settings::metersToPixels(cor));
     }
     sf::Vector2f irlGetPosition() const {
         return position;

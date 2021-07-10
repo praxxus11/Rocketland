@@ -39,11 +39,15 @@ class Manager {
 
         void drawAll(sf::RenderWindow& win) const {
             sf::FloatRect bb = r.getGlobalBounds();
-            sf::RectangleShape rect(sf::Vector2f(bb.width, bb.height));
+            // std::cout << bb.left  << " " << bb.top << " \n";
+            sf::RectangleShape rect(Settings::convertSize(sf::Vector2f(bb.width, bb.height)));
+            // sf::RectangleShape rect(sf::Vector2f(bb.width, bb.height));
             rect.setFillColor(sf::Color::Transparent);
             rect.setOutlineColor(sf::Color::Red);
             rect.setOutlineThickness(3.f);
-            rect.setPosition(bb.left, bb.top);
+            sf::Vector2f temp = Settings::metersToPixels(sf::Vector2f(bb.left, bb.top));
+            rect.setPosition(temp.x, temp.y);
+            // rect.setPosition(bb.left, bb.top-bb.height);
             win.draw(f);
             win.draw(r);
             win.draw(rect);

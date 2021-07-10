@@ -19,15 +19,19 @@ public:
         texture.setSmooth(true);
         sprite.setTexture(texture);
         explosion_anim.setOrigin(72, 120);
-        std::cout << position.y << ">><<" << position.y << ">>";
+        // std::cout << position.y << ">><<" << position.y << ">>";
     }
     enum class Status {
         Regular, Explode
     };
     sf::FloatRect getGlobalBounds() const override {
-        return getTransform().transformRect(sprite.getGlobalBounds());
+        sf::FloatRect ir = sprite.getLocalBounds();
+        ir = getTransform().transformRect(ir);
+        sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
+        return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
     }
     void update(Status status) {
+        sf::FloatRect fr = getGlobalBounds();
         switch (status) {
         case Status::Regular: {
             float elap = Settings::g_elapsed();

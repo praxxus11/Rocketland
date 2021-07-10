@@ -29,10 +29,19 @@ public:
 
     // converts real life coordinates (meter, meter) to (pixel, pixel)
     template<typename T>
-    static sf::Vector2<T> convertUnits(const sf::Vector2<T>& pr) {
+    static sf::Vector2<T> metersToPixels(const sf::Vector2<T>& pr) {
         sf::Vector2<T> res{};
         res.x = (pr.x * pixpmeter) + displ.x;
         res.y = (-pr.y * pixpmeter) + displ.y;
+        return res;
+    }
+
+    // converts (pixel, pixel) to real life coordinates (meter, meter)
+    template<typename T>
+    static sf::Vector2<T> pixelsToMeters(const sf::Vector2<T>& pr) {
+        sf::Vector2<T> res{};
+        res.x = (pr.x - displ.x) / pixpmeter;
+        res.y = -((pr.y - displ.y) / pixpmeter);
         return res;
     }
 
