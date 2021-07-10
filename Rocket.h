@@ -2,7 +2,9 @@
 #include <iostream>
 #include <utility>
 
-
+// all position in Rocket should go through
+// superclass function in gameobject
+// no dealing with direct coordinates in rocket!!!!
 class Rocket : public GameObject {
 public:
     Rocket() : GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
@@ -22,7 +24,7 @@ public:
     enum class Status {
         Regular, Explode
     };
-    sf::FloatRect getGlobalBounds() const {
+    sf::FloatRect getGlobalBounds() const override {
         return getTransform().transformRect(sprite.getGlobalBounds());
     }
     void update(Status status) {
@@ -33,10 +35,7 @@ public:
             vel.x += accel.x*elap;
             vel.y += Settings::gravity*elap;
             
-            sf::Vector2f newPos {Settings::convertUnits<float>(sf::Vector2f(position.x, position.y))};
-            setPosition(newPos.x, newPos.y);
-            position.x += vel.x*elap;
-            position.y += vel.y*elap;
+            irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
             break;
         }
         case Status::Explode: {
@@ -53,7 +52,7 @@ public:
                 !(explosion_anim.get_curr() % (explosion_anim.get_frames() / 5)) &&
                 explosion_anim.ison_new_frame()) {
                 std::cout << "Hello!!!";
-                setPosition(getPosition().x, getPosition().y + getPosition().y / 5);
+                irlSetPosition(sf::Vector2f(position.x, position.y / 5));
             }
             break;
         }
@@ -67,7 +66,6 @@ private:
         states.transform *= getTransform();
         target.draw(sprite, states);
         target.draw(explosion_anim);
-
     }
     sf::Texture texture;
     sf::Sprite sprite;

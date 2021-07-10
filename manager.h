@@ -11,11 +11,9 @@ class Manager {
     public:
         Manager() 
         {
-            sf::Vector2f newPos {Settings::convertUnits(sf::Vector2f(r.position.x, r.position.y))};
-            r.setPosition(newPos.x, newPos.y);
-            r.setScale(r.scale.x, r.scale.y);
-            r.setRotation(r.rotation);
-
+            r.irlSetPosition(r.irlGetPosition());
+            r.setScale(r.getScale());
+            r.setRotation(r.getRotation());
         }
         ~Manager() 
         {
@@ -27,8 +25,8 @@ class Manager {
             else 
                 r.update(Rocket::Status::Explode); 
 
-            r.setScale(r.scale.x, r.scale.y);
-            r.setRotation(r.rotation);
+            // r.setScale(r.getScale()); // when you put on engines
+            // r.setRotation(r.getRotation());
             drawAll(win);
             // std::cout << r.getPosition().y << " ";
         }

@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-
 class CollisionManager {
 public:
     CollisionManager() 
