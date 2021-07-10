@@ -21,9 +21,11 @@ class Manager {
         void update(sf::RenderWindow& win) {
 
             if (!cm.rocket_floor_collision(r, f)) 
-                r.update(Rocket::Status::Regular);
+                r.setStatus(Rocket::Status::Regular);
             else 
-                r.update(Rocket::Status::Explode); 
+                r.setStatus(Rocket::Status::Explode); // automaticcally changes to Rocket::Status::BlewUp
+
+            r.update();
 
             // r.setScale(r.getScale()); // when you put on engines
             // r.setRotation(r.getRotation());

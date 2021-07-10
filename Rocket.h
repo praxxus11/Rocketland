@@ -7,11 +7,13 @@
 // no dealing with direct coordinates in rocket!!!!
 class Rocket : public GameObject {
 public:
-    Rocket() : GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
+    Rocket() : 
+        GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
         pixels_tall(1120),
         vel(0, 0),
         accel(0, 0),
-        explosion_anim(128, 3328, 26, 3)
+        explosion_anim(128, 3328, 26, 3),
+        status(Status::Regular)
     {
         if (!texture.loadFromFile("imgs/ship.png")) {
             std::cout << "Rocket png not loaded";
@@ -22,7 +24,7 @@ public:
         // std::cout << position.y << ">><<" << position.y << ">>";
     }
     enum class Status {
-        Regular, Explode
+        Regular, Explode, BlewUp
     };
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
@@ -30,7 +32,7 @@ public:
         sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
     }
-    void update(Status status) {
+    void update() {
         switch (status) {
         case Status::Regular: {
             float elap = Settings::g_elapsed();
@@ -51,14 +53,23 @@ public:
                 explosion_initialized = 1;
             }
             explosion_anim.update();
-            if (explosion_anim.get_curr() <= explosion_anim.get_frames() && 
+            if (explosion_anim.get_curr() < explosion_anim.get_frames() && 
                 !(explosion_anim.get_curr() % (explosion_anim.get_frames() / 10)) &&
                 explosion_anim.ison_new_frame()) {
                 irlSetPosition(sf::Vector2f(position.x, position.y / 1.5));
             }
+            if (explosion_anim.get_curr() >= explosion_anim.get_frames()) {
+                setStatus(Status::BlewUp);
+            }
+            break;
+        }
+        case Status::BlewUp: {
             break;
         }
         } // end switch (status)
+    }
+    void setStatus(Status s) {
+        status = s;
     } 
     int pixels_tall; // change this code later
     sf::Vector2f vel;
@@ -73,4 +84,5 @@ private:
     sf::Sprite sprite;
     Gif explosion_anim;
     bool explosion_initialized = 0;
+    Status status;
 };
