@@ -4,16 +4,16 @@
 class Floor : public GameObject {
 public:
     Floor() :
-        GameObject({-Settings::ww/(2*Settings::pixpmeter), 0}, {1, 1}, 0) 
+        GameObject({-Env::ww/(2*Env::pixpmeter), 0}, {1, 1}, 0) 
     {
         rect.setFillColor(sf::Color(0,100,0));
-        rect.setSize(sf::Vector2f(Settings::ww, Settings::floor_hei));
+        rect.setSize(sf::Vector2f(Env::ww, Env::floor_hei));
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = rect.getLocalBounds();
         ir = getTransform().transformRect(ir);
-        const sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
-        return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
+        const sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
+        return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
 private:
     sf::RectangleShape rect;

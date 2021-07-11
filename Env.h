@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <utility>
 
-class Settings {
+class Env {
 public:
     /*
         these are keeping track of meta-dimensions
@@ -66,11 +66,11 @@ public:
     static void restartc() { clock.restart(); }
 };
 
-int Settings::ww = 800;
-int Settings::wh = 800;
-int Settings::floor_hei = 100;
-float Settings::pixpmeter = 7;
-const float Settings::gravity = -9.8;
-const float Settings::PI = 3.14159265;
-sf::Clock Settings::clock{};
-sf::Vector2f Settings::displ(Settings::ww/2, Settings::wh - Settings::floor_hei);
+int Env::ww = 800;
+int Env::wh = 800;
+int Env::floor_hei = 100;
+float Env::pixpmeter = 7;
+const float Env::gravity = -9.8;
+const float Env::PI = 3.14159265;
+sf::Clock Env::clock{};
+sf::Vector2f Env::displ(Env::ww/2, Env::wh - Env::floor_hei);

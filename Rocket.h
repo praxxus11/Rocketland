@@ -11,7 +11,7 @@
 class Rocket : public GameObject {
 public:
     Rocket() : 
-        GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
+        GameObject({0, 100}, {50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120}, 0),
         pixels_tall(1120),
         vel(0, 0),
         accel(0, 0),
@@ -34,17 +34,17 @@ public:
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
         ir = getTransform().transformRect(ir);
-        sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
-        return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
+        sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
+        return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
         std::cout << vel.y << " " << angular_vel << "\n";
         switch (status) {
         case Status::Regular: {
-            const float elap = Settings::g_elapsed();
+            const float elap = Env::g_elapsed();
 
             vel.x += accel.x*elap;
-            vel.y += Settings::gravity*elap;
+            vel.y += Env::gravity*elap;
 
             angular_vel += angular_accel*elap;
             rotation += angular_vel;
@@ -84,7 +84,7 @@ public:
             accel.y = 0;
             angular_accel = 0;
             angular_vel = 0;
-            float elap = Settings::g_elapsed();
+            float elap = Env::g_elapsed();
             if (userInputUpdate(elap)) {
                 sf::Vector2f pos = irlGetPosition();
                 pos.y += 0.5; // to not make collisionmanager thing rocket crashed in floor
@@ -124,8 +124,8 @@ private:
     bool userInputUpdate(const float& elap) {
         bool updated = false;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            vel.y += 20 * cos(Settings::PI/180 * rotation) * elap;
-            vel.x += 20 * sin(Settings::PI/180 * rotation) * elap;
+            vel.y += 20 * cos(Env::PI/180 * rotation) * elap;
+            vel.x += 20 * sin(Env::PI/180 * rotation) * elap;
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {

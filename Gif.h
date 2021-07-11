@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#include "Settings.h"
+#include "Env.h"
 
 class Gif : public GameObject {
 public:
@@ -36,7 +36,7 @@ public:
         else if (curr_frame == -1) curr_frame = 0;
         else {
             float req_elapsed = duration / frames;
-            time_elapsed += Settings::g_elapsed();
+            time_elapsed += Env::g_elapsed();
             if (time_elapsed > req_elapsed) {
                 curr_frame += time_elapsed / req_elapsed;
                 time_elapsed = 0;
@@ -53,8 +53,8 @@ public:
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprites[0].getLocalBounds();
         ir = getTransform().transformRect(ir);
-        const sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
-        return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
+        const sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
+        return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (curr_frame >= frames || curr_frame < 0) return; 

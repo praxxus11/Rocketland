@@ -10,7 +10,7 @@ public:
 
     void irlSetPosition(sf::Vector2f cor) {
         position = cor;
-        setPosition(Settings::metersToPixels(cor));
+        setPosition(Env::metersToPixels(cor));
     }
 
     sf::Vector2f irlGetPosition() const {
@@ -28,11 +28,11 @@ public:
     std::unique_ptr<sf::RectangleShape> getBoundingBox() const {
         const sf::FloatRect bb = getGlobalBounds();
         std::unique_ptr<sf::RectangleShape> rect(
-            new sf::RectangleShape(Settings::convertSize(sf::Vector2f(bb.width, bb.height))));
+            new sf::RectangleShape(Env::convertSize(sf::Vector2f(bb.width, bb.height))));
         rect->setFillColor(sf::Color::Transparent);
         rect->setOutlineColor(sf::Color::Red);
         rect->setOutlineThickness(3.f);
-        sf::Vector2f temp = Settings::metersToPixels(sf::Vector2f(bb.left, bb.top));
+        sf::Vector2f temp = Env::metersToPixels(sf::Vector2f(bb.left, bb.top));
         rect->setPosition(temp.x, temp.y);
         return rect;
     }
@@ -43,7 +43,7 @@ protected:
         scale(sc),
         rotation(rot) 
     {
-        setPosition(Settings::metersToPixels(pos));
+        setPosition(Env::metersToPixels(pos));
     }
     virtual ~GameObject()
     {

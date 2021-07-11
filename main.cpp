@@ -15,7 +15,7 @@ int main()
         }
         window.clear();
         m.update(window);
-        Settings::restartc();
+        Env::restartc();
         window.display();
     }
     return 0;

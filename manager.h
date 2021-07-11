@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Settings.h"
+#include "Env.h"
 #include "GameObject.h"
 #include "Gif.h"
 #include "Rocket.h"
@@ -24,8 +24,8 @@ class Manager {
             r.update();
             drawAll(win);
         }
-        int get_window_width() const { return Settings::ww; }
-        int get_window_height() const { return Settings::wh; }
+        int get_window_width() const { return Env::ww; }
+        int get_window_height() const { return Env::wh; }
     private:
         Rocket r;
         Floor f;
@@ -38,8 +38,8 @@ class Manager {
                 win.draw(*r.getBoundingBox().release());
             win.draw(r);
 
-            // sf::Vertex a(Settings::displ, sf::Color::White);
-            // sf::Vertex b(sf::Vector2f(Settings::displ.x, 0), sf::Color::White);
+            // sf::Vertex a(Env::displ, sf::Color::White);
+            // sf::Vertex b(sf::Vector2f(Env::displ.x, 0), sf::Color::White);
             // sf::Vertex vert[2] {a, b};
             // win.draw(vert, 2, sf::Lines);
         }
