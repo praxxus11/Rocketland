@@ -41,7 +41,7 @@ public:
         std::cout << vel.y << " " << angular_vel << "\n";
         switch (status) {
         case Status::Regular: {
-            float elap = Settings::g_elapsed();
+            const float elap = Settings::g_elapsed();
 
             vel.x += accel.x*elap;
             vel.y += Settings::gravity*elap;

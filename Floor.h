@@ -12,7 +12,7 @@ public:
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = rect.getLocalBounds();
         ir = getTransform().transformRect(ir);
-        sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
+        const sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
     }
 private:

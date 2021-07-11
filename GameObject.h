@@ -26,7 +26,7 @@ public:
     }
 
     std::unique_ptr<sf::RectangleShape> getBoundingBox() const {
-        sf::FloatRect bb = getGlobalBounds();
+        const sf::FloatRect bb = getGlobalBounds();
         std::unique_ptr<sf::RectangleShape> rect(
             new sf::RectangleShape(Settings::convertSize(sf::Vector2f(bb.width, bb.height))));
         rect->setFillColor(sf::Color::Transparent);
