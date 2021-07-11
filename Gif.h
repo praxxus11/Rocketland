@@ -1,8 +1,40 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include "Env.h"
+
+class Frames {
+public:
+    Frames(int sw, int sh, int frms, std::string sheet_loc) :
+        number_frames(frms),
+        sheet_width(sw),
+        sheet_height(sh),
+        sprites(number_frames)
+    {
+        sf::Texture sprite_sheet;
+        try {
+            sprite_sheet.loadFromFile("imgs/explosion_sheet.png");
+            const int imghei = sheet_height / number_frames;
+            for (int i=0; i<number_frames; i++) {
+                sprites.push_back(
+                    sf::Sprite(sprite_sheet, sf::IntRect(0, i*imghei, sheet_width, imghei)));
+            }
+        }
+        catch (...) {
+            std::cout << "Sprite sheet png not loaded";
+        }
+    }
+    const sf::Sprite& operator[](int i) const {
+        return sprites[i];
+    }
+private:
+    int number_frames;
+    int sheet_width;
+    int sheet_height;
+    std::vector<sf::Sprite> sprites;
+};
 
 class Gif : public GameObject {
 public:
@@ -47,9 +79,7 @@ public:
             }
         }
     }
-    void reset() {
-        if (curr_frame >= frames) curr_frame = -1;
-    }
+
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprites[0].getLocalBounds();
         ir = getTransform().transformRect(ir);
