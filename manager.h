@@ -49,8 +49,9 @@ class Manager {
             sf::Vector2f temp = Settings::metersToPixels(sf::Vector2f(bb.left, bb.top));
             rect.setPosition(temp.x, temp.y);
             win.draw(f);
+            if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
+                win.draw(rect);
             win.draw(r);
-            // win.draw(rect);
 
             sf::Vertex a(Settings::displ, sf::Color::White);
             sf::Vertex b(sf::Vector2f(Settings::displ.x, 0), sf::Color::White);

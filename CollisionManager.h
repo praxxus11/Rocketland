@@ -10,6 +10,8 @@ public:
     ~CollisionManager()
     {
     }
+    // given the position and features of rocket, position of floor,
+    // produces result saying what the status of the rocket is
     Rocket::Status rocket_floor_collision(const Rocket& r, const  Floor& f) {
         sf::FloatRect rr = r.getGlobalBounds();
         sf::FloatRect fr = f.getGlobalBounds();
@@ -19,7 +21,7 @@ public:
         if (sf::FloatRect(rr.left, rr.top-rr.height, rr.width, rr.top)
             .intersects(sf::FloatRect(fr.left, fr.top-fr.height, fr.width, fr.height))
             || rr.top - rr.height < fr.top) {
-            if (abs(r.getRotation()) < 5 && r.getVelocity().y > -6) {
+            if (abs(r.getRotation()) < 5 && r.getVelocity().y > -20) {
                 return Rocket::Status::Landed;
             } 
             return Rocket::Status::Explode;

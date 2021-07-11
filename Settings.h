@@ -69,7 +69,7 @@ public:
 int Settings::ww = 800;
 int Settings::wh = 800;
 int Settings::floor_hei = 100;
-float Settings::pixpmeter = 7;
+float Settings::pixpmeter = 2;
 const float Settings::gravity = -9.8;
 const float Settings::PI = 3.14159265;
 sf::Clock Settings::clock{};

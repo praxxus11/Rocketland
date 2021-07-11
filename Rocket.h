@@ -9,7 +9,7 @@
 class Rocket : public GameObject {
 public:
     Rocket() : 
-        GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
+        GameObject({0, 350}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, -90),
         pixels_tall(1120),
         vel(0, 0),
         accel(0, 0),
@@ -36,7 +36,7 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
     }
     void update() {
-        std::cout << vel.y << '\n';
+        std::cout << vel.y << " " << angular_vel << "\n";
         switch (status) {
         case Status::Regular: {
             float elap = Settings::g_elapsed();
@@ -46,6 +46,8 @@ public:
 
             angular_vel += angular_accel*elap;
             rotation += angular_vel;
+
+            angular_vel += -5./10 * angular_vel * elap;
 
             userInputUpdate(elap);
             
@@ -78,10 +80,12 @@ public:
             vel.y = 0;
             accel.x = 0;
             accel.y = 0;
+            angular_accel = 0;
+            angular_vel = 0;
             float elap = Settings::g_elapsed();
             if (userInputUpdate(elap)) {
                 sf::Vector2f pos = irlGetPosition();
-                pos.y += 0.5;
+                pos.y += 0.5; // to not make collisionmanager thing rocket crashed in floor
                 irlSetPosition(pos);
                 status = Status::Regular;
             }
@@ -98,11 +102,16 @@ public:
     sf::Vector2f getVelocity() const {
         return vel;
     }
+    Status getStatus() const {
+        return status;
+    }
     int pixels_tall; // change this code later
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
-        states.transform *= getTransform();
-        target.draw(sprite, states);
+        if (status != Status::Explode && status != Status::BlewUp) {
+            states.transform *= getTransform();
+            target.draw(sprite, states);
+        }
         target.draw(explosion_anim);
     }
 
@@ -115,11 +124,11 @@ private:
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angular_vel += 0.1 * elap;
+            angular_vel += 0.5 * elap;
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angular_vel += -0.1 * elap;
+            angular_vel += -0.5 * elap;
             updated = true;
         }
         return updated;
