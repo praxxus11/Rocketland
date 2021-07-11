@@ -7,22 +7,28 @@
 class GameObject: public sf::Drawable, public sf::Transformable {
 public:
     virtual sf::FloatRect getGlobalBounds() const = 0;
+
     void irlSetPosition(sf::Vector2f cor) {
         position = cor;
         setPosition(Settings::metersToPixels(cor));
     }
+
     sf::Vector2f irlGetPosition() const {
         return position;
     }
+
     sf::Vector2f getScale() const {
         return scale;
     }
+
     float getRotation() const {
         return rotation;
     }
+
     std::unique_ptr<sf::RectangleShape> getBoundingBox() const {
         sf::FloatRect bb = getGlobalBounds();
-        std::unique_ptr<sf::RectangleShape> rect(new sf::RectangleShape(Settings::convertSize(sf::Vector2f(bb.width, bb.height))));
+        std::unique_ptr<sf::RectangleShape> rect(
+            new sf::RectangleShape(Settings::convertSize(sf::Vector2f(bb.width, bb.height))));
         rect->setFillColor(sf::Color::Transparent);
         rect->setOutlineColor(sf::Color::Red);
         rect->setOutlineThickness(3.f);
@@ -30,6 +36,7 @@ public:
         rect->setPosition(temp.x, temp.y);
         return rect;
     }
+
 protected:
     GameObject(sf::Vector2f pos, sf::Vector2f sc, float rot) :
         position(pos),
