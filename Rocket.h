@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <utility>
+#include <math.h>
 
 // all position in Rocket should go through
 // superclass function in gameobject
@@ -12,6 +13,8 @@ public:
         pixels_tall(1120),
         vel(0, 0),
         accel(0, 0),
+        angular_vel(0),
+        angular_accel(0),
         explosion_anim(128, 3328, 26, 3),
         status(Status::Regular)
     {
@@ -24,7 +27,7 @@ public:
         // std::cout << position.y << ">><<" << position.y << ">>";
     }
     enum class Status {
-        Regular, Explode, BlewUp
+        Regular, Explode, BlewUp, Landed
     };
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
@@ -33,14 +36,21 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
     }
     void update() {
+        std::cout << vel.y << '\n';
         switch (status) {
         case Status::Regular: {
             float elap = Settings::g_elapsed();
 
             vel.x += accel.x*elap;
             vel.y += Settings::gravity*elap;
+
+            angular_vel += angular_accel*elap;
+            rotation += angular_vel;
+
+            userInputUpdate(elap);
             
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
+            setRotation(rotation);
             break;
         }
         case Status::Explode: {
@@ -63,6 +73,20 @@ public:
             }
             break;
         }
+        case Status::Landed: {
+            vel.x = 0;
+            vel.y = 0;
+            accel.x = 0;
+            accel.y = 0;
+            float elap = Settings::g_elapsed();
+            if (userInputUpdate(elap)) {
+                sf::Vector2f pos = irlGetPosition();
+                pos.y += 0.5;
+                irlSetPosition(pos);
+                status = Status::Regular;
+            }
+            break;
+        }
         case Status::BlewUp: {
             break;
         }
@@ -70,18 +94,42 @@ public:
     }
     void setStatus(Status s) {
         status = s;
-    } 
+    }
+    sf::Vector2f getVelocity() const {
+        return vel;
+    }
     int pixels_tall; // change this code later
-    sf::Vector2f vel;
-    sf::Vector2f accel;
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         states.transform *= getTransform();
         target.draw(sprite, states);
         target.draw(explosion_anim);
     }
+
+    // returns true if update was performed
+    bool userInputUpdate(const float& elap) {
+        bool updated = false;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            vel.y += 20 * cos(Settings::PI/180 * rotation) * elap;
+            vel.x += 20 * sin(Settings::PI/180 * rotation) * elap;
+            updated = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            angular_vel += 0.1 * elap;
+            updated = true;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            angular_vel += -0.1 * elap;
+            updated = true;
+        }
+        return updated;
+    }
     sf::Texture texture;
     sf::Sprite sprite;
+    sf::Vector2f vel;
+    sf::Vector2f accel;
+    float angular_vel;
+    float angular_accel;
     Gif explosion_anim;
     bool explosion_initialized = 0;
     Status status;
