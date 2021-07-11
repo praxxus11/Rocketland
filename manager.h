@@ -42,9 +42,9 @@ class Manager {
 
         void drawAll(sf::RenderWindow& win) const {
             win.draw(f);
-            win.draw(f.getBoundingBox());
+            win.draw(*f.getBoundingBox().release());
             if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
-                win.draw(r.getBoundingBox());
+                win.draw(*r.getBoundingBox().release());
             win.draw(r);
 
             sf::Vertex a(Settings::displ, sf::Color::White);

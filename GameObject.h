@@ -20,14 +20,14 @@ public:
     float getRotation() const {
         return rotation;
     }
-    sf::RectangleShape getBoundingBox() const {
+    std::unique_ptr<sf::RectangleShape> getBoundingBox() const {
         sf::FloatRect bb = getGlobalBounds();
-        sf::RectangleShape rect(Settings::convertSize(sf::Vector2f(bb.width, bb.height)));
-        rect.setFillColor(sf::Color::Transparent);
-        rect.setOutlineColor(sf::Color::Red);
-        rect.setOutlineThickness(3.f);
+        std::unique_ptr<sf::RectangleShape> rect(new sf::RectangleShape(Settings::convertSize(sf::Vector2f(bb.width, bb.height))));
+        rect->setFillColor(sf::Color::Transparent);
+        rect->setOutlineColor(sf::Color::Red);
+        rect->setOutlineThickness(3.f);
         sf::Vector2f temp = Settings::metersToPixels(sf::Vector2f(bb.left, bb.top));
-        rect.setPosition(temp.x, temp.y);
+        rect->setPosition(temp.x, temp.y);
         return rect;
     }
 protected:
