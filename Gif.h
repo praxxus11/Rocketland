@@ -50,6 +50,12 @@ public:
     void reset() {
         if (curr_frame >= frames) curr_frame = -1;
     }
+    sf::FloatRect getGlobalBounds() const override {
+        sf::FloatRect ir = sprites[0].getLocalBounds();
+        ir = getTransform().transformRect(ir);
+        sf::Vector2f newcor = Settings::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
+        return sf::FloatRect(newcor.x, newcor.y, ir.width/Settings::pixpmeter, ir.height/Settings::pixpmeter);
+    }
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (curr_frame >= frames || curr_frame < 0) return; 
         states.transform *= getTransform();

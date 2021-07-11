@@ -11,7 +11,7 @@ public:
     {
     }
     // given the position and features of rocket, position of floor,
-    // produces result saying what the status of the rocket is
+    // produces status of rocket
     Rocket::Status rocket_floor_collision(const Rocket& r, const  Floor& f) {
         sf::FloatRect rr = r.getGlobalBounds();
         sf::FloatRect fr = f.getGlobalBounds();
@@ -19,9 +19,9 @@ public:
         // bounds in meters. However, game position is in terms of pixels, where
         // going down is positive direction. Need to compensate for this transform meter to pixesl
         if (sf::FloatRect(rr.left, rr.top-rr.height, rr.width, rr.top)
-            .intersects(sf::FloatRect(fr.left, fr.top-fr.height, fr.width, fr.height))
-            || rr.top - rr.height < fr.top) {
-            if (abs(r.getRotation()) < 5 && r.getVelocity().y > -20) {
+            .intersects(sf::FloatRect(fr.left, fr.top-fr.height, fr.width, fr.height)) || 
+            rr.top - rr.height < fr.top) {
+            if (abs(r.getRotation()) < 5 && abs(r.getVelocity().y) < 10 && abs(r.getVelocity().x) < 5) {
                 return Rocket::Status::Landed;
             } 
             return Rocket::Status::Explode;

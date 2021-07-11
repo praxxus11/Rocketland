@@ -3,13 +3,15 @@
 #include <utility>
 #include <math.h>
 
+#include "Flame.h"
+
 // all position in Rocket should go through
 // superclass function in gameobject
 // no dealing with direct coordinates in rocket!!!!
 class Rocket : public GameObject {
 public:
     Rocket() : 
-        GameObject({0, 350}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, -90),
+        GameObject({0, 100}, {50.f * Settings::pixpmeter / 1120, 50.f * Settings::pixpmeter / 1120}, 0),
         pixels_tall(1120),
         vel(0, 0),
         accel(0, 0),
@@ -112,7 +114,10 @@ private:
             states.transform *= getTransform();
             target.draw(sprite, states);
         }
-        target.draw(explosion_anim);
+        if (status == Status::Explode) {
+            target.draw(explosion_anim);
+            target.draw(explosion_anim.getBoundingBox());
+        }
     }
 
     // returns true if update was performed
@@ -124,11 +129,11 @@ private:
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angular_vel += 0.5 * elap;
+            angular_vel += -0.5 * elap;
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angular_vel += -0.5 * elap;
+            angular_vel += 0.5 * elap;
             updated = true;
         }
         return updated;

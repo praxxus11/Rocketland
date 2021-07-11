@@ -41,16 +41,10 @@ class Manager {
         CollisionManager cm;
 
         void drawAll(sf::RenderWindow& win) const {
-            sf::FloatRect bb = r.getGlobalBounds();
-            sf::RectangleShape rect(Settings::convertSize(sf::Vector2f(bb.width, bb.height)));
-            rect.setFillColor(sf::Color::Transparent);
-            rect.setOutlineColor(sf::Color::Red);
-            rect.setOutlineThickness(3.f);
-            sf::Vector2f temp = Settings::metersToPixels(sf::Vector2f(bb.left, bb.top));
-            rect.setPosition(temp.x, temp.y);
             win.draw(f);
+            win.draw(f.getBoundingBox());
             if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
-                win.draw(rect);
+                win.draw(r.getBoundingBox());
             win.draw(r);
 
             sf::Vertex a(Settings::displ, sf::Color::White);
