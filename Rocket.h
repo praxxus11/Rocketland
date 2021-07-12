@@ -83,9 +83,9 @@ public:
             if (!explosion_initialized) {
                 const auto globalbnd = getGlobalBounds();
                 explosion_anim.irlSetPosition(sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height));
-                constexpr float times_bigger = 1.3; // how large explosion is compared to rocket
+                float times_bigger = 0.5 + std::min(sqrt(vel.x*vel.x + vel.y*vel.y) / 30, 2.f); // how large explosion is compared to rocket
                 const float scale = (times_bigger * 1120 * getScale().x) / 128;
-                explosion_anim.setScale(scale, scale);
+                explosion_anim.setScale(rand()%2 ? scale : -scale, scale); // randomly flip the explosion animation
                 explosion_initialized = 1;
             }
             explosion_anim.update();

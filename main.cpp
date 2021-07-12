@@ -4,6 +4,7 @@
 
 int main()
 {
+    srand(time(nullptr));
     int ct = 0;
 
     Manager m {};

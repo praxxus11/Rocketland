@@ -17,7 +17,7 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 100;
+            int numrocks = 10;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 rockets.push_back(Rocket(
