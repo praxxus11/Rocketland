@@ -5,3 +5,8 @@
 -> add engines
 -> determine the center of mass and intertia of rocket
 -> mass and stuff
+
+
+// Just for aestheitc
+-> random winds to push thing around
+-> explosion size determined by velocity when hits the floor

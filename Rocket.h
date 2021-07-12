@@ -32,15 +32,27 @@ public:
         explosion_anim(expls),
         status(stat)
     {
-        if (!texture.loadFromFile("imgs/ship.png")) {
-            std::cout << "Rocket png not loaded";
-        }
-        texture.setSmooth(true);
-        sprite.setTexture(texture);
+        sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);
-        // std::cout << position.y << ">><<" << position.y << ">>";
     }
 
+    Rocket(const Rocket& r) : 
+        GameObject(r.position, r.scale, r.rotation),
+        pixels_tall(r.pixels_tall),
+        vel(r.vel),
+        accel(r.accel),
+        angular_vel(r.angular_vel),
+        angular_accel(r.angular_accel),
+        explosion_anim(r.explosion_anim),
+        status(r.status)
+    {
+        // if (!texture.loadFromFile("imgs/ship.png")) {
+        //     std::cout << "Rocket png not loaded";
+        // }
+        // texture.setSmooth(true);
+        sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
+        explosion_anim.setOrigin(72, 120);    
+    }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
         ir = getTransform().transformRect(ir);
@@ -126,7 +138,7 @@ private:
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
-            target.draw(*explosion_anim.getBoundingBox().release());
+            // target.draw(*explosion_anim.getBoundingBox().release());
         }
     }
 
@@ -148,7 +160,7 @@ private:
         }
         return updated;
     }
-    sf::Texture texture;
+    static sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f vel;
     sf::Vector2f accel;
@@ -158,3 +170,4 @@ private:
     bool explosion_initialized = 0;
     Status status;
 };
+
