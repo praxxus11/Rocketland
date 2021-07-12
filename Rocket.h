@@ -3,7 +3,7 @@
 #include <utility>
 #include <math.h>
 
-#include "Flame.h"
+#include "Engine.h"
 
 // all position in Rocket should go through
 // superclass function in gameobject
@@ -138,8 +138,9 @@ private:
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
-            target.draw(*explosion_anim.getBoundingBox().get());
+            // target.draw(*explosion_anim.getBoundingBox().get());
         }
+        target.draw(engines);
     }
 
     // returns true if update was performed
@@ -169,5 +170,6 @@ private:
     Gif explosion_anim;
     bool explosion_initialized = 0;
     Status status;
+    EngineSet engines;
 };
 
