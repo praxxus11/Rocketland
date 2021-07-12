@@ -138,7 +138,7 @@ private:
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
-            // target.draw(*explosion_anim.getBoundingBox().release());
+            target.draw(*explosion_anim.getBoundingBox().get());
         }
     }
 

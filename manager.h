@@ -17,7 +17,7 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 1000;
+            int numrocks = 100;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 rockets.push_back(Rocket(
@@ -58,10 +58,10 @@ class Manager {
 
         void drawAll(sf::RenderWindow& win) const {
             win.draw(f);
-            // win.draw(*f.getBoundingBox().release());
+            win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
-                // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
-                    // win.draw(*r.getBoundingBox().release());
+                if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
+                    win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
         }
