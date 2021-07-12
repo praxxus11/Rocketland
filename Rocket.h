@@ -10,15 +10,27 @@
 // no dealing with direct coordinates in rocket!!!!
 class Rocket : public GameObject {
 public:
-    Rocket() : 
-        GameObject({0, 100}, {50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120}, 0),
-        pixels_tall(1120),
-        vel(0, 0),
-        accel(0, 0),
-        angular_vel(0),
-        angular_accel(0),
-        explosion_anim(128, 3328, 26, 3),
-        status(Status::Regular)
+    enum class Status {
+        Regular, Explode, BlewUp, Landed
+    };
+    Rocket(const sf::Vector2f& pos, 
+    const sf::Vector2f& scal, 
+    float rot,
+    int pix_tall,
+    const sf::Vector2f& velo,
+    const sf::Vector2f& acce,
+    float ang_vel,
+    float ang_accel,
+    Gif expls,
+    Status stat) : 
+        GameObject(pos, scal, rot),
+        pixels_tall(pix_tall),
+        vel(velo),
+        accel(acce),
+        angular_vel(ang_vel),
+        angular_accel(ang_accel),
+        explosion_anim(expls),
+        status(stat)
     {
         if (!texture.loadFromFile("imgs/ship.png")) {
             std::cout << "Rocket png not loaded";
@@ -28,9 +40,7 @@ public:
         explosion_anim.setOrigin(72, 120);
         // std::cout << position.y << ">><<" << position.y << ">>";
     }
-    enum class Status {
-        Regular, Explode, BlewUp, Landed
-    };
+
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
         ir = getTransform().transformRect(ir);
@@ -38,7 +48,7 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
-        std::cout << vel.y << " " << angular_vel << "\n";
+        // std::cout << vel.y << " " << angular_vel << "\n";
         switch (status) {
         case Status::Regular: {
             const float elap = Env::g_elapsed();
@@ -47,7 +57,7 @@ public:
             vel.y += Env::gravity*elap;
 
             angular_vel += angular_accel*elap;
-            rotation += angular_vel;
+            rotation += angular_vel*elap;
 
             angular_vel += -5./10 * angular_vel * elap;
 
@@ -67,12 +77,12 @@ public:
                 explosion_initialized = 1;
             }
             explosion_anim.update();
-            if (explosion_anim.get_curr() < explosion_anim.get_frames() && 
-                !(explosion_anim.get_curr() % (explosion_anim.get_frames() / 10)) &&
+            if (explosion_anim.get_curr() < explosion_anim.number_frames() && 
+                !(explosion_anim.get_curr() % (explosion_anim.number_frames() / 10)) &&
                 explosion_anim.ison_new_frame()) {
                 irlSetPosition(sf::Vector2f(position.x, position.y / 1.5));
             }
-            if (explosion_anim.get_curr() >= explosion_anim.get_frames()) {
+            else if (explosion_anim.get_curr() >= explosion_anim.number_frames()) {
                 setStatus(Status::BlewUp);
             }
             break;
@@ -129,11 +139,11 @@ private:
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angular_vel += -0.5 * elap;
+            angular_vel += -10 * elap;
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angular_vel += 0.5 * elap;
+            angular_vel += 10 * elap;
             updated = true;
         }
         return updated;

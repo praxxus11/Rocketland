@@ -9,7 +9,21 @@
 
 class Manager {
     public:
-        Manager() 
+        Manager() :
+            exframes(128, 
+                3328,
+                26,
+                "imgs/explosion_sheet.png"),
+            r(sf::Vector2f(0, 100),
+                sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
+                0,
+                1120,
+                sf::Vector2f(0, 0),
+                sf::Vector2f(0, 0),
+                0,
+                0,
+                Gif(3, exframes),
+                Rocket::Status::Regular)
         {
             r.setOrigin(120, 200);
             r.irlSetPosition(r.irlGetPosition());
@@ -27,6 +41,7 @@ class Manager {
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }
     private:
+        Frames exframes;
         Rocket r;
         Floor f;
         CollisionManager cm;
@@ -37,10 +52,5 @@ class Manager {
             if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
                 win.draw(*r.getBoundingBox().release());
             win.draw(r);
-
-            // sf::Vertex a(Env::displ, sf::Color::White);
-            // sf::Vertex b(sf::Vector2f(Env::displ.x, 0), sf::Color::White);
-            // sf::Vertex vert[2] {a, b};
-            // win.draw(vert, 2, sf::Lines);
         }
 };
