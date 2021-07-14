@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "Flame.h"
 
 class Engine : public GameObjectRelative {
 public:
