@@ -16,8 +16,8 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if (ct++%3==0) 
-            std::cout << 1/Env::g_elapsed() << '\n';
+        // if (ct++%3==0) 
+            // std::cout << 1/Env::g_elapsed() << '\n';
 
         window.clear();
         m.update(window);

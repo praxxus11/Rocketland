@@ -23,28 +23,32 @@ public:
     float ang_accel,
     Gif expls,
     Status stat) : 
-        GameObject(pos, scal, rot),
+        GameObject(pos),
         pixels_tall(pix_tall),
         vel(velo),
         accel(acce),
         angular_vel(ang_vel),
         angular_accel(ang_accel),
         explosion_anim(expls),
-        status(stat)
+        status(stat),
+        engine({0, 0}, *this)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);
+        setScale(scal);
+        setRotation(rot);
     }
 
     Rocket(const Rocket& r) : 
-        GameObject(r.position, r.scale, r.rotation),
+        GameObject(r.position),
         pixels_tall(r.pixels_tall),
         vel(r.vel),
         accel(r.accel),
         angular_vel(r.angular_vel),
         angular_accel(r.angular_accel),
         explosion_anim(r.explosion_anim),
-        status(r.status)
+        status(r.status),
+        engine({0, 0}, *this)
     {
         // if (!texture.loadFromFile("imgs/ship.png")) {
         //     std::cout << "Rocket png not loaded";
@@ -52,6 +56,8 @@ public:
         // texture.setSmooth(true);
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);    
+        setScale(r.getScale());
+        setRotation(r.getRotation());
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
@@ -69,14 +75,16 @@ public:
             vel.y += Env::gravity*elap;
 
             angular_vel += angular_accel*elap;
-            rotation += angular_vel*elap;
+            setRotation(getRotation() + angular_vel*elap);
 
             angular_vel += -5./10 * angular_vel * elap;
 
             userInputUpdate(elap);
             
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
-            setRotation(rotation);
+            setRotation(getRotation());
+
+            engine.update(getScale().x);
             break;
         }
         case Status::Explode: {
@@ -109,7 +117,7 @@ public:
             float elap = Env::g_elapsed();
             if (userInputUpdate(elap)) {
                 sf::Vector2f pos = irlGetPosition();
-                pos.y += 0.5; // to not make collisionmanager thing rocket crashed in floor
+                pos.y += 0.1; // to not make collisionmanager thing rocket crashed in floor
                 irlSetPosition(pos);
                 status = Status::Regular;
             }
@@ -132,23 +140,23 @@ public:
     int pixels_tall; // change this code later
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
-        if (status != Status::Explode && status != Status::BlewUp) {
+        if (status == Status::Regular || status == Status::Landed) {
             states.transform *= getTransform();
             target.draw(sprite, states);
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) target.draw(engine, states);
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
             // target.draw(*explosion_anim.getBoundingBox().get());
         }
-        target.draw(engines);
     }
 
     // returns true if update was performed
     bool userInputUpdate(const float& elap) {
         bool updated = false;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            vel.y += 20 * cos(Env::PI/180 * rotation) * elap;
-            vel.x += 20 * sin(Env::PI/180 * rotation) * elap;
+            vel.y += 20 * cos(Env::PI/180 * getRotation()) * elap;
+            vel.x += 20 * sin(Env::PI/180 * getRotation()) * elap;
             updated = true;
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
@@ -170,6 +178,5 @@ private:
     Gif explosion_anim;
     bool explosion_initialized = 0;
     Status status;
-    EngineSet engines;
+    Engine engine;
 };
-

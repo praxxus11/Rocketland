@@ -4,7 +4,7 @@
 class Floor : public GameObject {
 public:
     Floor() :
-        GameObject({-Env::ww/(2*Env::pixpmeter), 0}, {1, 1}, 0) 
+        GameObject({-Env::ww/(2*Env::pixpmeter), 0}) 
     {
         rect.setFillColor(sf::Color(0,100,0));
         rect.setSize(sf::Vector2f(Env::ww, Env::floor_hei));

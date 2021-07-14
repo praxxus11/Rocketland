@@ -3,18 +3,16 @@
 
 #include "Flame.h"
 
-class Engine : public GameObject {
+class Engine : public GameObjectRelative {
 public:
-    Engine() :
-        GameObject({0, 0}, {1, 1}, 0)
+    Engine(sf::Vector2f pos, GameObject& parent) :
+        GameObjectRelative(pos, parent) 
     {
-        rect.setSize(sf::Vector2f(200, 200)); 
-        rect.setFillColor(sf::Color::White);
+        rect.setFillColor(sf::Color(255, 120, 0));
     }
     Engine(const Engine& e) :
-        GameObject(e.position, e.scale, e.rotation)
+        GameObjectRelative(e.position, e.parent)
     {
-        rect.setSize(e.rect.getSize());
         rect.setFillColor(e.rect.getFillColor());
     }
     sf::FloatRect getGlobalBounds() const override {
@@ -23,31 +21,17 @@ public:
         sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
+    void update(float scale) {
+        irlSetDisplacement(sf::Vector2f(3/scale, 50/scale));
+        rect.setSize(Env::convertSize(sf::Vector2f(5/scale, (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ? (rand()%7)+10 : 10) /scale)));
+        float sc = (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) ? (rand()%100)/300 + 1 : 1;
+        rect.setScale(sc, sc);
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         states.transform *= getTransform();
         target.draw(rect, states);
     }
     sf::RectangleShape rect;
-};
-
-class EngineSet : public GameObject {
-public:
-    EngineSet() :
-        GameObject({0,0},{1,1},0)
-    {
-        engines.push_back(Engine{});
-    }
-    sf::FloatRect getGlobalBounds() const override {
-        sf::FloatRect ir  (0.f,0.f,0.f,0.f);
-        ir = getTransform().transformRect(ir);
-        sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
-        return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
-    }
-private:
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
-        for (const Engine& engine : engines) 
-            target.draw(engine);
-    }
-    std::vector<Engine> engines;
+    float angular_delta; // -90 -> 90 degress, where 0 degrees is downward
 };

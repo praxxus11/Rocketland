@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -13,16 +12,13 @@ public:
         setPosition(Env::metersToPixels(cor));
     }
 
-    sf::Vector2f irlGetPosition() const {
+    void irlSetDisplacement(sf::Vector2f cor) {
+        position = cor;
+        setPosition(Env::convertSize(cor));
+    }
+
+    const sf::Vector2f& irlGetPosition() const {
         return position;
-    }
-
-    sf::Vector2f getScale() const {
-        return scale;
-    }
-
-    float getRotation() const {
-        return rotation;
     }
 
     std::unique_ptr<sf::RectangleShape> getBoundingBox() const {
@@ -38,10 +34,8 @@ public:
     }
 
 protected:
-    GameObject(sf::Vector2f pos, sf::Vector2f sc, float rot) :
-        position(pos),
-        scale(sc),
-        rotation(rot) 
+    GameObject(sf::Vector2f pos) :
+        position(pos)
     {
         setPosition(Env::metersToPixels(pos));
     }
@@ -49,6 +43,19 @@ protected:
     {
     }
     sf::Vector2f position;
-    sf::Vector2f scale;
-    float rotation;
+};
+
+class GameObjectRelative : public GameObject {
+public:
+    void irlSetDisplacement(sf::Vector2f cor) {
+        position = cor;
+        setPosition(Env::convertSize(cor));
+    }
+    GameObjectRelative(sf::Vector2f pos, GameObject& par) :
+        GameObject(pos),
+        parent(par)
+    {
+    }
+protected:
+    GameObject& parent;
 };

@@ -17,22 +17,22 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 1;
+            int numrocks = 200;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 rockets.push_back(Rocket(
                     sf::Vector2f(rand()%80-40, rand()%30+80),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
-                    rand()%40-20,
+                    rand()%5,
                     1120,
-                    sf::Vector2f(0, rand()%10),
+                    sf::Vector2f(rand()%5-2.5, rand()%10),
                     sf::Vector2f(0, 0),
                     0,
                     0,
                     Gif(3, exframes),
                     Rocket::Status::Regular
                 ));
-                rockets[i].setOrigin(120, 200);
+                rockets[i].setOrigin(0, 0);
                 rockets[i].irlSetPosition(rockets[i].irlGetPosition());
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
@@ -60,8 +60,8 @@ class Manager {
             win.draw(f);
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
-                // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
-                    // win.draw(*r.getBoundingBox().get());
+                if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
+                    win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
         }

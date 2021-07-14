@@ -40,7 +40,7 @@ private:
 class Gif : public GameObject {
 public:
     Gif(float dur, Frames& spr_frms) :
-        GameObject({0, 0}, {1, 1}, 0), 
+        GameObject({0, 0}), 
         duration(dur),
         time_elapsed(0),
         curr_frame(-1),
