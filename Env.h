@@ -69,7 +69,7 @@ public:
 int Env::ww = 1500;
 int Env::wh = 800;
 int Env::floor_hei = 100;
-float Env::pixpmeter = 2;
+float Env::pixpmeter = 5;
 const float Env::gravity = -9.8;
 const float Env::PI = 3.14159265;
 sf::Clock Env::clock{};
