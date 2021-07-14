@@ -2,14 +2,16 @@
 #include <iostream>
 #include <map>
 
+// singleton class
 class ResourceManger {
 public:
     enum class ResourceTypes {
-        RocketImg
+        RocketImg, RocketFlame
     };
     ResourceManger() 
     {
         filepaths[ResourceTypes::RocketImg] = "imgs/ship.png";
+        filepaths[ResourceTypes::RocketFlame] = "imgs/flame.png";
     }
     sf::Texture& getTexture(ResourceTypes resource) {
         const auto& textureFound = textures.find(resource);
@@ -24,7 +26,7 @@ public:
         }
     }
     static ResourceManger* getInstance() {
-        if (instance == nullptr) 
+        if (!instance) 
             instance = new ResourceManger();
         return instance;
     }

@@ -155,7 +155,7 @@ private:
     bool updateFromEngine(const float elap) {
         bool updated = false;
         if (engine.is_engine_on()) {
-            const float engine_force = 20;
+            const float engine_force = 25 * engine.get_throttle();
             const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
             const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
             vel.y += perpen_force * cos(Env::PI/180 * getRotation()) * elap;

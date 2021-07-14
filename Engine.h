@@ -7,23 +7,20 @@ class Engine : public GameObjectRelative {
 public:
     Engine(sf::Vector2f pos, GameObject& parent) :
         GameObjectRelative(pos, parent),
-        angular_delta(0) 
+        angular_delta(0),
+        throttle(1.f) 
     {
-        rect.setFillColor(sf::Color(255, 120, 0));
-        rect.setSize(sf::Vector2f(100, 800));
-        rect.setOrigin(50, 0);
-
-        base.setFillColor(sf::Color(200,200,200));
-        base.setSize(sf::Vector2f(150, 100));
-        base.setOrigin(75, 0);
+        flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
+        flame_sprite.setOrigin(522/2, 0);
     }
     Engine(const Engine& e) :
         GameObjectRelative(e.position, e.parent)
     {
-        rect.setFillColor(e.rect.getFillColor());
+        flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
+
     }
     sf::FloatRect getGlobalBounds() const override {
-        sf::FloatRect ir = rect.getLocalBounds();
+        sf::FloatRect ir = flame_sprite.getLocalBounds();
         ir = getTransform().transformRect(ir);
         ir = parent.getTransform().transformRect(ir);
         sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
@@ -32,10 +29,12 @@ public:
     void update() {
         const float scale = parent.getScale().x;
         irlSetDisplacement(sf::Vector2f(5/scale, 48/scale));
-        float sc = (rand()%100)/200. + 1;
-        setScale(1, sc);
+        float scx = 1;
+        float scy = (rand()%1000)/2000. + 1;
+        setScale(scx, scy * (0.4 + get_throttle()));
+        setScale(0.5*getScale().x, 0.7*getScale().y);
         setRotation(angular_delta);
-        engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
+        engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             angular_delta = std::max(-45.f, angular_delta-100*Env::g_elapsed());
         }
@@ -45,6 +44,13 @@ public:
         else { 
             angular_delta -= 5*angular_delta*Env::g_elapsed();
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            throttle = std::min(1.f, throttle + 1.f*Env::g_elapsed());
+        }   
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            throttle = std::max(0.4f, throttle - 1.f*Env::g_elapsed());
+        }
     }
     float get_angle() const {
         return angular_delta;
@@ -52,16 +58,18 @@ public:
     float is_engine_on() const {
         return engine_on;
     }
+    float get_throttle() const {
+        return throttle;
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter
         states.transform *= parent.getTransform() * getTransform(); 
         if (is_engine_on())
-            target.draw(rect, states);
-        target.draw(base, states);
+            target.draw(flame_sprite, states);
     }
-    sf::RectangleShape rect;
-    sf::RectangleShape base;
-    float angular_delta; // -90 -> 90 degress, where 0 degrees is downward
+    sf::Sprite flame_sprite;
+    float angular_delta; // -45 -> 45 degress, where 0 degrees is downward
+    float throttle; // 0.4 -> 1.0
     bool engine_on;
 };
