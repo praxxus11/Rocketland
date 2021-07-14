@@ -10,7 +10,7 @@ public:
         angular_delta(0) 
     {
         rect.setFillColor(sf::Color(255, 120, 0));
-        rect.setSize(sf::Vector2f(100, 500));
+        rect.setSize(sf::Vector2f(100, 800));
         rect.setOrigin(50, 0);
 
         base.setFillColor(sf::Color(200,200,200));
