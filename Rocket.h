@@ -115,6 +115,7 @@ public:
             angular_accel = 0;
             angular_vel = 0;
             float elap = Env::g_elapsed();
+            engine.update();
             if (updateFromEngine(elap)) {
                 sf::Vector2f pos = irlGetPosition();
                 pos.y += 0.1; // to not make collisionmanager thing rocket crashed in floor
@@ -141,10 +142,10 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {
+            target.draw(engine);
             states.transform *= getTransform();
             target.draw(sprite, states);
             states.transform *= engine.getTransform();
-            target.draw(engine);
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);

@@ -7,13 +7,13 @@ class Engine : public GameObjectRelative {
 public:
     Engine(sf::Vector2f pos, GameObject& parent) :
         GameObjectRelative(pos, parent),
-        angular_delta(5) 
+        angular_delta(0) 
     {
         rect.setFillColor(sf::Color(255, 120, 0));
         rect.setSize(sf::Vector2f(100, 500));
         rect.setOrigin(50, 0);
 
-        base.setFillColor(sf::Color(100,100,100));
+        base.setFillColor(sf::Color(200,200,200));
         base.setSize(sf::Vector2f(150, 100));
         base.setOrigin(75, 0);
     }
@@ -31,7 +31,7 @@ public:
     }
     void update() {
         const float scale = parent.getScale().x;
-        irlSetDisplacement(sf::Vector2f(5/scale, 50/scale));
+        irlSetDisplacement(sf::Vector2f(5/scale, 48/scale));
         float sc = (rand()%100)/200. + 1;
         setScale(1, sc);
         setRotation(angular_delta);

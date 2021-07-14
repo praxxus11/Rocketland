@@ -17,15 +17,15 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 100;
+            int numrocks = 1;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 rockets.push_back(Rocket(
                     sf::Vector2f(rand()%80-40, rand()%30+80),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
-                    rand()%5,
+                    rand()%5-2.5,
                     1120,
-                    sf::Vector2f(rand()%5-2.5, rand()%10),
+                    sf::Vector2f(0, rand()%10+5),
                     sf::Vector2f(0, 0),
                     0,
                     0,
