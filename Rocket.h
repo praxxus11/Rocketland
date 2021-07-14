@@ -84,7 +84,7 @@ public:
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
             setRotation(getRotation());
 
-            engine.update(getScale().x);
+            engine.update();
             break;
         }
         case Status::Explode: {
@@ -143,7 +143,9 @@ private:
         if (status == Status::Regular || status == Status::Landed) {
             states.transform *= getTransform();
             target.draw(sprite, states);
-            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) target.draw(engine, states);
+            states.transform *= engine.getTransform();
+            // if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
+                target.draw(engine);
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
@@ -159,14 +161,14 @@ private:
             vel.x += 20 * sin(Env::PI/180 * getRotation()) * elap;
             updated = true;
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angular_vel += -10 * elap;
-            updated = true;
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angular_vel += 10 * elap;
-            updated = true;
-        }
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        //     angular_vel += -10 * elap;
+        //     updated = true;
+        // }
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        //     angular_vel += 10 * elap;
+        //     updated = true;
+        // }
         return updated;
     }
     static sf::Texture texture;

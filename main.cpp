@@ -9,7 +9,7 @@ int main()
 
     Manager m {};
     sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "");
-    window.setFramerateLimit(30);
+    window.setFramerateLimit(60);
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
