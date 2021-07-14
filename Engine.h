@@ -12,6 +12,10 @@ public:
         rect.setFillColor(sf::Color(255, 120, 0));
         rect.setSize(sf::Vector2f(100, 500));
         rect.setOrigin(50, 0);
+
+        base.setFillColor(sf::Color(100,100,100));
+        base.setSize(sf::Vector2f(150, 100));
+        base.setOrigin(75, 0);
     }
     Engine(const Engine& e) :
         GameObjectRelative(e.position, e.parent)
@@ -31,6 +35,7 @@ public:
         float sc = (rand()%100)/200. + 1;
         setScale(1, sc);
         setRotation(angular_delta);
+        engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Up);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             angular_delta = std::max(-45.f, angular_delta-100*Env::g_elapsed());
         }
@@ -41,11 +46,22 @@ public:
             angular_delta -= 5*angular_delta*Env::g_elapsed();
         }
     }
+    float get_angle() const {
+        return angular_delta;
+    }
+    float is_engine_on() const {
+        return engine_on;
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
-        states.transform *= parent.getTransform() * getTransform(); // take note that the order in which the transform is applied does matter
-        target.draw(rect, states);
+        // take note that the order in which the transforms are applied DOES matter
+        states.transform *= parent.getTransform() * getTransform(); 
+        if (is_engine_on())
+            target.draw(rect, states);
+        target.draw(base, states);
     }
     sf::RectangleShape rect;
+    sf::RectangleShape base;
     float angular_delta; // -90 -> 90 degress, where 0 degrees is downward
+    bool engine_on;
 };

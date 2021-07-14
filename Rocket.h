@@ -79,7 +79,7 @@ public:
 
             angular_vel += -5./10 * angular_vel * elap;
 
-            userInputUpdate(elap);
+            updateFromEngine(elap);
             
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
             setRotation(getRotation());
@@ -115,7 +115,7 @@ public:
             angular_accel = 0;
             angular_vel = 0;
             float elap = Env::g_elapsed();
-            if (userInputUpdate(elap)) {
+            if (updateFromEngine(elap)) {
                 sf::Vector2f pos = irlGetPosition();
                 pos.y += 0.1; // to not make collisionmanager thing rocket crashed in floor
                 irlSetPosition(pos);
@@ -144,33 +144,27 @@ private:
             states.transform *= getTransform();
             target.draw(sprite, states);
             states.transform *= engine.getTransform();
-            // if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
-                target.draw(engine);
+            target.draw(engine);
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
             // target.draw(*explosion_anim.getBoundingBox().get());
         }
     }
-
-    // returns true if update was performed
-    bool userInputUpdate(const float& elap) {
+    bool updateFromEngine(const float elap) {
         bool updated = false;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            vel.y += 20 * cos(Env::PI/180 * getRotation()) * elap;
-            vel.x += 20 * sin(Env::PI/180 * getRotation()) * elap;
+        if (engine.is_engine_on()) {
+            const float engine_force = 20;
+            const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
+            const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
+            vel.y += perpen_force * cos(Env::PI/180 * getRotation()) * elap;
+            vel.x += perpen_force * sin(Env::PI/180 * getRotation()) * elap;
+            angular_vel -= 2 * tangent_force * elap;
             updated = true;
         }
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        //     angular_vel += -10 * elap;
-        //     updated = true;
-        // }
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        //     angular_vel += 10 * elap;
-        //     updated = true;
-        // }
         return updated;
     }
+
     static sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f vel;
