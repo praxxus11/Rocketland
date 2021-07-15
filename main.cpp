@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "manager.h"
+#include "Camera.h"
 
 int main()
 {

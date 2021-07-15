@@ -3,10 +3,14 @@
 
 class Camera {
 public:
-    Camera() 
+    Camera() :
+        center(0, 0),
+        left(0),
+        right(0)
     {
     }
 private:
-    float width;
-    float pixpmeter;
+    sf::Vector2i center;
+    int left;
+    int right;
 };
