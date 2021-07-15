@@ -70,9 +70,9 @@ public:
         switch (status) {
         case Status::Regular: {
             ////////////////
-            // totTime += Env::g_elapsed();
-            // std::ofstream fin("python/data.txt", std::ios_base::app);
-            // fin << totTime << " " << vel.y << " " << position.y << '\n';
+            totTime += Env::g_elapsed();
+            std::ofstream fin("python/data.txt", std::ios_base::app);
+            fin << totTime << " " << vel.y << " " << position.y << '\n';
             ////////////////
 
 

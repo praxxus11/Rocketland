@@ -4,3 +4,4 @@
 *.o
 lib
 include
+python/data.txt
