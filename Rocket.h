@@ -73,10 +73,10 @@ public:
             
             timeSoFar += Env::g_elapsed();
             totTime += Env::g_elapsed();
-            if (timeSoFar > 0.5) {
+            if (timeSoFar > 1.1) {
             std::ofstream fin("python/datas.txt", std::ios_base::app);
                 timeSoFar = 0;
-                fin << totTime << " " << position.y << " " << vel.y << '\n';
+                fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << '\n';
             }
             ////////////////
 
