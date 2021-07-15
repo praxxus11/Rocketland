@@ -27,7 +27,7 @@ public:
     }
     void update() {
         const float scale = parent.getScale().x;
-        irlSetDisplacement(sf::Vector2f(5/scale, 48/scale));
+        irlSetDisplacement(sf::Vector2f(4.5/scale, 48/scale));
         float scx = 1;
         float scy = (rand()%1000)/2000. + 1;
         setScale(scx, scy * (0.4 + get_throttle()));

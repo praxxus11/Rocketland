@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "Engine.h"
+#include "RocketFins.h"
 
 // all position in Rocket should go through
 // superclass function in gameobject
@@ -32,7 +33,9 @@ public:
         angular_accel(ang_accel),
         explosion_anim(expls),
         status(stat),
-        engine({0, 0}, *this)
+        engine({0, 0}, *this),
+        upper_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketUpperFin),
+        lower_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketLowerFin)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);
@@ -49,7 +52,9 @@ public:
         angular_accel(r.angular_accel),
         explosion_anim(r.explosion_anim),
         status(r.status),
-        engine({0, 0}, *this)
+        engine({0, 0}, *this),
+        upper_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketUpperFin),
+        lower_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketLowerFin)
     {
         // if (!texture.loadFromFile("imgs/ship.png")) {
         //     std::cout << "Rocket png not loaded";
@@ -71,13 +76,13 @@ public:
         case Status::Regular: {
             ////////////////
             
-            timeSoFar += Env::g_elapsed();
-            totTime += Env::g_elapsed();
-            if (timeSoFar > 1.1) {
-            std::ofstream fin("python/datas.txt", std::ios_base::app);
-                timeSoFar = 0;
-                fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << '\n';
-            }
+            // timeSoFar += Env::g_elapsed();
+            // totTime += Env::g_elapsed();
+            // if (timeSoFar > 1.1) {
+            // std::ofstream fin("python/datas.txt", std::ios_base::app);
+            //     timeSoFar = 0;
+            //     fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << '\n';
+            // }
             ////////////////
 
 
@@ -97,6 +102,8 @@ public:
             setRotation(getRotation());
 
             engine.update();
+            upper_fin.update();
+            lower_fin.update();
             break;
         }
         case Status::Explode: {
@@ -128,6 +135,9 @@ public:
             angular_vel = 0;
             float elap = Env::g_elapsed();
             engine.update();
+            upper_fin.update();
+            lower_fin.update();
+
             if (updateFromEngine(elap)) {
                 sf::Vector2f pos = irlGetPosition();
                 pos.y += 0.1; // to not make collisionmanager thing rocket crashed in floor
@@ -158,6 +168,9 @@ private:
             states.transform *= getTransform();
             target.draw(sprite, states);
             states.transform *= engine.getTransform();
+            target.draw(upper_fin);
+            target.draw(lower_fin);
+
         }
         if (status == Status::Explode) {
             target.draw(explosion_anim);
@@ -191,4 +204,7 @@ private:
     
     float totTime = 0;
     float timeSoFar = 0;
+
+    RocketFins upper_fin;
+    RocketFins2 lower_fin;
 };

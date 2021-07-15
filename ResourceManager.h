@@ -6,12 +6,14 @@
 class ResourceManger {
 public:
     enum class ResourceTypes {
-        RocketImg, RocketFlame
+        RocketImg, RocketFlame, RocketUpperFin, RocketLowerFin
     };
     ResourceManger() 
     {
-        filepaths[ResourceTypes::RocketImg] = "imgs/ship.png";
+        filepaths[ResourceTypes::RocketImg] = "imgs/ship_no_fins.png";
         filepaths[ResourceTypes::RocketFlame] = "imgs/flame.png";
+        filepaths[ResourceTypes::RocketLowerFin] = "imgs/rocket_lower_fin.png";
+        filepaths[ResourceTypes::RocketUpperFin] = "imgs/rocket_upper_fin.png";
     }
     sf::Texture& getTexture(ResourceTypes resource) {
         const auto& textureFound = textures.find(resource);
