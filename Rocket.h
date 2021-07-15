@@ -2,6 +2,7 @@
 #include <iostream>
 #include <utility>
 #include <math.h>
+#include <fstream>
 
 #include "Engine.h"
 
@@ -66,9 +67,15 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
-        // std::cout << vel.y << " " << angular_vel << "\n";
         switch (status) {
         case Status::Regular: {
+            ////////////////
+            // totTime += Env::g_elapsed();
+            // std::ofstream fin("python/data.txt", std::ios_base::app);
+            // fin << totTime << " " << vel.y << " " << position.y << '\n';
+            ////////////////
+
+
             const float elap = Env::g_elapsed();
 
             vel.x += accel.x*elap;
@@ -176,4 +183,5 @@ private:
     bool explosion_initialized = 0;
     Status status;
     Engine engine;
+    float totTime = 0;
 };

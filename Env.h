@@ -66,7 +66,7 @@ public:
     static void restartc() { clock.restart(); }
 };
 
-int Env::ww = 1500;
+int Env::ww = 800;
 int Env::wh = 800;
 int Env::floor_hei = 100;
 float Env::pixpmeter = 5;
