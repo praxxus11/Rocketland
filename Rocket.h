@@ -203,7 +203,8 @@ private:
         return updated;
     }
     void updateWindResistence(const float& elap) {
-        // std::cout << fuel_mass << '\n';
+        vel.y -= (vel.y / 15) * elap;
+        vel.x -= (vel.x / 15) * elap;
     }
     float get_total_mass() const {
         return mass + fuel_mass;

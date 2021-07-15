@@ -21,11 +21,11 @@ class Manager {
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 rockets.push_back(Rocket(
-                    sf::Vector2f(rand()%80-40, rand()%300+40),
+                    sf::Vector2f(rand()%80+60, rand()%30+700),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
                     -90,
                     1120,
-                    sf::Vector2f(0, rand()%10+5),
+                    sf::Vector2f(0, rand()%10-100),
                     sf::Vector2f(0, 0),
                     0,
                     0,
