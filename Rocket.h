@@ -24,7 +24,10 @@ public:
     float ang_vel,
     float ang_accel,
     Gif expls,
-    Status stat) : 
+    Status stat,
+    float mass,
+    float f_mass,
+    float inertia) : 
         GameObject(pos),
         pixels_tall(pix_tall),
         vel(velo),
@@ -35,7 +38,10 @@ public:
         status(stat),
         engine({0, 0}, *this),
         upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), *this, RocketFins::Type::Upper),
-        lower_fin(sf::Vector2f(4.5/scal.x, 32.8/scal.y), *this, RocketFins::Type::Lower)
+        lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), *this, RocketFins::Type::Lower),
+        mass(mass),
+        fuel_mass(f_mass),
+        angle_inertia(inertia)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);
@@ -54,7 +60,10 @@ public:
         status(r.status),
         engine({0, 0}, *this),
         upper_fin(sf::Vector2f(4.5/r.getScale().x, 3/r.getScale().y), *this, RocketFins::Type::Upper),
-        lower_fin(sf::Vector2f(4.5/r.getScale().x, 32.8/r.getScale().y), *this, RocketFins::Type::Lower)
+        lower_fin(sf::Vector2f(4.5/r.getScale().x, 34.5/r.getScale().y), *this, RocketFins::Type::Lower),
+        mass(r.mass),
+        fuel_mass(r.fuel_mass),
+        angle_inertia(r.angle_inertia)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);    
@@ -72,13 +81,13 @@ public:
         case Status::Regular: {
             ////////////////
             
-            // timeSoFar += Env::g_elapsed();
-            // totTime += Env::g_elapsed();
-            // if (timeSoFar > 1.1) {
-            // std::ofstream fin("python/datas.txt", std::ios_base::app);
-            //     timeSoFar = 0;
-            //     fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << '\n';
-            // }
+            timeSoFar += Env::g_elapsed();
+            totTime += Env::g_elapsed();
+            if (timeSoFar > 1.1) {
+            std::ofstream fin("python/datas.txt", std::ios_base::app);
+                timeSoFar = 0;
+                fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << fuel_mass << '\n';
+            }
             ////////////////
 
 
@@ -93,9 +102,9 @@ public:
             angular_vel += -5./10 * angular_vel * elap;
 
             updateFromEngine(elap);
+            updateWindResistence(elap);
             
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
-            setRotation(getRotation());
 
             engine.update();
             upper_fin.update();
@@ -160,7 +169,7 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {
-            target.draw(engine);
+            if (fuel_mass) target.draw(engine);
             states.transform *= getTransform();
             target.draw(sprite, states);
             states.transform *= engine.getTransform();
@@ -175,16 +184,29 @@ private:
     }
     bool updateFromEngine(const float elap) {
         bool updated = false;
-        if (engine.is_engine_on()) {
-            const float engine_force = 25 * engine.get_throttle();
+        if (engine.is_engine_on() && fuel_mass) {
+            const float engine_force = engine.get_thrust();
             const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
             const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
-            vel.y += perpen_force * cos(Env::PI/180 * getRotation()) * elap;
-            vel.x += perpen_force * sin(Env::PI/180 * getRotation()) * elap;
-            angular_vel -= 2 * tangent_force * elap;
+            vel.y += ((perpen_force * cos(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
+            vel.x += ((perpen_force * sin(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
+
+            const float torque = tangent_force * 25;
+            angular_vel -= 180/Env::PI * (torque/angle_inertia) * elap;
+
+            // sucking up some fuel
+            const float max_flow = 660; // kg per second
+            fuel_mass = std::max(0.f, fuel_mass - max_flow * engine.get_throttle() * elap);
+
             updated = true;
         }
         return updated;
+    }
+    void updateWindResistence(const float& elap) {
+        // std::cout << fuel_mass << '\n';
+    }
+    float get_total_mass() const {
+        return mass + fuel_mass;
     }
 
     static sf::Texture texture;
@@ -203,4 +225,8 @@ private:
 
     RocketFins upper_fin;
     RocketFins lower_fin;
+
+    float mass;
+    float fuel_mass;
+    float angle_inertia;
 };

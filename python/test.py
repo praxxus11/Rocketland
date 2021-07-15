@@ -14,19 +14,21 @@ x = []
 vel = []
 pos = []
 velx = []
-gs = []
+fuel = []
 def animate(i):
     with open("python/datas.txt", "r") as f:
         x = []
         vel = []
         pos = []
         velx = []
+        fuel = []
         for (i, l) in enumerate(f):
             sp = l.split()
             x.append(float(sp[0]))
             pos.append(float(sp[1]))
             vel.append(float(sp[2]))
             velx.append(float(sp[3]))
+            fuel.append(float(sp[4]))
     for ax in axs:
         ax.cla()
     axs[0].plot(x, pos, color='black', label="Position y (m)")
@@ -39,6 +41,9 @@ def animate(i):
     axs[1].plot(x, velx, color='green', label="Velocity x (m/s)")
     axs[1].title.set_text("Horizontal stuff")
     axs[1].legend()
+
+    axs[2].plot(x, fuel, color='goldenrod', label="Fuel left (kg)")
+    axs[2].legend()
 
 
 ani = FuncAnimation(plt.gcf(), animate, interval=1000)

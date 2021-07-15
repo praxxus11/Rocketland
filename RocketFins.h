@@ -24,9 +24,7 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
-        const float parent_scale = parent.getScale().x;
-        const float scale = fin_type == Type::Upper ? 0.35 : 0.35;
-        setScale(scale/parent.getScale().x, scale/parent.getScale().y);
+        setScale(1,1);
         setScale(angle/90.f * getScale().x, getScale().y);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {

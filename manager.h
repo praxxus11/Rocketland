@@ -21,18 +21,21 @@ class Manager {
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 rockets.push_back(Rocket(
-                    sf::Vector2f(rand()%80-40, rand()%30+50),
+                    sf::Vector2f(rand()%80-40, rand()%300+40),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
-                    0,
+                    -90,
                     1120,
                     sf::Vector2f(0, rand()%10+5),
                     sf::Vector2f(0, 0),
                     0,
                     0,
                     Gif(3, exframes),
-                    Rocket::Status::Regular
+                    Rocket::Status::Regular,
+                    77000, // assume has mass of 7.7e4 kg = around 85 tons
+                    9000, // assume has initial fuel of 9.0e4 kg - around 100 tons 
+                    50000000
                 ));
-                rockets[i].setOrigin(0, 0);
+                rockets[i].setOrigin(100, 600);
                 rockets[i].irlSetPosition(rockets[i].irlGetPosition());
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());

@@ -7,7 +7,8 @@ public:
     Engine(sf::Vector2f pos, GameObject& parent) :
         GameObjectRelative(pos, parent),
         angular_delta(0),
-        throttle(1.f) 
+        throttle(1.f),
+        max_thrust(2.3e6)
     {
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
         flame_sprite.setOrigin(522/2, 0);
@@ -30,7 +31,7 @@ public:
         irlSetDisplacement(sf::Vector2f(4.5/scale, 48/scale));
         float scx = 1;
         float scy = (rand()%1000)/2000. + 1;
-        setScale(scx, scy * (0.4 + get_throttle()));
+        setScale(scx, scy * (0.4 + throttle));
         setScale(0.3*getScale().x, 0.5*getScale().y);
         setRotation(angular_delta);
         engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
@@ -57,6 +58,9 @@ public:
     float is_engine_on() const {
         return engine_on;
     }
+    float get_thrust() const {
+        return max_thrust * throttle;
+    }
     float get_throttle() const {
         return throttle;
     }
@@ -71,4 +75,5 @@ private:
     float angular_delta; // -45 -> 45 degress, where 0 degrees is downward
     float throttle; // 0.4 -> 1.0
     bool engine_on;
+    float max_thrust;
 };
