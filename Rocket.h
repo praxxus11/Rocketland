@@ -81,13 +81,13 @@ public:
         case Status::Regular: {
             ////////////////
             
-            timeSoFar += Env::g_elapsed();
-            totTime += Env::g_elapsed();
-            if (timeSoFar > 1.1) {
-            std::ofstream fin("python/datas.txt", std::ios_base::app);
-                timeSoFar = 0;
-                fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << fuel_mass << '\n';
-            }
+            // timeSoFar += Env::g_elapsed();
+            // totTime += Env::g_elapsed();
+            // if (timeSoFar > 1.1) {
+            // std::ofstream fin("python/datas.txt", std::ios_base::app);
+            //     timeSoFar = 0;
+            //     fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << fuel_mass << '\n';
+            // }
             ////////////////
 
 

@@ -7,7 +7,7 @@ public:
     Engine(sf::Vector2f pos, GameObject& parent) :
         GameObjectRelative(pos, parent),
         angular_delta(0),
-        throttle(1.f),
+        throttle(0.5f),
         max_thrust(2.3e6)
     {
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));

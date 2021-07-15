@@ -20,6 +20,9 @@ class Manager {
             int numrocks = 1;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
+                const float fuel_amount = 20000;
+                const float rocket_mass = 77000;
+                const float inertia = 50000000 + (50000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
                 rockets.push_back(Rocket(
                     sf::Vector2f(rand()%80+60, rand()%30+700),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
@@ -31,9 +34,9 @@ class Manager {
                     0,
                     Gif(3, exframes),
                     Rocket::Status::Regular,
-                    77000, // assume has mass of 7.7e4 kg = around 85 tons
-                    9000, // assume has initial fuel of 9.0e4 kg - around 100 tons 
-                    50000000
+                    rocket_mass, // assume has mass of 7.7e4 kg = around 85 tons
+                    fuel_amount, // assume has initial fuel of 9.0e4 kg - around 100 tons 
+                    inertia
                 ));
                 rockets[i].setOrigin(100, 600);
                 rockets[i].irlSetPosition(rockets[i].irlGetPosition());
