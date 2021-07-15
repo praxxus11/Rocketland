@@ -70,9 +70,14 @@ public:
         switch (status) {
         case Status::Regular: {
             ////////////////
+            
+            timeSoFar += Env::g_elapsed();
             totTime += Env::g_elapsed();
-            std::ofstream fin("python/data.txt", std::ios_base::app);
-            fin << totTime << " " << vel.y << " " << position.y << '\n';
+            if (timeSoFar > 0.5) {
+            std::ofstream fin("python/datas.txt", std::ios_base::app);
+                timeSoFar = 0;
+                fin << totTime << " " << position.y << " " << vel.y << '\n';
+            }
             ////////////////
 
 
@@ -183,5 +188,7 @@ private:
     bool explosion_initialized = 0;
     Status status;
     Engine engine;
+    
     float totTime = 0;
+    float timeSoFar = 0;
 };
