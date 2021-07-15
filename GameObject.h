@@ -12,11 +12,6 @@ public:
         setPosition(Env::metersToPixels(cor));
     }
 
-    void irlSetDisplacement(sf::Vector2f cor) {
-        position = cor;
-        setPosition(Env::convertSize(cor));
-    }
-
     const sf::Vector2f& irlGetPosition() const {
         return position;
     }
@@ -55,7 +50,9 @@ public:
         GameObject(pos),
         parent(par)
     {
+        irlSetDisplacement(pos);
     }
 protected:
+    // the gameobject that this one is relative to
     GameObject& parent;
 };

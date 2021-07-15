@@ -34,8 +34,8 @@ public:
         explosion_anim(expls),
         status(stat),
         engine({0, 0}, *this),
-        upper_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketUpperFin),
-        lower_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketLowerFin)
+        upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), *this, RocketFins::Type::Upper),
+        lower_fin(sf::Vector2f(4.5/scal.x, 32.8/scal.y), *this, RocketFins::Type::Lower)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);
@@ -53,13 +53,9 @@ public:
         explosion_anim(r.explosion_anim),
         status(r.status),
         engine({0, 0}, *this),
-        upper_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketUpperFin),
-        lower_fin({0, 0}, *this, ResourceManger::ResourceTypes::RocketLowerFin)
+        upper_fin(sf::Vector2f(4.5/r.getScale().x, 3/r.getScale().y), *this, RocketFins::Type::Upper),
+        lower_fin(sf::Vector2f(4.5/r.getScale().x, 32.8/r.getScale().y), *this, RocketFins::Type::Lower)
     {
-        // if (!texture.loadFromFile("imgs/ship.png")) {
-        //     std::cout << "Rocket png not loaded";
-        // }
-        // texture.setSmooth(true);
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);    
         setScale(r.getScale());
@@ -206,5 +202,5 @@ private:
     float timeSoFar = 0;
 
     RocketFins upper_fin;
-    RocketFins2 lower_fin;
+    RocketFins lower_fin;
 };
