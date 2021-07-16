@@ -14,10 +14,13 @@ public:
         flame_sprite.setOrigin(522/2, 0);
     }
     Engine(const Engine& e) :
-        GameObjectRelative(e.position, e.parent)
+        GameObjectRelative(e.position, e.parent),
+        angular_delta(e.angular_delta),
+        throttle(e.throttle),
+        max_thrust(e.max_thrust)
     {
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
-
+        flame_sprite.setOrigin(522/2, 0);
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = flame_sprite.getLocalBounds();
@@ -28,7 +31,6 @@ public:
     }
     void update() {
         const float scale = parent.getScale().x;
-        irlSetDisplacement(sf::Vector2f(4.5/scale, 48/scale));
         float scx = 1;
         float scy = (rand()%1000)/2000. + 1;
         setScale(scx, scy * (0.4 + throttle));
@@ -49,7 +51,7 @@ public:
             throttle = std::min(1.f, throttle + 1.f*Env::g_elapsed());
         }   
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            throttle = std::max(0.4f, throttle - 1.f*Env::g_elapsed());
+            throttle = std::max(0.05f, throttle - 1.f*Env::g_elapsed());
         }
     }
     float get_angle() const {
@@ -67,13 +69,14 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter
-        states.transform *= parent.getTransform() * getTransform(); 
-        if (is_engine_on())
+        if (is_engine_on()) {
+            states.transform *= parent.getTransform() * getTransform(); 
             target.draw(flame_sprite, states);
+        }
     }
     sf::Sprite flame_sprite;
     float angular_delta; // -45 -> 45 degress, where 0 degrees is downward
-    float throttle; // 0.4 -> 1.0
+    float throttle; // 0.05 -> 1.0
     bool engine_on;
     float max_thrust;
 };

@@ -36,7 +36,6 @@ public:
         angular_accel(ang_accel),
         explosion_anim(expls),
         status(stat),
-        engine({0, 0}, *this),
         upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), *this, RocketFins::Type::Upper),
         lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), *this, RocketFins::Type::Lower),
         mass(mass),
@@ -47,6 +46,9 @@ public:
         explosion_anim.setOrigin(72, 120);
         setScale(scal);
         setRotation(rot);
+        
+        engines.push_back(Engine(sf::Vector2f(6/getScale().x, 48/getScale().x), *this));
+        // engines.push_back(Engine(sf::Vector2f(3/getScale().x, 48/getScale().x), *this));
     }
 
     Rocket(const Rocket& r) : 
@@ -58,7 +60,6 @@ public:
         angular_accel(r.angular_accel),
         explosion_anim(r.explosion_anim),
         status(r.status),
-        engine({0, 0}, *this),
         upper_fin(sf::Vector2f(4.5/r.getScale().x, 3/r.getScale().y), *this, RocketFins::Type::Upper),
         lower_fin(sf::Vector2f(4.5/r.getScale().x, 34.5/r.getScale().y), *this, RocketFins::Type::Lower),
         mass(r.mass),
@@ -69,6 +70,10 @@ public:
         explosion_anim.setOrigin(72, 120);    
         setScale(r.getScale());
         setRotation(r.getRotation());
+
+        engines.push_back(Engine(sf::Vector2f(6/getScale().x, 48/getScale().x), *this));
+        // engines.push_back(Engine(sf::Vector2f(3/getScale().x, 48/getScale().x), *this));
+
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
@@ -106,7 +111,9 @@ public:
             
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
 
-            engine.update();
+            for (Engine& engine : engines) {
+                engine.update();
+            }
             upper_fin.update();
             lower_fin.update();
             break;
@@ -139,7 +146,9 @@ public:
             angular_accel = 0;
             angular_vel = 0;
             float elap = Env::g_elapsed();
-            engine.update();
+            for (Engine& engine : engines) {
+                engine.update();
+            }
             upper_fin.update();
             lower_fin.update();
 
@@ -169,10 +178,13 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {
-            if (fuel_mass) target.draw(engine);
+            if (fuel_mass) {
+                for (const Engine& engine : engines) {
+                    target.draw(engine);
+                }
+            }
             states.transform *= getTransform();
             target.draw(sprite, states);
-            states.transform *= engine.getTransform();
             target.draw(upper_fin);
             target.draw(lower_fin);
 
@@ -184,21 +196,37 @@ private:
     }
     bool updateFromEngine(const float elap) {
         bool updated = false;
-        if (engine.is_engine_on() && fuel_mass) {
-            const float engine_force = engine.get_thrust();
-            const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
-            const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
-            vel.y += ((perpen_force * cos(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
-            vel.x += ((perpen_force * sin(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
+        for (const Engine& engine : engines) {
+            if (engine.is_engine_on() && fuel_mass) {
+                const float engine_force = engine.get_thrust();
+                const float rocket_center = 4.5;
+                const float engine_displacement_x = getScale().x * engine.irlGetPosition().x - rocket_center;
 
-            const float torque = tangent_force * 25;
-            angular_vel -= 180/Env::PI * (torque/angle_inertia) * elap;
+                // see ReferenceImage1
+                const float angleA = engine.get_angle();
+                const float angleB = 90 - angleA;
+                const float angleC = 180/Env::PI * atan2(engine_displacement_x, 25);
+                const float angleD = 90 - angleC;
+                const float angleE = 180 - angleD - angleB;
 
-            // sucking up some fuel
-            const float max_flow = 660; // kg per second
-            fuel_mass = std::max(0.f, fuel_mass - max_flow * engine.get_throttle() * elap);
+                const float line1 = sqrt(25*25 + engine_displacement_x*engine_displacement_x);
+                const float line3 = sin(Env::PI/180 * angleE) * engine_force;
+                const float torque = line1 * line3;
 
-            updated = true;
+                const float line2 = cos(Env::PI/180 * angleE) * engine_force;
+                const float lineV = cos(Env::PI/180 * angleC) * line2;
+                const float lineH = sin(Env::PI/180 * angleC) * line2;
+
+                vel.y += lineV / get_total_mass() * elap;
+                vel.x += lineH / get_total_mass() * elap;
+
+                angular_vel -= 180/Env::PI * (torque / angle_inertia) * elap;
+
+                const float max_flow = 660; // kg per second
+                fuel_mass = std::max(0.f, fuel_mass - max_flow * engine.get_throttle() * elap);
+
+                updated = true;
+            }
         }
         return updated;
     }
@@ -219,7 +247,7 @@ private:
     Gif explosion_anim;
     bool explosion_initialized = 0;
     Status status;
-    Engine engine;
+    std::vector<Engine> engines;
     
     float totTime = 0;
     float timeSoFar = 0;
