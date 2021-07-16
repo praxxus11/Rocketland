@@ -34,7 +34,7 @@ public:
         float scx = 1;
         float scy = (rand()%1000)/2000. + 1;
         setScale(scx, scy * (0.4 + throttle));
-        setScale(0.3*getScale().x, 0.5*getScale().y);
+        setScale(0.25*getScale().x, 0.5*getScale().y);
         setRotation(angular_delta);
         engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {

@@ -22,13 +22,13 @@ class Manager {
             for (int i=0; i<numrocks; i++) {
                 const float fuel_amount = 100000;
                 const float rocket_mass = 77000;
-                const float inertia = 50000000 + (50000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
+                const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
                 rockets.push_back(Rocket(
-                    sf::Vector2f(rand()%10, rand()%30+60),
+                    sf::Vector2f(rand()%10, rand()%30+50),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
                     0,
                     1120,
-                    sf::Vector2f(0, rand()%10+5),
+                    sf::Vector2f(0, rand()%10+20),
                     0,
                     0,
                     Gif(3, exframes),

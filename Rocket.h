@@ -68,6 +68,7 @@ public:
         setRotation(rot);
         
         engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), this));
+        engines.push_back(Engine(sf::Vector2f(4.5/getScale().x, 48/getScale().x), this));
         engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), this));
     }
 
@@ -103,6 +104,7 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
+        std::cout << fuel_mass << '\n';
         const float elap = Env::g_elapsed();
         
         switch (status) {
