@@ -47,8 +47,8 @@ public:
         setScale(scal);
         setRotation(rot);
         
-        engines.push_back(Engine(sf::Vector2f(6/getScale().x, 48/getScale().x), *this));
-        // engines.push_back(Engine(sf::Vector2f(3/getScale().x, 48/getScale().x), *this));
+        engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), *this));
+        engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), *this));
     }
 
     Rocket(const Rocket& r) : 
@@ -71,8 +71,8 @@ public:
         setScale(r.getScale());
         setRotation(r.getRotation());
 
-        engines.push_back(Engine(sf::Vector2f(6/getScale().x, 48/getScale().x), *this));
-        // engines.push_back(Engine(sf::Vector2f(3/getScale().x, 48/getScale().x), *this));
+        engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), *this));
+        engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), *this));
 
     }
     sf::FloatRect getGlobalBounds() const override {
@@ -202,7 +202,6 @@ private:
                 const float rocket_center = 4.5;
                 const float engine_displacement_x = getScale().x * engine.irlGetPosition().x - rocket_center;
 
-                // see ReferenceImage1
                 const float angleA = engine.get_angle();
                 const float angleB = 90 - angleA;
                 const float angleC = 180/Env::PI * atan2(engine_displacement_x, 25);
@@ -214,14 +213,26 @@ private:
                 const float torque = line1 * line3;
 
                 const float line2 = cos(Env::PI/180 * angleE) * engine_force;
-                const float lineV = cos(Env::PI/180 * angleC) * line2;
-                const float lineH = sin(Env::PI/180 * angleC) * line2;
+
+                // note the getRotation() here: that accounts for the rotation of the rocket itself
+                const float lineV = cos(Env::PI/180 * (angleC + getRotation())) * line2; 
+                const float lineH = sin(Env::PI/180 * (angleC + getRotation())) * line2;
 
                 vel.y += lineV / get_total_mass() * elap;
                 vel.x += lineH / get_total_mass() * elap;
 
                 angular_vel -= 180/Env::PI * (torque / angle_inertia) * elap;
 
+                std::cout << getRotation() << '\n';
+                // const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
+                // const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
+                // vel.y += ((perpen_force * cos(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
+                // vel.x += ((perpen_force * sin(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
+
+                // const float torque = tangent_force * 25;
+                // angular_vel -= 180/Env::PI * (torque/angle_inertia) * elap;
+
+                // // sucking up some fuel
                 const float max_flow = 660; // kg per second
                 fuel_mass = std::max(0.f, fuel_mass - max_flow * engine.get_throttle() * elap);
 
