@@ -38,10 +38,10 @@ public:
         setRotation(angular_delta);
         engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angular_delta = std::max(-45.f, angular_delta-100*Env::g_elapsed());
+            angular_delta = std::max(-25.f, angular_delta-100*Env::g_elapsed());
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angular_delta = std::min(45.f, angular_delta+100*Env::g_elapsed());
+            angular_delta = std::min(25.f, angular_delta+100*Env::g_elapsed());
         }
         else { 
             angular_delta -= 5*angular_delta*Env::g_elapsed();

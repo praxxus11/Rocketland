@@ -15,6 +15,9 @@ public:
         filepaths[ResourceTypes::RocketLowerFin] = "imgs/rocket_lower_fin.png";
         filepaths[ResourceTypes::RocketUpperFin] = "imgs/rocket_upper_fin.png";
     }
+    ~ResourceManger() {
+        delete instance;
+    }
     sf::Texture& getTexture(ResourceTypes resource) {
         const auto& textureFound = textures.find(resource);
         if (textureFound == textures.end()) {

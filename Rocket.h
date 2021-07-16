@@ -223,7 +223,6 @@ private:
 
                 angular_vel -= 180/Env::PI * (torque / angle_inertia) * elap;
 
-                std::cout << getRotation() << '\n';
                 // const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
                 // const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
                 // vel.y += ((perpen_force * cos(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
