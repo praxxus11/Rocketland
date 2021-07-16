@@ -6,7 +6,7 @@ public:
         Upper, Lower
     };
     // type should be either upperfin or lowerfin
-    RocketFins(sf::Vector2f pos, GameObject& parent, Type type) :
+    RocketFins(sf::Vector2f pos, GameObject* parent, Type type) :
         GameObjectRelative(pos, parent),
         angle(0),
         fin_type(type)
@@ -19,7 +19,7 @@ public:
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = fin_sprite.getLocalBounds();
         ir = getTransform().transformRect(ir);
-        ir = parent.getTransform().transformRect(ir);
+        ir = parent->getTransform().transformRect(ir);
         sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
@@ -44,7 +44,7 @@ public:
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter
-        states.transform *= parent.getTransform() * getTransform(); 
+        states.transform *= parent->getTransform() * getTransform(); 
         target.draw(fin_sprite, states);
     }
     sf::Sprite fin_sprite;

@@ -29,7 +29,6 @@ class Manager {
                     0,
                     1120,
                     sf::Vector2f(0, rand()%10+5),
-                    sf::Vector2f(0, 0),
                     0,
                     0,
                     Gif(3, exframes),

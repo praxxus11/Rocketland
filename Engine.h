@@ -4,7 +4,7 @@
 
 class Engine : public GameObjectRelative {
 public:
-    Engine(sf::Vector2f pos, GameObject& parent) :
+    Engine(sf::Vector2f pos, GameObject* parent) :
         GameObjectRelative(pos, parent),
         angular_delta(0),
         throttle(0.5f),
@@ -25,12 +25,12 @@ public:
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = flame_sprite.getLocalBounds();
         ir = getTransform().transformRect(ir);
-        ir = parent.getTransform().transformRect(ir);
+        ir = parent->getTransform().transformRect(ir);
         sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
-        const float scale = parent.getScale().x;
+        const float scale = parent->getScale().x;
         float scx = 1;
         float scy = (rand()%1000)/2000. + 1;
         setScale(scx, scy * (0.4 + throttle));
@@ -70,7 +70,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter
         if (is_engine_on()) {
-            states.transform *= parent.getTransform() * getTransform(); 
+            states.transform *= parent->getTransform() * getTransform(); 
             target.draw(flame_sprite, states);
         }
     }

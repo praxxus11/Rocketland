@@ -20,7 +20,6 @@ public:
     float rot,
     int pix_tall,
     const sf::Vector2f& velo,
-    const sf::Vector2f& acce,
     float ang_vel,
     float ang_accel,
     Gif expls,
@@ -31,13 +30,11 @@ public:
         GameObject(pos),
         pixels_tall(pix_tall),
         vel(velo),
-        accel(acce),
         angular_vel(ang_vel),
-        angular_accel(ang_accel),
         explosion_anim(expls),
         status(stat),
-        upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), *this, RocketFins::Type::Upper),
-        lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), *this, RocketFins::Type::Lower),
+        upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), this, RocketFins::Type::Upper),
+        lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), this, RocketFins::Type::Lower),
         mass(mass),
         fuel_mass(f_mass),
         angle_inertia(inertia)
@@ -47,33 +44,34 @@ public:
         setScale(scal);
         setRotation(rot);
         
-        engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), *this));
-        engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), *this));
+        engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), this));
+        engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), this));
     }
 
     Rocket(const Rocket& r) : 
         GameObject(r.position),
         pixels_tall(r.pixels_tall),
         vel(r.vel),
-        accel(r.accel),
         angular_vel(r.angular_vel),
-        angular_accel(r.angular_accel),
         explosion_anim(r.explosion_anim),
         status(r.status),
-        upper_fin(sf::Vector2f(4.5/r.getScale().x, 3/r.getScale().y), *this, RocketFins::Type::Upper),
-        lower_fin(sf::Vector2f(4.5/r.getScale().x, 34.5/r.getScale().y), *this, RocketFins::Type::Lower),
+        upper_fin(r.upper_fin),
+        lower_fin(r.lower_fin),
         mass(r.mass),
         fuel_mass(r.fuel_mass),
-        angle_inertia(r.angle_inertia)
+        angle_inertia(r.angle_inertia),
+        engines(r.engines)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         explosion_anim.setOrigin(72, 120);    
         setScale(r.getScale());
         setRotation(r.getRotation());
 
-        engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), *this));
-        engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), *this));
-
+        for (Engine& engine : engines) {
+            engine.set_parent(this);
+        }
+        upper_fin.set_parent(this);
+        lower_fin.set_parent(this);
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = sprite.getLocalBounds();
@@ -82,40 +80,26 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
+        const float elap = Env::g_elapsed();
+        
         switch (status) {
         case Status::Regular: {
-            ////////////////
-            
-            // timeSoFar += Env::g_elapsed();
-            // totTime += Env::g_elapsed();
-            // if (timeSoFar > 1.1) {
-            // std::ofstream fin("python/datas.txt", std::ios_base::app);
-            //     timeSoFar = 0;
-            //     fin << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << fuel_mass << '\n';
-            // }
-            ////////////////
 
-
-            const float elap = Env::g_elapsed();
-
-            vel.x += accel.x*elap;
             vel.y += Env::gravity*elap;
 
-            angular_vel += angular_accel*elap;
-            setRotation(getRotation() + angular_vel*elap);
-
-            angular_vel += -5./10 * angular_vel * elap;
-
-            updateFromEngine(elap);
-            updateWindResistence(elap);
-            
-            irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
+            // angular_vel += -5./10 * angular_vel * elap;
 
             for (Engine& engine : engines) {
                 engine.update();
             }
             upper_fin.update();
             lower_fin.update();
+
+            updateFromEngine(elap);
+            updateWindResistence(elap);
+            
+            irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
+            setRotation(getRotation() + angular_vel*elap);
             break;
         }
         case Status::Explode: {
@@ -141,11 +125,7 @@ public:
         case Status::Landed: {
             vel.x = 0;
             vel.y = 0;
-            accel.x = 0;
-            accel.y = 0;
-            angular_accel = 0;
             angular_vel = 0;
-            float elap = Env::g_elapsed();
             for (Engine& engine : engines) {
                 engine.update();
             }
@@ -165,7 +145,7 @@ public:
         }
         } // end switch (status)
     }
-    void setStatus(Status s) {
+    void setStatus(const Status& s) {
         status = s;
     }
     sf::Vector2f getVelocity() const {
@@ -194,7 +174,7 @@ private:
             // target.draw(*explosion_anim.getBoundingBox().get());
         }
     }
-    bool updateFromEngine(const float elap) {
+    bool updateFromEngine(float elap) {
         bool updated = false;
         for (const Engine& engine : engines) {
             if (engine.is_engine_on() && fuel_mass) {
@@ -240,7 +220,7 @@ private:
         }
         return updated;
     }
-    void updateWindResistence(const float& elap) {
+    void updateWindResistence(float elap) {
         vel.y -= (vel.y / 15) * elap;
         vel.x -= (vel.x / 15) * elap;
     }
@@ -251,9 +231,7 @@ private:
     static sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f vel;
-    sf::Vector2f accel;
     float angular_vel;
-    float angular_accel;
     Gif explosion_anim;
     bool explosion_initialized = 0;
     Status status;

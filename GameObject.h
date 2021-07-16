@@ -46,13 +46,19 @@ public:
         position = cor;
         setPosition(Env::convertSize(cor));
     }
-    GameObjectRelative(sf::Vector2f pos, GameObject& par) :
+    GameObjectRelative(sf::Vector2f pos, GameObject* par) :
         GameObject(pos),
         parent(par)
     {
         irlSetDisplacement(pos);
     }
+    void set_parent(GameObject* par) {
+        parent = par;
+    }
+    const GameObject* get_parent() const {
+        return parent;
+    }
 protected:
     // the gameobject that this one is relative to
-    GameObject& parent;
+    GameObject* parent;
 };
