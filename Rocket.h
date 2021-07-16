@@ -15,6 +15,29 @@ public:
     enum class Status {
         Regular, Explode, BlewUp, Landed
     };
+    
+    struct stateVectors {
+        stateVectors(float ax, float ay, float aa, float fu) :
+            accelx(ax),
+            accely(ay),
+            angular_accel(aa),
+            fuel_kg_per_sec(fu)
+        {
+        }
+        float accelx;
+        float accely;
+        float angular_accel;
+        float fuel_kg_per_sec;
+        stateVectors operator+(const stateVectors& v) const {
+            return stateVectors(
+                accelx + v.accelx,
+                accely + v.accely,
+                angular_accel + v.angular_accel,
+                fuel_kg_per_sec + v.fuel_kg_per_sec
+            );
+        }
+    };
+
     Rocket(const sf::Vector2f& pos, 
     const sf::Vector2f& scal, 
     float rot,
@@ -95,8 +118,15 @@ public:
             upper_fin.update();
             lower_fin.update();
 
-            updateFromEngine(elap);
-            updateWindResistence(elap);
+            stateVectors v(0, 0, 0, 0);
+            updateFromEngine(v);
+            updateFromWindResistence(v);
+            updateFromGravity(v);
+
+            vel.x += v.accelx * elap;
+            vel.y += v.accely * elap;
+            angular_vel += v.angular_accel * elap;
+            fuel_mass = std::max(0.f, fuel_mass + v.fuel_kg_per_sec * elap);
             
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
             setRotation(getRotation() + angular_vel*elap);
@@ -132,7 +162,9 @@ public:
             upper_fin.update();
             lower_fin.update();
 
-            if (updateFromEngine(elap)) {
+            stateVectors v(0, 0, 0, 0);
+            updateFromEngine(v);
+            if (v.accelx || v.accely || v.angular_accel) {
                 sf::Vector2f pos = irlGetPosition();
                 pos.y += 0.1; // to not make collisionmanager thing rocket crashed in floor
                 irlSetPosition(pos);
@@ -174,14 +206,14 @@ private:
             // target.draw(*explosion_anim.getBoundingBox().get());
         }
     }
-    bool updateFromEngine(float elap) {
-        bool updated = false;
+    void updateFromEngine(stateVectors& res) {
         for (const Engine& engine : engines) {
             if (engine.is_engine_on() && fuel_mass) {
                 const float engine_force = engine.get_thrust();
                 const float rocket_center = 4.5;
                 const float engine_displacement_x = getScale().x * engine.irlGetPosition().x - rocket_center;
 
+                // see imgs/referenceImage1
                 const float angleA = engine.get_angle();
                 const float angleB = 90 - angleA;
                 const float angleC = 180/Env::PI * atan2(engine_displacement_x, 25);
@@ -198,31 +230,23 @@ private:
                 const float lineV = cos(Env::PI/180 * (angleC + getRotation())) * line2; 
                 const float lineH = sin(Env::PI/180 * (angleC + getRotation())) * line2;
 
-                vel.y += lineV / get_total_mass() * elap;
-                vel.x += lineH / get_total_mass() * elap;
+                res.accely += lineV / get_total_mass();
+                res.accelx += lineH / get_total_mass();
 
-                angular_vel -= 180/Env::PI * (torque / angle_inertia) * elap;
+                res.angular_accel -= 180/Env::PI * (torque / angle_inertia);
 
-                // const float tangent_force = engine_force * sin(Env::PI/180 * engine.get_angle());
-                // const float perpen_force = engine_force * cos(Env::PI/180 * engine.get_angle());
-                // vel.y += ((perpen_force * cos(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
-                // vel.x += ((perpen_force * sin(Env::PI/180 * getRotation())) / get_total_mass()) * elap;
 
-                // const float torque = tangent_force * 25;
-                // angular_vel -= 180/Env::PI * (torque/angle_inertia) * elap;
-
-                // // sucking up some fuel
                 const float max_flow = 660; // kg per second
-                fuel_mass = std::max(0.f, fuel_mass - max_flow * engine.get_throttle() * elap);
-
-                updated = true;
+                res.fuel_kg_per_sec -= max_flow * engine.get_throttle();
             }
         }
-        return updated;
     }
-    void updateWindResistence(float elap) {
-        vel.y -= (vel.y / 15) * elap;
-        vel.x -= (vel.x / 15) * elap;
+    void updateFromWindResistence(stateVectors& res) {
+        res.accely -= (vel.y / 15);
+        res.accelx -= (vel.x / 15);
+    }
+    void updateFromGravity(stateVectors& res) {
+        res.accely += Env::gravity;
     }
     float get_total_mass() const {
         return mass + fuel_mass;
