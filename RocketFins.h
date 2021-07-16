@@ -41,6 +41,9 @@ public:
             angle -= 5 * angle * Env::g_elapsed();
         }
     }
+    float get_angle() const {
+        return angle;
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter

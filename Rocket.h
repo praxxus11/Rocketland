@@ -16,8 +16,8 @@ public:
         Regular, Explode, BlewUp, Landed
     };
     
-    struct stateVectors {
-        stateVectors(float ax, float ay, float aa, float fu) :
+    struct stateVector {
+        stateVector(float ax, float ay, float aa, float fu) :
             accelx(ax),
             accely(ay),
             angular_accel(aa),
@@ -28,8 +28,8 @@ public:
         float accely;
         float angular_accel;
         float fuel_kg_per_sec;
-        stateVectors operator+(const stateVectors& v) const {
-            return stateVectors(
+        stateVector operator+(const stateVector& v) const {
+            return stateVector(
                 accelx + v.accelx,
                 accely + v.accely,
                 angular_accel + v.angular_accel,
@@ -104,26 +104,21 @@ public:
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
     void update() {
-        std::cout << fuel_mass << '\n';
         const float elap = Env::g_elapsed();
         
         switch (status) {
         case Status::Regular: {
-
-            vel.y += Env::gravity*elap;
-
-            // angular_vel += -5./10 * angular_vel * elap;
-
             for (Engine& engine : engines) {
                 engine.update();
             }
             upper_fin.update();
             lower_fin.update();
 
-            stateVectors v(0, 0, 0, 0);
+            stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
             updateFromWindResistence(v);
             updateFromGravity(v);
+            updateFromFins(v);
 
             vel.x += v.accelx * elap;
             vel.y += v.accely * elap;
@@ -164,7 +159,7 @@ public:
             upper_fin.update();
             lower_fin.update();
 
-            stateVectors v(0, 0, 0, 0);
+            stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
             if (v.accelx || v.accely || v.angular_accel) {
                 sf::Vector2f pos = irlGetPosition();
@@ -208,11 +203,11 @@ private:
             // target.draw(*explosion_anim.getBoundingBox().get());
         }
     }
-    void updateFromEngine(stateVectors& res) {
+    void updateFromEngine(stateVector& res) {
         for (const Engine& engine : engines) {
             if (engine.is_engine_on() && fuel_mass) {
                 const float engine_force = engine.get_thrust();
-                const float rocket_center = 4.5;
+                const float rocket_center = 4.5; // horizontal center of the rocket (meters)
                 const float engine_displacement_x = getScale().x * engine.irlGetPosition().x - rocket_center;
 
                 // see imgs/referenceImage1
@@ -243,14 +238,42 @@ private:
             }
         }
     }
-    void updateFromWindResistence(stateVectors& res) {
+    void updateFromFins(stateVector& res) {
+        // std::cout << getRotation() << " " << angular_vel << "\n";
+
+        // imgs/ReferenceImage2
+        const float line1_ref2 = 20; // vert distance from upper fin to middle of rocket
+        const float line2_ref2 = line1_ref2 * (Env::PI/180 * angular_vel);
+
+        const float angleA_ref2 = getRotation();
+        const float angleB_ref2 = 90 - angleA_ref2;
+
+        const float lineV_ref2 = line2_ref2 * cos(Env::PI/180 * angleB_ref2);
+        const float lineH_ref2 = line2_ref2 * sin(Env::PI/180 * angleB_ref2);
+
+        const float vert_vel_comb = lineV_ref2 + vel.y;
+        const float hori_vel_comb = lineH_ref2 + vel.x;
+
+
+        // imgs/ReferenceImage3
+        const float const_mul = (hori_vel_comb*lineH_ref2 + vert_vel_comb*lineV_ref2) / (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2);
+        const float r_push_air_h = const_mul * lineH_ref2;
+        const float r_push_air_v = const_mul * lineV_ref2;
+        
+        const float torque = sqrt(r_push_air_h*r_push_air_h + r_push_air_v*r_push_air_v);
+    
+        // std::cout << lineV_ref2 << " " << lineH_ref2 << " " << sqrt(lineV_ref2*lineV_ref2 + lineH_ref2*lineH_ref2) << "\n";
+
+    }
+    void updateFromWindResistence(stateVector& res) {
         res.accely -= (vel.y / 15);
         res.accelx -= (vel.x / 15);
     }
-    void updateFromGravity(stateVectors& res) {
+    void updateFromGravity(stateVector& res) {
         res.accely += Env::gravity;
     }
     float get_total_mass() const {
+        const float upper_radius = 20; // meters from center of rocket
         return mass + fuel_mass;
     }
 
