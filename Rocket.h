@@ -103,11 +103,24 @@ public:
         sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
-    void update() {
+    void update(sf::RenderWindow& win) {
         const float elap = Env::g_elapsed();
         
         switch (status) {
         case Status::Regular: {
+
+
+            ////////////////////////////
+            // totTime += Env::g_elapsed();
+            // timeSoFar += Env::g_elapsed();
+            // if (timeSoFar > .7) {
+            //     std::ofstream fout("python/datas.txt", std::ios_base::app);
+            //     timeSoFar = 0;
+            //     fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << fuel_mass << '\n';
+            // }
+            ////////////////////////////
+
+
             for (Engine& engine : engines) {
                 engine.update();
             }
@@ -116,9 +129,9 @@ public:
 
             stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
-            updateFromWindResistence(v);
+            // updateFromWindResistence(v);
             updateFromGravity(v);
-            updateFromFins(v);
+            updateFromFins(v, win);
 
             vel.x += v.accelx * elap;
             vel.y += v.accely * elap;
@@ -238,30 +251,70 @@ private:
             }
         }
     }
-    void updateFromFins(stateVector& res) {
+    void updateFromFins(stateVector& res, sf::RenderWindow& win) {
         // std::cout << getRotation() << " " << angular_vel << "\n";
+        int radii[] = {20, -25};
+        for (int i=0; i<2; i++) {
+            // imgs/ReferenceImage2
+            const float line1_ref2 = radii[i]; // vert distance from upper fin to middle of rocket
+            const float line2_ref2 = line1_ref2 * (Env::PI/180 * angular_vel + 0.000000001);
 
-        // imgs/ReferenceImage2
-        const float line1_ref2 = 20; // vert distance from upper fin to middle of rocket
-        const float line2_ref2 = line1_ref2 * (Env::PI/180 * angular_vel);
+            const float angleA_ref2 = getRotation();
+            const float angleB_ref2 = 90 - angleA_ref2;
 
-        const float angleA_ref2 = getRotation();
-        const float angleB_ref2 = 90 - angleA_ref2;
+            const float lineV_ref2 = -line2_ref2 * cos(Env::PI/180 * angleB_ref2); // negative here, idk why
+            const float lineH_ref2 = line2_ref2 * sin(Env::PI/180 * angleB_ref2);
 
-        const float lineV_ref2 = line2_ref2 * cos(Env::PI/180 * angleB_ref2);
-        const float lineH_ref2 = line2_ref2 * sin(Env::PI/180 * angleB_ref2);
-
-        const float vert_vel_comb = lineV_ref2 + vel.y;
-        const float hori_vel_comb = lineH_ref2 + vel.x;
+            const float vert_vel_comb = lineV_ref2 + vel.y;
+            const float hori_vel_comb = lineH_ref2 + vel.x;
 
 
-        // imgs/ReferenceImage3
-        const float const_mul = (hori_vel_comb*lineH_ref2 + vert_vel_comb*lineV_ref2) / (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2);
-        const float r_push_air_h = const_mul * lineH_ref2;
-        const float r_push_air_v = const_mul * lineV_ref2;
-        
-        const float torque = sqrt(r_push_air_h*r_push_air_h + r_push_air_v*r_push_air_v);
-    
+            // imgs/ReferenceImage3
+            const float const_mul = (hori_vel_comb*lineH_ref2 + vert_vel_comb*lineV_ref2) / (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2);
+            const float r_push_air_h = const_mul * lineH_ref2;
+            const float r_push_air_v = const_mul * lineV_ref2;
+            
+            const float air_push_rock_h = -r_push_air_h;
+            const float air_push_rock_v = -r_push_air_v;
+            const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v);
+
+            const float max_force_from_air = 1e6; // newtons, 1/20 of an engine
+            const float realized_force_from_air = (air_speed*air_speed) / (100*100) * max_force_from_air;
+
+            // 3/4 of the force goes into rotating, and the other 1/4 goes into translation
+            // Too lazy to split it because then ill have to either approx or find the moment of intertia
+            // which is too slow
+            const float translation_force = realized_force_from_air / 4;
+            const float air_speed_unit_x = air_push_rock_h / air_speed;
+            const float air_speed_unit_y = air_push_rock_v / air_speed;
+            const float trans_force_x = translation_force * air_speed_unit_x;
+            const float trans_force_y = translation_force * air_speed_unit_y;
+
+            res.accelx += trans_force_x / get_total_mass();
+            res.accely += trans_force_y / get_total_mass();
+
+            const float torque = realized_force_from_air * (3.f/4) * abs(radii[i]); // torque = F*r
+            // if (i==0) std::cout << air_speed_unit_x << " " << air_speed_unit_y << '\n';
+            if (i==0) {
+            if (air_push_rock_h*lineV_ref2 + air_push_rock_v*lineH_ref2 < 0) { // torque and rotation opposite direction
+                res.angular_accel += (angular_vel > 0 ? -1 : 1) * (torque / angle_inertia);
+            }
+            else // torque and rotation same direction
+                res.angular_accel += (angular_vel > 0 ? 1 : -1) * (torque / angle_inertia);
+            }
+            sf::Vector2f vect(0, 0);
+            if (i==0)
+                vect = (getTransform() * upper_fin.getTransform()).transformPoint(vect);
+            else
+                vect = (getTransform() * lower_fin.getTransform()).transformPoint(vect);
+            sf::Vertex line[2] = {
+                sf::Vertex(vect, sf::Color::Red),
+                // sf::Vertex(sf::Vector2f(vect.x+air_push_rock_h*10, vect.y+air_push_rock_v*-10))
+                sf::Vertex(sf::Vector2f(vect.x+trans_force_x, vect.y+trans_force_y*-1))
+
+            };
+            win.draw(line, 2, sf::Lines);
+        }
         // std::cout << lineV_ref2 << " " << lineH_ref2 << " " << sqrt(lineV_ref2*lineV_ref2 + lineH_ref2*lineH_ref2) << "\n";
 
     }

@@ -31,7 +31,7 @@ def animate(i):
             fuel.append(float(sp[4]))
     for ax in axs:
         ax.cla()
-    axs[0].plot(x, pos, color='black', label="Position y (m)")
+    # axs[0].plot(x, pos, color='black', label="Position y (m)")
     axs[0].plot(x, vel, color='red', label="Velocity y (m/s)")
     axs[0].title.set_text("Y stuff")
     axs[0].set_xlabel("Time")
