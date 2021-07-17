@@ -42,7 +42,7 @@ def animate(i):
     axs[1].title.set_text("Horizontal stuff")
     axs[1].legend()
 
-    axs[2].plot(x, fuel, color='goldenrod', label="Fuel left (kg)")
+    axs[2].plot(x, fuel, color='goldenrod', label="Oreientation (degrees)")
     axs[2].legend()
 
 

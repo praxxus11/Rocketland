@@ -117,7 +117,7 @@ public:
             // if (timeSoFar > .7) {
             //     std::ofstream fout("python/datas.txt", std::ios_base::app);
             //     timeSoFar = 0;
-            //     fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << fuel_mass << '\n';
+            //     fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << getRotation() << '\n';
             // }
             ////////////////////////////
 
@@ -130,7 +130,7 @@ public:
 
             stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
-            // updateFromWindResistence(v);
+            updateFromWindResistence(v);
             updateFromGravity(v);
             updateFromFins(v, win);
 
@@ -254,7 +254,7 @@ private:
     }
 
     void updateFromFins(stateVector& res, sf::RenderWindow& win) {
-        
+
         std::array<RocketFins*, 2> fins = {&upper_fin, &lower_fin};
 
         for (const RocketFins* fin : fins) {
@@ -334,18 +334,17 @@ private:
         }
     }
     void updateFromWindResistence(stateVector& res) {
-        res.accely -= (vel.y / 15);
-        res.accelx -= (vel.x / 15);
+        res.accely -= (vel.y / 50);
+        res.accelx -= (vel.x / 50);
+        res.angular_accel -= (angular_vel / 50);
     }
     void updateFromGravity(stateVector& res) {
         res.accely += Env::gravity;
     }
     float get_total_mass() const {
-        const float upper_radius = 20; // meters from center of rocket
         return mass + fuel_mass;
     }
 
-    static sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f vel;
     float angular_vel;

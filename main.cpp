@@ -11,7 +11,7 @@ int main()
 
     Manager m {};
     sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "", sf::Style::Default, settings);
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(120);
     window.setPosition(sf::Vector2i(1920-m.get_window_width(), 0));
     while (window.isOpen()) {
         sf::Event event;
