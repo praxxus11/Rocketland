@@ -270,7 +270,8 @@ private:
 
 
             // imgs/ReferenceImage3
-            const float const_mul = (hori_vel_comb*lineH_ref2 + vert_vel_comb*lineV_ref2) / (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2);
+            const float const_mul = (hori_vel_comb*lineH_ref2 + vert_vel_comb*lineV_ref2) / 
+                (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2);
             const float r_push_air_h = const_mul * lineH_ref2;
             const float r_push_air_v = const_mul * lineV_ref2;
             
@@ -279,7 +280,7 @@ private:
             const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v);
 
             const float max_force_from_air = 1e6; // newtons, 1/20 of an engine
-            const float realized_force_from_air = (air_speed*air_speed) / (100*100) * max_force_from_air;
+            const float realized_force_from_air = (air_speed*air_speed) / (90*90) * max_force_from_air;
 
             // 3/4 of the force goes into rotating, and the other 1/4 goes into translation
             // Too lazy to split it because then ill have to either approx or find the moment of intertia
@@ -295,13 +296,13 @@ private:
 
             const float torque = realized_force_from_air * (3.f/4) * abs(radii[i]); // torque = F*r
             // if (i==0) std::cout << air_speed_unit_x << " " << air_speed_unit_y << '\n';
-            if (i==0) {
-            if (air_push_rock_h*lineV_ref2 + air_push_rock_v*lineH_ref2 < 0) { // torque and rotation opposite direction
+            
+            if (air_push_rock_h*lineV_ref2 + air_push_rock_v*lineH_ref2 < 0)  // torque and rotation opposite direction
                 res.angular_accel += (angular_vel > 0 ? -1 : 1) * (torque / angle_inertia);
-            }
+            
             else // torque and rotation same direction
                 res.angular_accel += (angular_vel > 0 ? 1 : -1) * (torque / angle_inertia);
-            }
+            
             sf::Vector2f vect(0, 0);
             if (i==0)
                 vect = (getTransform() * upper_fin.getTransform()).transformPoint(vect);

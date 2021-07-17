@@ -37,6 +37,7 @@ public:
         setScale(0.25*getScale().x, 0.5*getScale().y);
         setRotation(angular_delta);
         engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             angular_delta = std::max(-15.f, angular_delta-100*Env::g_elapsed());
         }
@@ -51,7 +52,7 @@ public:
             throttle = std::min(1.f, throttle + 1.f*Env::g_elapsed());
         }   
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            throttle = std::max(0.05f, throttle - 1.f*Env::g_elapsed());
+            throttle = std::max(0.4f, throttle - 1.f*Env::g_elapsed());
         }
     }
     float get_angle() const {
