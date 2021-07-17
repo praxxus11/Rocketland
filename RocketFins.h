@@ -6,10 +6,11 @@ public:
         Upper, Lower
     };
     // type should be either upperfin or lowerfin
-    RocketFins(sf::Vector2f pos, GameObject* parent, Type type) :
+    RocketFins(sf::Vector2f pos, GameObject* parent, Type type, float rad_dist) :
         GameObjectRelative(pos, parent),
         angle(0),
-        fin_type(type)
+        fin_type(type),
+        radial_distance(rad_dist)
     {
         ResourceManger::ResourceTypes load_type = (type == Type::Upper) ? 
             ResourceManger::ResourceTypes::RocketUpperFin : 
@@ -28,12 +29,18 @@ public:
         setScale(angle/90.f * getScale().x, getScale().y);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angle = fin_type == Type::Upper ? 
+            // angle = fin_type == Type::Upper ? 
+            //     std::max(-90.f, angle - 300 * Env::g_elapsed()) :
+            //     std::min(90.f, angle + 300 * Env::g_elapsed());
+            angle = 1 ? 
                 std::max(-90.f, angle - 300 * Env::g_elapsed()) :
                 std::min(90.f, angle + 300 * Env::g_elapsed());
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angle = fin_type == Type::Upper ?
+            // angle = fin_type == Type::Upper ?
+            //     std::min(90.f, angle + 300 * Env::g_elapsed()) : 
+            //     std::max(-90.f, angle - 300 * Env::g_elapsed());
+            angle = 1 ?
                 std::min(90.f, angle + 300 * Env::g_elapsed()) : 
                 std::max(-90.f, angle - 300 * Env::g_elapsed());
         }
@@ -44,6 +51,9 @@ public:
     float get_angle() const {
         return angle;
     }
+    float get_radial_dist() const {
+        return radial_distance;
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter
@@ -53,4 +63,5 @@ private:
     sf::Sprite fin_sprite;
     float angle;
     Type fin_type;
+    float radial_distance;
 };

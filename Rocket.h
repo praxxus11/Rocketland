@@ -3,6 +3,7 @@
 #include <utility>
 #include <math.h>
 #include <fstream>
+#include <array>
 
 #include "Engine.h"
 #include "RocketFins.h"
@@ -56,8 +57,8 @@ public:
         angular_vel(ang_vel),
         explosion_anim(expls),
         status(stat),
-        upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), this, RocketFins::Type::Upper),
-        lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), this, RocketFins::Type::Lower),
+        upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), this, RocketFins::Type::Upper, 20),
+        lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), this, RocketFins::Type::Lower, -25),
         mass(mass),
         fuel_mass(f_mass),
         angle_inertia(inertia)
@@ -251,12 +252,13 @@ private:
             }
         }
     }
+
     void updateFromFins(stateVector& res, sf::RenderWindow& win) {
-        // std::cout << getRotation() << " " << angular_vel << "\n";
-        int radii[] = {20, -25};
-        for (int i=0; i<2; i++) {
-            // imgs/ReferenceImage2
-            const float line1_ref2 = radii[i]; // vert distance from upper fin to middle of rocket
+        
+        std::array<RocketFins*, 2> fins = {&upper_fin, &lower_fin};
+
+        for (const RocketFins* fin : fins) {
+            const float line1_ref2 = fin->get_radial_dist(); // vert distance from upper fin to middle of rocket
             const float line2_ref2 = line1_ref2 * (Env::PI/180 * angular_vel + 0.000000001);
 
             const float angleA_ref2 = getRotation();
@@ -280,7 +282,27 @@ private:
             const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v);
 
             const float max_force_from_air = 1e6; // newtons, 1/20 of an engine
-            const float realized_force_from_air = (air_speed*air_speed) / (90*90) * max_force_from_air;
+
+            float force_multiplier = 0;
+            sf::Vector2f initial_pt(0, 0);
+            sf::Vector2f final_pt(500, 0);
+        
+            initial_pt = (getTransform() * fin->getTransform()).transformPoint(initial_pt);
+            final_pt = (getTransform() * fin->getTransform()).transformPoint(final_pt);
+        
+            sf::Vector2f diff(final_pt-initial_pt);
+
+            // Reference Image 4
+            if (diff.x*air_push_rock_h + diff.y*air_push_rock_v < 0) { 
+            // differenet direction than movement of rocket, means less force
+                force_multiplier = 1 - 0.01*abs(lower_fin.get_angle());
+            }
+            //Reference Image 5
+            else { 
+            // same direction as movement, more force
+                force_multiplier = 1 - 0.0044*abs(lower_fin.get_angle());
+            }
+            const float realized_force_from_air = ((air_speed*air_speed) / (90*90)) * max_force_from_air * force_multiplier;
 
             // 3/4 of the force goes into rotating, and the other 1/4 goes into translation
             // Too lazy to split it because then ill have to either approx or find the moment of intertia
@@ -294,30 +316,22 @@ private:
             res.accelx += trans_force_x / get_total_mass();
             res.accely += trans_force_y / get_total_mass();
 
-            const float torque = realized_force_from_air * (3.f/4) * abs(radii[i]); // torque = F*r
-            // if (i==0) std::cout << air_speed_unit_x << " " << air_speed_unit_y << '\n';
+            const float torque = realized_force_from_air * (3.f/4) * abs(fin->get_radial_dist()); // torque = F*r
             
             if (air_push_rock_h*lineV_ref2 + air_push_rock_v*lineH_ref2 < 0)  // torque and rotation opposite direction
                 res.angular_accel += (angular_vel > 0 ? -1 : 1) * (torque / angle_inertia);
-            
             else // torque and rotation same direction
                 res.angular_accel += (angular_vel > 0 ? 1 : -1) * (torque / angle_inertia);
             
+
             sf::Vector2f vect(0, 0);
-            if (i==0)
-                vect = (getTransform() * upper_fin.getTransform()).transformPoint(vect);
-            else
-                vect = (getTransform() * lower_fin.getTransform()).transformPoint(vect);
+            vect = (getTransform() * fin->getTransform()).transformPoint(vect);
             sf::Vertex line[2] = {
                 sf::Vertex(vect, sf::Color::Red),
-                // sf::Vertex(sf::Vector2f(vect.x+air_push_rock_h*10, vect.y+air_push_rock_v*-10))
                 sf::Vertex(sf::Vector2f(vect.x+trans_force_x, vect.y+trans_force_y*-1))
-
             };
-            win.draw(line, 2, sf::Lines);
+            win.draw(line, 2, sf::Lines);        
         }
-        // std::cout << lineV_ref2 << " " << lineH_ref2 << " " << sqrt(lineV_ref2*lineV_ref2 + lineH_ref2*lineH_ref2) << "\n";
-
     }
     void updateFromWindResistence(stateVector& res) {
         res.accely -= (vel.y / 15);
