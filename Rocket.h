@@ -334,9 +334,8 @@ private:
         }
     }
     void updateFromWindResistence(stateVector& res) {
-        res.accely -= (vel.y / 50);
-        res.accelx -= (vel.x / 50);
-        res.angular_accel -= (angular_vel / 50);
+        res.accely -= (vel.y / 60);
+        res.accelx -= (vel.x / 60);
     }
     void updateFromGravity(stateVector& res) {
         res.accely += Env::gravity;

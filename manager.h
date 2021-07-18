@@ -24,11 +24,11 @@ class Manager {
                 const float rocket_mass = 77000;
                 const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
                 rockets.push_back(Rocket(
-                    sf::Vector2f(rand()%10, rand()%30+50),
+                    sf::Vector2f(rand()%10+40, rand()%30+700),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
-                    0,
+                    -90,
                     1120,
-                    sf::Vector2f(0, 4),
+                    sf::Vector2f(0, -100),
                     0,
                     0,
                     Gif(3, exframes),

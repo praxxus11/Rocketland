@@ -62,14 +62,14 @@ public:
     */
 
     static sf::Clock clock;
-    static float g_elapsed() { return clock.getElapsedTime().asSeconds()*1; }
+    static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
     static void restartc() { clock.restart(); }
 };
 
 int Env::ww = 1100;
 int Env::wh = 900;
 int Env::floor_hei = 100;
-float Env::pixpmeter = 7;
+float Env::pixpmeter = 1.3;
 const float Env::gravity = -9.8;
 const float Env::PI = 3.14159265;
 sf::Clock Env::clock{};
