@@ -83,10 +83,14 @@ public:
     int number_frames() const { return sprite_frames.number_of_frames(); }
     int get_curr() const { return curr_frame; }
     bool ison_new_frame() const { return on_new_frame; }
+    sf::Vector2f& get_old_pos() {
+        return old_pos;
+    }
 private:
     int curr_frame;
     float time_elapsed;
     float duration;
     bool on_new_frame;
     Frames& sprite_frames;
+    sf::Vector2f old_pos {0, 0};
 };

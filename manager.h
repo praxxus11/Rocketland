@@ -24,11 +24,11 @@ class Manager {
                 const float rocket_mass = 77000;
                 const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
                 rockets.push_back(Rocket(
-                    sf::Vector2f(rand()%10+40, rand()%30+700),
+                    sf::Vector2f(rand()%10+40, 52),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
-                    -90,
+                    0,
                     1120,
-                    sf::Vector2f(0, -100),
+                    sf::Vector2f(0, 0),
                     0,
                     0,
                     Gif(3, exframes),
@@ -52,9 +52,13 @@ class Manager {
                 r.setStatus(cm.rocket_floor_collision(r, f));
                 r.update(win);
             }
+            f.update(); // make sure to update rocket before floor
         }
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }
+        sf::Vector2f get_rocket_pos() const {
+            return rockets[0].irlGetPosition();
+        }
     private:
         Frames exframes;
         std::vector<Rocket> rockets;
@@ -63,10 +67,10 @@ class Manager {
 
         void drawAll(sf::RenderWindow& win) const {
             win.draw(f);
-            // win.draw(*f.getBoundingBox().get());
+            win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
-                // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
-                    // win.draw(*r.getBoundingBox().get());
+                if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
+                    win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
         }

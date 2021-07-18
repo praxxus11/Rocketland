@@ -146,19 +146,16 @@ public:
         case Status::Explode: {
             if (!explosion_initialized) {
                 const auto globalbnd = getGlobalBounds();
-                explosion_anim.irlSetPosition(sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height));
+                // explosion_anim.irlSetPosition(sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height));
+                explosion_anim.get_old_pos() = sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height);
                 float times_bigger = 0.5 + std::min(sqrt(vel.x*vel.x + vel.y*vel.y) / 30, 2.f); // how large explosion is compared to rocket
                 const float scale = (times_bigger * 1120 * getScale().x) / 128;
                 explosion_anim.setScale(rand()%2 ? scale : -scale, scale); // randomly flip the explosion animation
                 explosion_initialized = 1;
             }
+            explosion_anim.irlSetPosition(explosion_anim.get_old_pos());
             explosion_anim.update();
-            if (explosion_anim.get_curr() < explosion_anim.number_frames() && 
-                !(explosion_anim.get_curr() % (explosion_anim.number_frames() / 10)) &&
-                explosion_anim.ison_new_frame()) {
-                irlSetPosition(sf::Vector2f(position.x, position.y / 1.5));
-            }
-            else if (explosion_anim.get_curr() >= explosion_anim.number_frames()) {
+            if (explosion_anim.get_curr() >= explosion_anim.number_frames()) {
                 setStatus(Status::BlewUp);
             }
             break;
@@ -167,6 +164,7 @@ public:
             vel.x = 0;
             vel.y = 0;
             angular_vel = 0;
+            irlSetPosition(sf::Vector2f(position.x, position.y));
             for (Engine& engine : engines) {
                 engine.update();
             }

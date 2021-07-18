@@ -10,6 +10,7 @@ int main()
     settings.antialiasingLevel= 8;
 
     Manager m {};
+    Camera c {};
     sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "", sf::Style::Default, settings);
     window.setFramerateLimit(60);
     window.setPosition(sf::Vector2i(1920-m.get_window_width(), 0));
@@ -19,6 +20,7 @@ int main()
             if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
                 window.close();
         }
+        c.update_from_rocket(m.get_rocket_pos());
         window.clear();
         m.update(window);
         Env::restartc();

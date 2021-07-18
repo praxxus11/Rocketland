@@ -23,16 +23,17 @@ public:
     */
 
     static float pixpmeter; // UNITS(pixels/meter)
-    static sf::Vector2f displ; // UNITS(x: pixels, y: pixels): 
-                        // displacement of origin relative to top left corner
+    static sf::Vector2f origin; // UNITS(x: pixels, y: pixels): 
+                        // originacement of origin relative to top left corner
                         // down: positive, right: positive
+    static sf::Vector2f camera_pos;
 
     // converts real life coordinates (meter, meter) to (pixel, pixel)
     template<typename T>
     static sf::Vector2<T> metersToPixels(const sf::Vector2<T>& pr) {
         sf::Vector2<T> res{};
-        res.x = (pr.x * pixpmeter) + displ.x;
-        res.y = (-pr.y * pixpmeter) + displ.y;
+        res.x = (pr.x * pixpmeter) + origin.x - (camera_pos.x * pixpmeter);
+        res.y = (-pr.y * pixpmeter) + origin.y + (camera_pos.y * pixpmeter);
         return res;
     }
 
@@ -40,8 +41,8 @@ public:
     template<typename T>
     static sf::Vector2<T> pixelsToMeters(const sf::Vector2<T>& pr) {
         sf::Vector2<T> res{};
-        res.x = (pr.x - displ.x) / pixpmeter;
-        res.y = -((pr.y - displ.y) / pixpmeter);
+        res.x = (pr.x - origin.x + camera_pos.x * pixpmeter) / pixpmeter;
+        res.y = -((pr.y - origin.y - camera_pos.y * pixpmeter) / pixpmeter);
         return res;
     }
 
@@ -68,9 +69,10 @@ public:
 
 int Env::ww = 1100;
 int Env::wh = 900;
-int Env::floor_hei = 100;
-float Env::pixpmeter = 1.3;
+int Env::floor_hei = wh/2;
+float Env::pixpmeter = 7;
 const float Env::gravity = -9.8;
 const float Env::PI = 3.14159265;
 sf::Clock Env::clock{};
-sf::Vector2f Env::displ(Env::ww/2, Env::wh - Env::floor_hei);
+sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
+sf::Vector2f Env::camera_pos(0, 0);
