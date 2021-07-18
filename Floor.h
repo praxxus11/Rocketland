@@ -19,7 +19,6 @@ public:
     void update() {
         irlSetPosition(sf::Vector2f((-Env::ww/2)/Env::pixpmeter + Env::camera_pos.x, 0));
         rect.setSize(sf::Vector2f(Env::ww, Env::floor_hei - (Env::camera_pos.y < 0 ? Env::camera_pos.y * Env::pixpmeter : 0)));
-        std::cout << getPosition().x << " " << getPosition().y << '\n';
     }
 private:
     sf::RectangleShape rect;

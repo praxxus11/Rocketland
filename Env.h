@@ -26,7 +26,7 @@ public:
     static sf::Vector2f origin; // UNITS(x: pixels, y: pixels): 
                         // originacement of origin relative to top left corner
                         // down: positive, right: positive
-    static sf::Vector2f camera_pos;
+    static sf::Vector2f camera_pos; // (meters, meters) that represent the center of the screen
 
     // converts real life coordinates (meter, meter) to (pixel, pixel)
     template<typename T>
@@ -63,7 +63,7 @@ public:
     */
 
     static sf::Clock clock;
-    static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
+    static float g_elapsed() { return clock.getElapsedTime().asSeconds()*1; }
     static void restartc() { clock.restart(); }
 };
 

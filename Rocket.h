@@ -112,13 +112,13 @@ public:
 
 
             ////////////////////////////
-            // totTime += Env::g_elapsed();
-            // timeSoFar += Env::g_elapsed();
-            // if (timeSoFar > .7) {
-            //     std::ofstream fout("python/datas.txt", std::ios_base::app);
-            //     timeSoFar = 0;
-            //     fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << getRotation() << '\n';
-            // }
+            totTime += Env::g_elapsed();
+            timeSoFar += Env::g_elapsed();
+            if (timeSoFar > 8) {
+                std::ofstream fout("python/datas.txt", std::ios_base::app);
+                timeSoFar = 0;
+                fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << getRotation() << '\n';
+            }
             ////////////////////////////
 
 
@@ -279,11 +279,11 @@ private:
             const float air_push_rock_v = -r_push_air_v;
             const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v);
 
-            const float max_force_from_air = 1e6; // newtons, 1/20 of an engine
+            const float max_force_from_air = 1e6; // newtons, 1/2 of an engine
 
-            float force_multiplier = 0;
+            float force_multiplier = 1;
             sf::Vector2f initial_pt(0, 0);
-            sf::Vector2f final_pt(500, 0);
+            sf::Vector2f final_pt(1, 0);
         
             initial_pt = (getTransform() * fin->getTransform()).transformPoint(initial_pt);
             final_pt = (getTransform() * fin->getTransform()).transformPoint(final_pt);
@@ -316,7 +316,7 @@ private:
 
             const float torque = realized_force_from_air * (3.f/4) * abs(fin->get_radial_dist()); // torque = F*r
             
-            if (air_push_rock_h*lineV_ref2 + air_push_rock_v*lineH_ref2 < 0)  // torque and rotation opposite direction
+            if (air_push_rock_h*lineH_ref2 + air_push_rock_v*lineV_ref2 < 0)  // torque and rotation opposite direction
                 res.angular_accel += (angular_vel > 0 ? -1 : 1) * (torque / angle_inertia);
             else // torque and rotation same direction
                 res.angular_accel += (angular_vel > 0 ? 1 : -1) * (torque / angle_inertia);
