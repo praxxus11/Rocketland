@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <math.h>
 
 class Camera {
 public:
@@ -24,6 +25,16 @@ public:
     }
     void update_from_rocket(const sf::Vector2f& pos) {
         Env::camera_pos = pos;
+        update_zoom();
+    }
+    void update_zoom() {
+        const float zoom_amt = 5;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal)) {
+            Env::pixpmeter += Env::g_elapsed() * zoom_amt;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Hyphen)) {
+            Env::pixpmeter = std::max(0.1f, Env::pixpmeter - Env::g_elapsed() * zoom_amt);
+        }
     }
 private:
     sf::Vector2i center; // (meters, meteres)

@@ -112,35 +112,43 @@ public:
 
 
             ////////////////////////////
-            totTime += Env::g_elapsed();
-            timeSoFar += Env::g_elapsed();
-            if (timeSoFar > 8) {
-                std::ofstream fout("python/datas.txt", std::ios_base::app);
-                timeSoFar = 0;
-                fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << getRotation() << '\n';
-            }
+            // totTime += Env::g_elapsed();
+            // timeSoFar += Env::g_elapsed();
+            // if (timeSoFar > 8) {
+            //     std::ofstream fout("python/datas.txt", std::ios_base::app);
+            //     timeSoFar = 0;
+            //     fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << getRotation() << '\n';
+            // }
             ////////////////////////////
-
+            irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
+            setRotation(getRotation() + angular_vel*elap);
+            setScale(sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120));
 
             for (Engine& engine : engines) {
                 engine.update();
             }
+
+            engines[0].irlSetDisplacement({7/getScale().x, 48/getScale().x});
+            engines[1].irlSetDisplacement({4.5/getScale().x, 48/getScale().x});
+            engines[2].irlSetDisplacement({2/getScale().x, 48/getScale().x});
+
             upper_fin.update();
             lower_fin.update();
 
             stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
+            // std::cout << "Engine" << v.angular_accel << '\n';
             updateFromWindResistence(v);
+            // std::cout << "Wind" << v.angular_accel << '\n';
             updateFromGravity(v);
+            // std::cout << "Gravity" << v.angular_accel << '\n';
             updateFromFins(v, win);
+            // std::cout << "Finds" << v.angular_accel << "\n\n";
 
             vel.x += v.accelx * elap;
             vel.y += v.accely * elap;
             angular_vel += v.angular_accel * elap;
             fuel_mass = std::max(0.f, fuel_mass + v.fuel_kg_per_sec * elap);
-            
-            irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
-            setRotation(getRotation() + angular_vel*elap);
             break;
         }
         case Status::Explode: {
@@ -165,6 +173,7 @@ public:
             vel.y = 0;
             angular_vel = 0;
             irlSetPosition(sf::Vector2f(position.x, position.y));
+            setScale(sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120));
             for (Engine& engine : engines) {
                 engine.update();
             }
@@ -241,7 +250,6 @@ private:
 
                 res.accely += lineV / get_total_mass();
                 res.accelx += lineH / get_total_mass();
-
                 res.angular_accel -= 180/Env::PI * (torque / angle_inertia);
 
 

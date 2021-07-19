@@ -57,10 +57,10 @@ class Manager {
 
         void draw(sf::RenderWindow& win) const {
             win.draw(f);
-            // win.draw(*f.getBoundingBox().get());
+            win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
-                // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
-                    // win.draw(*r.getBoundingBox().get());
+                if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
+                    win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
         }
