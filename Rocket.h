@@ -71,9 +71,10 @@ public:
         engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), this));
         engines.push_back(Engine(sf::Vector2f(4.5/getScale().x, 48/getScale().x), this));
         engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), this));
+        std::cout << "Regular\n";
     }
 
-    Rocket(const Rocket& r) : 
+    Rocket(const Rocket& r) :   
         GameObject(r.position),
         pixels_tall(r.pixels_tall),
         vel(r.vel),
@@ -91,6 +92,7 @@ public:
         explosion_anim.setOrigin(72, 120);    
         setScale(r.getScale());
         setRotation(r.getRotation());
+        std::cout << "Copy\n";
 
         for (Engine& engine : engines) {
             engine.set_parent(this);

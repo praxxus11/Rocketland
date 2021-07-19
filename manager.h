@@ -8,6 +8,7 @@
 #include "Rocket.h"
 #include "Floor.h"
 #include "CollisionManager.h"
+#include "AIManager.h"
 
 class Manager {
     public:
@@ -20,10 +21,10 @@ class Manager {
             int numrocks = 1;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
-                const float fuel_amount = 50000;
+                const float fuel_amount = 100000;
                 const float rocket_mass = 77000;
                 const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
-                rockets.push_back(Rocket(
+                rockets.emplace_back(
                     sf::Vector2f(rand()%10+40, 60),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
                     0,
@@ -36,7 +37,7 @@ class Manager {
                     rocket_mass, // assume has mass of 7.7e4 kg = around 85 tons
                     fuel_amount, // assume has initial fuel of 9.0e4 kg - around 100 tons 
                     inertia
-                ));
+                );
                 rockets[i].setOrigin(100, 600);
                 rockets[i].irlSetPosition(rockets[i].irlGetPosition());
                 rockets[i].setScale(rockets[i].getScale());
@@ -74,4 +75,5 @@ class Manager {
         std::vector<Rocket> rockets;
         Floor f;
         CollisionManager cm;
+        AIManager ai_manager;
 };
