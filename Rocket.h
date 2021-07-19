@@ -262,7 +262,6 @@ private:
     void updateFromFins(stateVector& res, sf::RenderWindow& win) {
 
         std::array<RocketFins*, 2> fins = {&upper_fin, &lower_fin};
-
         for (const RocketFins* fin : fins) {
             const float line1_ref2 = fin->get_radial_dist(); // vert distance from upper fin to middle of rocket
             const float line2_ref2 = line1_ref2 * (Env::PI/180 * angular_vel + 0.000000001);

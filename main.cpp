@@ -26,7 +26,6 @@ int main()
         m.draw(window);
         Env::restartc();
         window.display();
-
     }
     return 0;
 }
