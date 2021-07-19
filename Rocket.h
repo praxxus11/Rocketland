@@ -128,9 +128,9 @@ public:
                 engine.update();
             }
 
-            engines[0].irlSetDisplacement({7/getScale().x, 48/getScale().x});
-            engines[1].irlSetDisplacement({4.5/getScale().x, 48/getScale().x});
-            engines[2].irlSetDisplacement({2/getScale().x, 48/getScale().x});
+            engines[0].irlSetDisplacement(sf::Vector2f(7/getScale().x, 48/getScale().x));
+            engines[1].irlSetDisplacement(sf::Vector2f(4.5/getScale().x, 48/getScale().x));
+            engines[2].irlSetDisplacement(sf::Vector2f(2/getScale().x, 48/getScale().x));
 
             upper_fin.update();
             lower_fin.update();

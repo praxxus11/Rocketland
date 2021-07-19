@@ -12,7 +12,7 @@ int main()
     Manager m {};
     Camera c {};
     sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "", sf::Style::Default, settings);
-    window.setFramerateLimit(180);
+    window.setFramerateLimit(60);
     window.setPosition(sf::Vector2i(1920-m.get_window_width(), 0));
     while (window.isOpen()) {
         sf::Event event;
@@ -21,13 +21,9 @@ int main()
                 window.close();
         }
         window.clear();
-
-
         m.update(window);
         c.update_from_rocket(m.get_rocket_pos());
         m.draw(window);
-
-
         Env::restartc();
         window.display();
 
