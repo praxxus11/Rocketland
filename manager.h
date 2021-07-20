@@ -18,7 +18,7 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 40;
+            int numrocks = 100;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 const float fuel_amount = 100000;

@@ -40,15 +40,22 @@ public:
 
     void updateScore() {
         score += abs(rocket_ref->getVelocity().y) * 100;
-        score += abs(rocket_ref->getVelocity().x) * 50;
+        score += abs(rocket_ref->getVelocity().x) * 150;
         score += abs(rocket_ref->get_angular_vel()) * 100;
-        score += 25 * (-abs(180 - rocket_ref->getRotation()) + 180);   
+        score += 190 * (-abs(180 - rocket_ref->getRotation()) + 180);   
+        if (!is_crashed() && !is_landed()) {
+            score = INT_MAX;
+        }
     }
     int getScore() const { return score; }
-
+    
     void reset() {
         score = 0;
         rocket_ref->reset_rocket();
+    }
+
+    std::vector<Eigen::MatrixXf>& get_wb() {
+        return weights_biases;
     }
 
 private:

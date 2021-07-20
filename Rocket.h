@@ -198,6 +198,7 @@ public:
             break;
         }
         case Status::Explode: {
+            setStatus(Status::BlewUp);
             if (!explosion_initialized) {
                 const auto globalbnd = getGlobalBounds();
                 // explosion_anim.irlSetPosition(sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height));
@@ -282,12 +283,12 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(0, 600));
-        vel.x = 0; vel.y = 0;
-        setRotation(0); angular_vel = 0;
+        irlSetPosition(sf::Vector2f(0, 1000));
+        vel.x = rand()%20-10; vel.y = rand()%5-100;
+        setRotation((rand()%2 ? 1 : -1)*90); angular_vel = rand()%10-5;
         status = Status::Regular;
         explosion_initialized = 0;
-        fuel_mass = 100000;
+        fuel_mass = rand()%100 + 50000;
         explosion_anim.reset();
     }
 
