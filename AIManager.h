@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <Eigen/Dense>
 
 #include "NeuralNetwork.h"
 #include "RocketManager.h"
@@ -56,16 +57,15 @@ public:
             for (int i=Env::num_rocks-1; i>top_x; i--) {
                 int a = int(rand()%top_x), b = int(rand()%top_x);
                 if (a==b) b++;
-                do_cross_over(networks[a], networks[b]);
-                networks[i].get_wb() = networks[rand()%2 ? a : b].get_wb();
+                networks[i].get_wb() = do_cross_over(networks[a], networks[b]);
             }
 
             // now cross best again
-            for (int i=0; i<top_x; i++) {
-                int a = int(rand()%top_x), b = int(rand()%top_x);
-                if (a==b) b++;
-                do_cross_over(networks[a], networks[b]);
-            }
+            // for (int i=0; i<float(top_x)/3; i++) {
+            //     int a = int(rand()%top_x), b = int(rand()%top_x);
+            //     if (a==b) b++;
+            //     networks[a].get_wb() = do_cross_over(networks[a], networks[b]);
+            // }
 
             for (RocketManager& rm : networks) {
                 do_mutations(rm);
@@ -85,35 +85,42 @@ public:
         }
     }
 
-    void do_cross_over(RocketManager& a, RocketManager& b) {
+    std::vector<Eigen::MatrixXf> do_cross_over(RocketManager& a, RocketManager& b) {
+        std::vector<Eigen::MatrixXf> res;
         for (int layer=0; layer<a.get_wb().size(); layer++) {
             int num_rows = a.get_wb()[layer].rows();
             int num_cols = a.get_wb()[layer].cols();
+            Eigen::MatrixXf temp(num_rows, num_cols);
             for (int row=0; row<num_rows; row++) {
                 int splice_ind = (rand()%num_cols); // from [0, splice_ind], [splice_ind+1, num_rows-1]
                 if (rand()%2) {
                     for (int i=0; i<=splice_ind; i++) {
-                        float temp = a.get_wb()[layer](row, i);
-                        a.get_wb()[layer](row, i) = b.get_wb()[layer](row, i);
-                        b.get_wb()[layer](row, i) = temp;
+                        temp(row, i) = a.get_wb()[layer](row, i);
+                    }
+                    for (int i=splice_ind+1; i<num_cols; i++) {
+                        temp(row, i) = b.get_wb()[layer](row, i);
                     }
                 }
                 else {
+                    for (int i=0; i<=splice_ind; i++) {
+                        temp(row, i) = b.get_wb()[layer](row, i);
+                    }
                     for (int i=splice_ind+1; i<num_cols; i++) {
-                        float temp = a.get_wb()[layer](row, i);
-                        a.get_wb()[layer](row, i) = b.get_wb()[layer](row, i);
-                        b.get_wb()[layer](row, i) = temp;
+                        temp(row, i) = a.get_wb()[layer](row, i);
                     }
                 }
             }
+            res.push_back(temp);
         }
+        return res;
     }
 
     void do_mutations(RocketManager& rm) {
+        const float mutation_chance = 0.03*exp(-0.01*Env::cycle_num) + 0.006;
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
-                    if (float(rand())/RAND_MAX < 0.01)
+                    if (float(rand())/RAND_MAX < mutation_chance)
                         mat(i, j) += (rand()%2 ? 1 : -1) * float(rand())/(3*RAND_MAX);
                 }
             }
