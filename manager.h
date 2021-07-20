@@ -18,9 +18,8 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 100;
-            rockets.reserve(numrocks);
-            for (int i=0; i<numrocks; i++) {
+            rockets.reserve(Env::num_rocks);
+            for (int i=0; i<Env::num_rocks; i++) {
                 const float fuel_amount = 100000;
                 const float rocket_mass = 77000;
                 const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
@@ -49,7 +48,7 @@ class Manager {
         {
         }
 
-        void update(sf::RenderWindow& win) {
+        void update() {
             for (Rocket& r : rockets) {
                 r.setStatus(cm.rocket_floor_collision(r, f));
                 r.update();

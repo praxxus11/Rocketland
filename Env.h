@@ -63,10 +63,14 @@ public:
     */
 
     static sf::Clock clock;
-    static float g_elapsed() { return clock.getElapsedTime().asSeconds()*12; }
+    // static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
+    static float g_elapsed() { return 0.1; }
+    static float g_elapsed_real() { return clock.getElapsedTime().asSeconds(); }
+
     static void restartc() { clock.restart(); }
 
     static int cycle_num;
+    static int num_rocks;
 };
 
 int Env::ww = 1100;
@@ -79,3 +83,4 @@ sf::Clock Env::clock{};
 sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
+int Env::num_rocks = 1000;

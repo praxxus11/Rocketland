@@ -8,9 +8,10 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{14, 8, 8}, 
+        network(std::vector<int>{14, 14, 8}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
             NeuralNetwork::ActivationFuncs::tanh,
+            // NeuralNetwork::ActivationFuncs::tanh,
             // NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
         })
@@ -36,18 +37,22 @@ public:
             Env::cycle_num++;
             totTime = 0;
             double tot = 0;
+            int ct = 0;
             for (RocketManager& rm : networks) {
                 rm.updateScore();
-                tot += rm.getScore();
+                if (rm.getScore() < 5e6) {
+                    tot += rm.getScore();
+                    ct++;
+                }
             }
             sort(networks.begin(), networks.end(), [](const RocketManager& a, const RocketManager& b) {
                 return (a.getScore() < b.getScore());
             });
-            std::cout << "Iteration: " << iter++ << " Best score: " << tot/100 << "\n";
+            std::cout << "Iteration: " << iter++ << " Average score: " << tot/ct << "\n";
             
             // first remove the worst 90% of them, meanwhile also crosses best of them
-            const int top_x = 10;
-            for (int i=99; i>top_x; i--) {
+            const int top_x = Env::num_rocks/10;
+            for (int i=Env::num_rocks-1; i>top_x; i--) {
                 int a = int(rand()%top_x), b = int(rand()%top_x);
                 if (a==b) b++;
                 do_cross_over(networks[a], networks[b]);
@@ -72,20 +77,20 @@ public:
         for (int layer=0; layer<a.get_wb().size(); layer++) {
             int num_rows = a.get_wb()[layer].rows();
             int num_cols = a.get_wb()[layer].cols();
-            for (int col=0; col<num_cols; col++) {
-                int splice_ind = (rand()%num_rows); // from [0, splice_ind], [splice_ind+1, num_rows-1]
+            for (int row=0; row<num_rows; row++) {
+                int splice_ind = (rand()%num_cols); // from [0, splice_ind], [splice_ind+1, num_rows-1]
                 if (rand()%2) {
                     for (int i=0; i<=splice_ind; i++) {
-                        float temp = a.get_wb()[layer](i, col);
-                        a.get_wb()[layer](i, col) = b.get_wb()[layer](i, col);
-                        b.get_wb()[layer](i, col) = temp;
+                        float temp = a.get_wb()[layer](row, i);
+                        a.get_wb()[layer](row, i) = b.get_wb()[layer](row, i);
+                        b.get_wb()[layer](row, i) = temp;
                     }
                 }
                 else {
-                    for (int i=splice_ind+1; i<num_rows; i++) {
-                        float temp = a.get_wb()[layer](i, col);
-                        a.get_wb()[layer](i, col) = b.get_wb()[layer](i, col);
-                        b.get_wb()[layer](i, col) = temp;
+                    for (int i=splice_ind+1; i<num_cols; i++) {
+                        float temp = a.get_wb()[layer](row, i);
+                        a.get_wb()[layer](row, i) = b.get_wb()[layer](row, i);
+                        b.get_wb()[layer](row, i) = temp;
                     }
                 }
             }
@@ -93,11 +98,10 @@ public:
     }
 
     void do_mutations(RocketManager& rm) {
-        const float rand_chance = rand()/7;
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
-                    if (rand()/RAND_MAX < rand_chance)
+                    if (rand()/RAND_MAX < 0.01)
                         mat(i, j) += (rand()%2 ? 1 : -1) * rand()/(3*RAND_MAX);
                 }
             }
