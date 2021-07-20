@@ -8,11 +8,11 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{14, 8, 8}, 
+        network(std::vector<int>{14, 16, 16, 8}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
-            NeuralNetwork::ActivationFuncs::tanh,
-            NeuralNetwork::ActivationFuncs::tanh,
-            // NeuralNetwork::ActivationFuncs::tanh
+            NeuralNetwork::ActivationFuncs::none,
+            NeuralNetwork::ActivationFuncs::none,
+            NeuralNetwork::ActivationFuncs::tanh
         })
     {   
     }

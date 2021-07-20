@@ -18,7 +18,7 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 20;
+            int numrocks = 1;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 const float fuel_amount = 100000;
@@ -42,9 +42,8 @@ class Manager {
                 rockets[i].irlSetPosition(rockets[i].irlGetPosition());
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
-
-                ai_manager.init(rockets);
             }
+            ai_manager.init(rockets);
         }
         ~Manager() 
         {

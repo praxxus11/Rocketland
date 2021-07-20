@@ -266,13 +266,13 @@ public:
 
     void update_params(const ControlParams& contr) {
         engines[0].set_throttle_vel(contr.e1_thr_vel);
-        engines[0].set_throttle_vel(contr.e1_angle_vel * 100);
+        engines[0].set_angle_vel(contr.e1_angle_vel * 100);
 
         engines[1].set_throttle_vel(contr.e2_thr_vel);
-        engines[1].set_throttle_vel(contr.e2_angle_vel * 100);
+        engines[1].set_angle_vel(contr.e2_angle_vel * 100);
 
         engines[2].set_throttle_vel(contr.e3_thr_vel);
-        engines[2].set_throttle_vel(contr.e3_angle_vel * 100);
+        engines[2].set_angle_vel(contr.e3_angle_vel * 100);
 
         upper_fin.set_angular_vel(contr.uflp_angle_vel * 300);
         lower_fin.set_angular_vel(contr.lflp_angle_vel * 300);
