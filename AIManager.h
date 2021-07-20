@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 #include <iostream>
 
 #include "NeuralNetwork.h"
@@ -26,6 +27,11 @@ public:
             );
         }
     }
+    
+    void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
+        
+    }
+
     void update_rockets() {
         bool all_done = 1;
         for (RocketManager& rm : networks) {

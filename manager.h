@@ -42,7 +42,7 @@ class Manager {
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
             }
-            ai_manager.init(rockets);
+            ai_manager.init_from_file(rockets, "saves/save_cycle450.txt");
         }
         ~Manager() 
         {
