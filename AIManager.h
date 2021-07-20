@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 #include <iostream>
 #include <fstream>
 #include <Eigen/Dense>
@@ -13,13 +14,12 @@ public:
         network(std::vector<int>{14, 20, 8}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
             NeuralNetwork::ActivationFuncs::tanh,
-            // NeuralNetwork::ActivationFuncs::tanh,
+            NeuralNetwork::ActivationFuncs::tanh,
             // NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
         })
     {   
     }
-
     void init(std::vector<Rocket>& rockets) {
         for (Rocket& rocket : rockets) {
             networks.emplace_back(
@@ -28,6 +28,25 @@ public:
             );
         }
     }
+    
+    void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
+        std::vector<std::vector<Eigen::MatrixXf>> wts = network.get_wb_fromfile(filename);
+        for (int i=0; i<rockets.size(); i++) {
+            if (i<wts.size()) {
+                networks.emplace_back(
+                    &rockets[i],
+                    wts[i]
+                );
+            }
+            else {
+                networks.emplace_back(
+                    &rockets[i],
+                    network.get_random_weights_biases()                    
+                );
+            }
+        }
+    }
+
     void update_rockets() {
         bool all_done = 1;
         for (RocketManager& rm : networks) {
