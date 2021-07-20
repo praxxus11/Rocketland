@@ -250,6 +250,9 @@ public:
     Status getStatus() const {
         return status;
     }
+    float get_angular_vel() const {
+        return angular_vel;
+    }
     int pixels_tall; // change this code later
 
     StateParams get_rocket_params() const {
@@ -278,6 +281,16 @@ public:
         lower_fin.set_angular_vel(contr.lflp_angle_vel * 300);
     }
     
+    void reset_rocket() {
+        irlSetPosition(sf::Vector2f(0, 600));
+        vel.x = 0; vel.y = 0;
+        setRotation(0); angular_vel = 0;
+        status = Status::Regular;
+        explosion_initialized = 0;
+        fuel_mass = 100000;
+        explosion_anim.reset();
+    }
+
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {

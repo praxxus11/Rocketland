@@ -18,7 +18,7 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 1;
+            int numrocks = 40;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 const float fuel_amount = 100000;
@@ -29,7 +29,7 @@ class Manager {
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
                     -90,
                     1120,
-                    sf::Vector2f(0, 0),
+                    sf::Vector2f(0, -100),
                     0,
                     0,
                     Gif(3, exframes),

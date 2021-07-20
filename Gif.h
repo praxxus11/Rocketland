@@ -85,6 +85,11 @@ public:
     sf::Vector2f& get_old_pos() {
         return old_pos;
     }
+    void reset() {
+        curr_frame = -1;
+        on_new_frame = 0;
+        time_elapsed = 0;
+    }
 private:
     int curr_frame;
     float time_elapsed;

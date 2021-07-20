@@ -8,7 +8,8 @@ public:
     RocketManager(Rocket* rocket, 
         const std::vector<Eigen::MatrixXf>& wb) :
         weights_biases(wb),
-        rocket_ref(rocket)
+        rocket_ref(rocket),
+        score(0)
     {
     }
     void update_rocket(const NeuralNetwork& nn) {
@@ -29,7 +30,29 @@ public:
             res[6], res[7]
         ));
     }
+
+    bool is_crashed() const {
+        return (rocket_ref->getStatus() == Rocket::Status::BlewUp);
+    }
+    bool is_landed() const {
+        return (rocket_ref->getStatus() == Rocket::Status::Landed);
+    }
+
+    void updateScore() {
+        score += abs(rocket_ref->getVelocity().y) * 100;
+        score += abs(rocket_ref->getVelocity().x) * 50;
+        score += abs(rocket_ref->get_angular_vel()) * 100;
+        score += 25 * (-abs(180 - rocket_ref->getRotation()) + 180);   
+    }
+    int getScore() const { return score; }
+
+    void reset() {
+        score = 0;
+        rocket_ref->reset_rocket();
+    }
+
 private:
     Rocket* rocket_ref;
     std::vector<Eigen::MatrixXf> weights_biases;
+    int score;
 };
