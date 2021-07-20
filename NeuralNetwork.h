@@ -32,7 +32,7 @@ public:
     }
 
     std::vector<std::vector<Eigen::MatrixXf>> get_wb_fromfile(std::string filename) {
-        std::ifstream fin("saves/save_cycle450.txt");
+        std::ifstream fin(filename);
         std::vector<std::vector<Eigen::MatrixXf>> res;
         for (int num=0; num<30; num++) {
             std::vector<Eigen::MatrixXf> temp;
