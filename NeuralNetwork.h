@@ -34,7 +34,7 @@ public:
     std::vector<std::vector<Eigen::MatrixXf>> get_wb_fromfile(std::string filename) {
         std::ifstream fin("saves/save_cycle450.txt");
         std::vector<std::vector<Eigen::MatrixXf>> res;
-        for (int num=0; num<29; num++) {
+        for (int num=0; num<30; num++) {
             std::vector<Eigen::MatrixXf> temp;
             for (int layer=0; layer<layer_sizes.size()-1; layer++) {
                 Eigen::MatrixXf weights_biases(layer_sizes[layer]+1, layer_sizes[layer+1]);
