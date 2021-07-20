@@ -113,8 +113,8 @@ public:
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
-                    if (rand()/RAND_MAX < 0.01)
-                        mat(i, j) += (rand()%2 ? 1 : -1) * rand()/(3*RAND_MAX);
+                    if (float(rand())/RAND_MAX < 0.01)
+                        mat(i, j) += (rand()%2 ? 1 : -1) * float(rand())/(3*RAND_MAX);
                 }
             }
         }
