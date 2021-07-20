@@ -83,4 +83,4 @@ sf::Clock Env::clock{};
 sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
-int Env::num_rocks = 1111;
+int Env::num_rocks = 1024;

@@ -264,7 +264,7 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(0, 1000));
+        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%100 + 1000));
         vel.x = rand()%20-10; vel.y = rand()%5-100;
         setRotation((rand()%2 ? 1 : -1)*90); angular_vel = rand()%10-5;
         status = Status::Regular;
