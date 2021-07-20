@@ -14,8 +14,6 @@ public:
         network(std::vector<int>{14, 20, 8}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
             NeuralNetwork::ActivationFuncs::tanh,
-            NeuralNetwork::ActivationFuncs::tanh,
-            // NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
         })
     {   
