@@ -4,12 +4,9 @@
 
 class Camera {
 public:
-    Camera() :
-        center(0, 0)
-    {
-    }
+    Camera() {}
     void update() const {
-        const int move_amt = 100;
+        const int move_amt = 300;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
             Env::camera_pos.y += Env::g_elapsed() * move_amt;
         }
@@ -22,12 +19,13 @@ public:
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
             Env::camera_pos.x -= Env::g_elapsed() * move_amt; 
         }
+        update_zoom();
     }
-    void update_from_rocket(const sf::Vector2f& pos) {
+    void update_from_rocket(const sf::Vector2f& pos) const {
         Env::camera_pos = pos;
         update_zoom();
     }
-    void update_zoom() {
+    void update_zoom() const {
         const float zoom_amt = 5;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal)) {
             Env::pixpmeter += Env::g_elapsed() * zoom_amt;
@@ -37,5 +35,4 @@ public:
         }
     }
 private:
-    sf::Vector2i center; // (meters, meteres)
 };

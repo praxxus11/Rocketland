@@ -8,6 +8,52 @@
 #include "Engine.h"
 #include "RocketFins.h"
 
+struct StateParams {
+    StateParams(
+        float a, float b,
+        float c, float d,
+        float e, float f, 
+        float g, float h, 
+        float i, float j, 
+        float k, float l,
+        float m, float n) :
+        posy(a), posx(b),
+        vely(c), velx(d),
+        angle(e), angle_vel(f),
+        e1_thr(g), e1_angle(h),
+        e2_thr(i), e2_angle(j),
+        e3_thr(k), e3_angle(l),
+        uflp_angle(m), lflp_angle(n)
+    {
+    }
+    float posy, posx;
+    float vely, velx;
+    float angle, angle_vel;
+    float e1_thr, e1_angle;
+    float e2_thr, e2_angle;
+    float e3_thr, e3_angle;
+    float uflp_angle, lflp_angle;
+};
+
+struct ControlParams {
+    ControlParams(
+        float e1t, float e1a,
+        float e2t, float e2a, 
+        float e3t, float e3a, 
+        float uflp, float lflp) :
+        e1_thr_vel(e1t), e1_angle_vel(e1a),
+        e2_thr_vel(e2t), e2_angle_vel(e2a),
+        e3_thr_vel(e3t), e3_angle_vel(e3a),
+        uflp_angle_vel(uflp), lflp_angle_vel(lflp)
+    {
+    }
+    float e1_thr_vel, e1_angle_vel;
+    float e2_thr_vel, e2_angle_vel;
+    float e3_thr_vel, e3_angle_vel;
+    float uflp_angle_vel, lflp_angle_vel;
+};
+
+
 // all position in Rocket should go through
 // superclass function in gameobject
 // no dealing with direct coordinates in rocket!!!!
@@ -71,7 +117,6 @@ public:
         engines.push_back(Engine(sf::Vector2f(7/getScale().x, 48/getScale().x), this));
         engines.push_back(Engine(sf::Vector2f(4.5/getScale().x, 48/getScale().x), this));
         engines.push_back(Engine(sf::Vector2f(2/getScale().x, 48/getScale().x), this));
-        std::cout << "Regular\n";
     }
 
     Rocket(const Rocket& r) :   
@@ -92,7 +137,6 @@ public:
         explosion_anim.setOrigin(72, 120);    
         setScale(r.getScale());
         setRotation(r.getRotation());
-        std::cout << "Copy\n";
 
         for (Engine& engine : engines) {
             engine.set_parent(this);
@@ -106,7 +150,7 @@ public:
         sf::Vector2f newcor = Env::pixelsToMeters(sf::Vector2f(ir.left, ir.top));
         return sf::FloatRect(newcor.x, newcor.y, ir.width/Env::pixpmeter, ir.height/Env::pixpmeter);
     }
-    void update(sf::RenderWindow& win) {
+    void update() {
         const float elap = Env::g_elapsed();
         
         switch (status) {
@@ -144,7 +188,7 @@ public:
             // std::cout << "Wind" << v.angular_accel << '\n';
             updateFromGravity(v);
             // std::cout << "Gravity" << v.angular_accel << '\n';
-            updateFromFins(v, win);
+            updateFromFins(v);
             // std::cout << "Finds" << v.angular_accel << "\n\n";
 
             vel.x += v.accelx * elap;
@@ -207,6 +251,33 @@ public:
         return status;
     }
     int pixels_tall; // change this code later
+
+    StateParams get_rocket_params() const {
+        return StateParams(
+            position.y, position.x,
+            vel.y, vel.x,
+            getRotation(), angular_vel,
+            engines[0].get_throttle(), engines[0].get_angle(),
+            engines[1].get_throttle(), engines[1].get_angle(),
+            engines[2].get_throttle(), engines[2].get_angle(),
+            upper_fin.get_angle(), lower_fin.get_angle()
+        );
+    }
+
+    void update_params(const ControlParams& contr) {
+        engines[0].set_throttle_vel(contr.e1_thr_vel);
+        engines[0].set_throttle_vel(contr.e1_angle_vel * 100);
+
+        engines[1].set_throttle_vel(contr.e2_thr_vel);
+        engines[1].set_throttle_vel(contr.e2_angle_vel * 100);
+
+        engines[2].set_throttle_vel(contr.e3_thr_vel);
+        engines[2].set_throttle_vel(contr.e3_angle_vel * 100);
+
+        upper_fin.set_angular_vel(contr.uflp_angle_vel * 300);
+        lower_fin.set_angular_vel(contr.lflp_angle_vel * 300);
+    }
+    
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {
@@ -261,7 +332,7 @@ private:
         }
     }
 
-    void updateFromFins(stateVector& res, sf::RenderWindow& win) {
+    void updateFromFins(stateVector& res) {
 
         std::array<RocketFins*, 2> fins = {&upper_fin, &lower_fin};
         for (const RocketFins* fin : fins) {
@@ -329,15 +400,6 @@ private:
                 res.angular_accel += (angular_vel > 0 ? -1 : 1) * (torque / angle_inertia);
             else // torque and rotation same direction
                 res.angular_accel += (angular_vel > 0 ? 1 : -1) * (torque / angle_inertia);
-            
-
-            sf::Vector2f vect(0, 0);
-            vect = (getTransform() * fin->getTransform()).transformPoint(vect);
-            sf::Vertex line[2] = {
-                sf::Vertex(vect, sf::Color::Red),
-                sf::Vertex(sf::Vector2f(vect.x+trans_force_x, vect.y+trans_force_y*-1))
-            };
-            win.draw(line, 2, sf::Lines);        
         }
     }
     void updateFromWindResistence(stateVector& res) {

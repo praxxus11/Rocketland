@@ -13,7 +13,6 @@ public:
         number_frames(frms),
         sprites(number_frames)
     {
-        std::cout << "Hello";
         try {
             sprite_sheet.loadFromFile(sheet_loc);
             const int imghei = sheet_height / number_frames;

@@ -18,16 +18,16 @@ class Manager {
                 26,
                 "imgs/explosion_sheet.png")
         {
-            int numrocks = 1;
+            int numrocks = 20;
             rockets.reserve(numrocks);
             for (int i=0; i<numrocks; i++) {
                 const float fuel_amount = 100000;
                 const float rocket_mass = 77000;
                 const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
                 rockets.emplace_back(
-                    sf::Vector2f(rand()%10+40, 60),
+                    sf::Vector2f(rand()%10+40, 600),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
-                    0,
+                    -90,
                     1120,
                     sf::Vector2f(0, 0),
                     0,
@@ -42,6 +42,8 @@ class Manager {
                 rockets[i].irlSetPosition(rockets[i].irlGetPosition());
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
+
+                ai_manager.init(rockets);
             }
         }
         ~Manager() 
@@ -51,9 +53,10 @@ class Manager {
         void update(sf::RenderWindow& win) {
             for (Rocket& r : rockets) {
                 r.setStatus(cm.rocket_floor_collision(r, f));
-                r.update(win);
+                r.update();
             }
             f.update(); // make sure to update rocket before floor
+            ai_manager.update_rockets();
         }
 
         void draw(sf::RenderWindow& win) const {

@@ -22,7 +22,7 @@ int main()
         }
         window.clear();
         m.update(window);
-        c.update_from_rocket(m.get_rocket_pos());
+        c.update();
         m.draw(window);
         Env::restartc();
         window.display();

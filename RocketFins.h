@@ -9,6 +9,7 @@ public:
     RocketFins(sf::Vector2f pos, GameObject* parent, Type type, float rad_dist) :
         GameObjectRelative(pos, parent),
         angle(0),
+        angular_vel(0),
         fin_type(type),
         radial_distance(rad_dist)
     {
@@ -28,28 +29,34 @@ public:
         setScale(1,1);
         setScale(angle/90.f * getScale().x, getScale().y);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            // angle = fin_type == Type::Upper ? 
-            //     std::max(-90.f, angle - 300 * Env::g_elapsed()) :
-            //     std::min(90.f, angle + 300 * Env::g_elapsed());
-            angle = 1 ? 
-                std::max(-90.f, angle - 300 * Env::g_elapsed()) :
-                std::min(90.f, angle + 300 * Env::g_elapsed());
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            // angle = fin_type == Type::Upper ?
-            //     std::min(90.f, angle + 300 * Env::g_elapsed()) : 
-            //     std::max(-90.f, angle - 300 * Env::g_elapsed());
-            angle = 1 ?
-                std::min(90.f, angle + 300 * Env::g_elapsed()) : 
-                std::max(-90.f, angle - 300 * Env::g_elapsed());
-        }
-        else { 
-            angle -= 5 * angle * Env::g_elapsed();
-        }
+
+        if (angular_vel < 0) angle = std::max(-90.f, angle + angular_vel * Env::g_elapsed());
+        else angle = std::min(90.f, angle + angular_vel * Env::g_elapsed());
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        //     // angle = fin_type == Type::Upper ? 
+        //     //     std::max(-90.f, angle - 300 * Env::g_elapsed()) :
+        //     //     std::min(90.f, angle + 300 * Env::g_elapsed());
+        //     angle = 1 ? 
+        //         std::max(-90.f, angle - 300 * Env::g_elapsed()) :
+        //         std::min(90.f, angle + 300 * Env::g_elapsed());
+        // }
+        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        //     // angle = fin_type == Type::Upper ?
+        //     //     std::min(90.f, angle + 300 * Env::g_elapsed()) : 
+        //     //     std::max(-90.f, angle - 300 * Env::g_elapsed());
+        //     angle = 1 ?
+        //         std::min(90.f, angle + 300 * Env::g_elapsed()) : 
+        //         std::max(-90.f, angle - 300 * Env::g_elapsed());
+        // }
+        // else { 
+        //     angle -= 5 * angle * Env::g_elapsed();
+        // }
     }
     float get_angle() const {
         return angle;
+    }
+    void set_angular_vel(float angv) {
+        angular_vel = angv;
     }
     float get_radial_dist() const {
         return radial_distance;
@@ -62,6 +69,7 @@ private:
     }
     sf::Sprite fin_sprite;
     float angle;
+    float angular_vel;
     Type fin_type;
     float radial_distance;
 };

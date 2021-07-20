@@ -6,8 +6,10 @@ class Engine : public GameObjectRelative {
 public:
     Engine(sf::Vector2f pos, GameObject* parent) :
         GameObjectRelative(pos, parent),
-        angular_delta(0),
+        angle(0),
         throttle(0.5f),
+        angle_vel(0),
+        throttle_vel(0),
         max_thrust(2.3e6)
     {
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
@@ -15,7 +17,7 @@ public:
     }
     Engine(const Engine& e) :
         GameObjectRelative(e.position, e.parent),
-        angular_delta(e.angular_delta),
+        angle(e.angle),
         throttle(e.throttle),
         max_thrust(e.max_thrust)
     {
@@ -35,37 +37,49 @@ public:
         float scy = (rand()%1000)/2000. + 1;
         setScale(scx, scy * (0.4 + throttle));
         setScale(0.25*getScale().x, 0.5*getScale().y);
-        setRotation(angular_delta);
-        engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+        setRotation(angle);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            angular_delta = std::max(-15.f, angular_delta-100*Env::g_elapsed());
-        }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            angular_delta = std::min(15.f, angular_delta+100*Env::g_elapsed());
-        }
-        else { 
-            angular_delta -= 5*angular_delta*Env::g_elapsed();
-        }
+        if (angle_vel < 0) angle = std::max(-15.f, angle + angle_vel * Env::g_elapsed());
+        else angle = std::min(15.f, angle + angle_vel * Env::g_elapsed());
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            throttle = std::min(1.f, throttle + 1.f*Env::g_elapsed());
-        }   
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            throttle = std::max(0.4f, throttle - 1.f*Env::g_elapsed());
-        }
+        if (throttle_vel < 0) throttle = std::max(-1.f, throttle + throttle_vel * Env::g_elapsed());
+        else throttle = std::min(1.f, throttle + throttle_vel * Env::g_elapsed());
+        // engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        //     angle = std::max(-15.f, angle-100*Env::g_elapsed());
+        // }
+        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        //     angle = std::min(15.f, angle+100*Env::g_elapsed());
+        // }
+        // else { 
+        //     angle -= 5*angle*Env::g_elapsed();
+        // }
+
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        //     throttle = std::min(1.f, throttle + 1.f*Env::g_elapsed());
+        // }   
+        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        //     throttle = std::max(0.4f, throttle - 1.f*Env::g_elapsed());
+        // }
     }
     float get_angle() const {
-        return angular_delta;
+        return angle;
     }
     float is_engine_on() const {
-        return engine_on;
+        return (throttle >= 0.4);
     }
     float get_thrust() const {
         return max_thrust * throttle;
     }
     float get_throttle() const {
         return throttle;
+    }
+    void set_throttle_vel(float tv) {
+        throttle_vel = tv;
+    }
+    void set_angle_vel(float av) {
+        angle_vel = av;
     }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
@@ -76,8 +90,11 @@ private:
         }
     }
     sf::Sprite flame_sprite;
-    float angular_delta; // -45 -> 45 degress, where 0 degrees is downward
+
+    float angle; // -45 -> 45 degress, where 0 degrees is downward
     float throttle; // 0.05 -> 1.0
-    bool engine_on;
+    float angle_vel;
+    float throttle_vel;
+
     float max_thrust;
 };
