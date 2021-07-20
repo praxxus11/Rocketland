@@ -13,6 +13,7 @@ public:
     // given the position and features of rocket, position of floor,
     // produces status of rocket
     Rocket::Status rocket_floor_collision(const Rocket& r, const  Floor& f) {
+        if (r.getStatus() != Rocket::Status::Regular && r.getStatus() != Rocket::Status::Landed) return r.getStatus(); 
         sf::FloatRect rr = r.getGlobalBounds();
         sf::FloatRect fr = f.getGlobalBounds();
         // rr.top - rr.height because getGlobalBound for a GameObject returns
