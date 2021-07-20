@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 #include "NeuralNetwork.h"
 #include "RocketManager.h"
@@ -69,6 +70,17 @@ public:
             for (RocketManager& rm : networks) {
                 do_mutations(rm);
                 rm.reset();
+            }
+            if (Env::cycle_num%50==0) {
+                std::cout << "\n\nSaving...\n\n";
+                std::ofstream fout("saves/save_cycle" + std::to_string(Env::cycle_num) + ".txt");
+                for (int i=0; i<30; i++) {
+                    auto& hi = networks[i].get_wb();
+                    for (const auto& eigen_mat : hi) {
+                        fout << eigen_mat << '\n';
+                    }
+                    fout << '\n';
+                }
             }
         }
     }

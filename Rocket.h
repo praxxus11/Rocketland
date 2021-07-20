@@ -92,7 +92,6 @@ public:
     const sf::Vector2f& velo,
     float ang_vel,
     float ang_accel,
-    Gif expls,
     Status stat,
     float mass,
     float f_mass,
@@ -101,7 +100,6 @@ public:
         pixels_tall(pix_tall),
         vel(velo),
         angular_vel(ang_vel),
-        explosion_anim(expls),
         status(stat),
         upper_fin(sf::Vector2f(4.5/scal.x, 3/scal.y), this, RocketFins::Type::Upper, 20),
         lower_fin(sf::Vector2f(4.5/scal.x, 34.5/scal.y), this, RocketFins::Type::Lower, -25),
@@ -110,7 +108,6 @@ public:
         angle_inertia(inertia)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
-        explosion_anim.setOrigin(72, 120);
         setScale(scal);
         setRotation(rot);
         
@@ -124,7 +121,6 @@ public:
         pixels_tall(r.pixels_tall),
         vel(r.vel),
         angular_vel(r.angular_vel),
-        explosion_anim(r.explosion_anim),
         status(r.status),
         upper_fin(r.upper_fin),
         lower_fin(r.lower_fin),
@@ -134,7 +130,6 @@ public:
         engines(r.engines)
     {
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
-        explosion_anim.setOrigin(72, 120);    
         setScale(r.getScale());
         setRotation(r.getRotation());
 
@@ -199,20 +194,6 @@ public:
         }
         case Status::Explode: {
             setStatus(Status::BlewUp);
-            if (!explosion_initialized) {
-                const auto globalbnd = getGlobalBounds();
-                // explosion_anim.irlSetPosition(sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height));
-                explosion_anim.get_old_pos() = sf::Vector2f(globalbnd.left + 0.5*globalbnd.width, globalbnd.top - globalbnd.height);
-                float times_bigger = 0.5 + std::min(sqrt(vel.x*vel.x + vel.y*vel.y) / 30, 2.f); // how large explosion is compared to rocket
-                const float scale = (times_bigger * 1120 * getScale().x) / 128;
-                explosion_anim.setScale(rand()%2 ? scale : -scale, scale); // randomly flip the explosion animation
-                explosion_initialized = 1;
-            }
-            explosion_anim.irlSetPosition(explosion_anim.get_old_pos());
-            explosion_anim.update();
-            if (explosion_anim.get_curr() >= explosion_anim.number_frames()) {
-                setStatus(Status::BlewUp);
-            }
             break;
         }
         case Status::Landed: {
@@ -287,9 +268,7 @@ public:
         vel.x = rand()%20-10; vel.y = rand()%5-100;
         setRotation((rand()%2 ? 1 : -1)*90); angular_vel = rand()%10-5;
         status = Status::Regular;
-        explosion_initialized = 0;
         fuel_mass = rand()%100 + 50000;
-        explosion_anim.reset();
     }
 
 private:
@@ -305,10 +284,6 @@ private:
             target.draw(upper_fin);
             target.draw(lower_fin);
 
-        }
-        if (status == Status::Explode) {
-            target.draw(explosion_anim);
-            // target.draw(*explosion_anim.getBoundingBox().get());
         }
     }
     void updateFromEngine(stateVector& res) {
@@ -430,8 +405,6 @@ private:
     sf::Sprite sprite;
     sf::Vector2f vel;
     float angular_vel;
-    Gif explosion_anim;
-    bool explosion_initialized = 0;
     Status status;
     std::vector<Engine> engines;
     

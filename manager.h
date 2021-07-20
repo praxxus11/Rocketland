@@ -31,7 +31,6 @@ class Manager {
                     sf::Vector2f(0, -100),
                     0,
                     0,
-                    Gif(3, exframes),
                     Rocket::Status::Regular,
                     rocket_mass, // assume has mass of 7.7e4 kg = around 85 tons
                     fuel_amount, // assume has initial fuel of 9.0e4 kg - around 100 tons 

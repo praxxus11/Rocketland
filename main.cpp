@@ -10,7 +10,7 @@ int main()
     settings.antialiasingLevel= 8;
 
     Manager m {};
-    while (Env::cycle_num < 10) {
+    while (1) {
         m.update();
     }
     // Camera c {};
