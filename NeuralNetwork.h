@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <math.h>
 #include <functional>
+#include <string>
+#include <fstream>
 
 class NeuralNetwork {
 public:
@@ -25,6 +27,25 @@ public:
             // weights & bias from layer i to layer (i + 1)
             // the last row are the biases for the layer
             res.push_back(Eigen::MatrixXf::Random(layer_sizes[i] + 1, layer_sizes[i+1]));
+        }
+        return res;
+    }
+
+    std::vector<std::vector<Eigen::MatrixXf>> get_wb_fromfile(std::string filename) {
+        std::ifstream fin("saves/save_cycle450.txt");
+        std::vector<std::vector<Eigen::MatrixXf>> res;
+        for (int num=0; num<29; num++) {
+            std::vector<Eigen::MatrixXf> temp;
+            for (int layer=0; layer<layer_sizes.size()-1; layer++) {
+                Eigen::MatrixXf weights_biases(layer_sizes[layer]+1, layer_sizes[layer+1]);
+                for (int i=0; i<layer_sizes[layer]+1; i++) {
+                    for (int j=0; j<layer_sizes[layer+1]; j++) {
+                        fin >> weights_biases(i, j);
+                    }
+                }
+                temp.push_back(weights_biases);
+            }
+            res.push_back(temp);
         }
         return res;
     }

@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <Eigen/Dense>
 
 #include "NeuralNetwork.h"
 #include "RocketManager.h"
@@ -29,7 +31,21 @@ public:
     }
     
     void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
-        
+        std::vector<std::vector<Eigen::MatrixXf>> wts = network.get_wb_fromfile(filename);
+        for (int i=0; i<rockets.size(); i++) {
+            if (i<wts.size()) {
+                networks.emplace_back(
+                    &rockets[i],
+                    wts[i]
+                );
+            }
+            else {
+                networks.emplace_back(
+                    &rockets[i],
+                    network.get_random_weights_biases()                    
+                );
+            }
+        }
     }
 
     void update_rockets() {
