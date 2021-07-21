@@ -9,6 +9,7 @@
 #include "Floor.h"
 #include "CollisionManager.h"
 #include "AIManager.h"
+#include <thread>
 
 class Manager {
     public:
@@ -42,6 +43,8 @@ class Manager {
                 rockets[i].setRotation(rockets[i].getRotation());
             }
             ai_manager.init(rockets);
+            // ai_manager.init_from_file(rockets, "C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num100.txt");
+
         }
         ~Manager() 
         {
@@ -52,6 +55,7 @@ class Manager {
                 r.setStatus(cm.rocket_floor_collision(r, f));
                 r.update();
             }
+
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
         }

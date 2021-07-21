@@ -24,17 +24,11 @@ public:
         std::vector<float> inp {float(tanh(0.001 * p.posy)), float(tanh(0.01 * p.posx)),
                                 float(tanh(0.01 * p.vely)), float(tanh(0.01 * p.velx)),
                                 p.angle/180, float(tanh(0.005 * p.angle_vel)),
-                                p.e1_thr, p.e1_angle/15.f,
-                                p.e2_thr, p.e2_angle/15.f,
-                                p.e3_thr, p.e3_angle/15.f,
-                                p.uflp_angle/90.f, p.lflp_angle/90.f};
+                                p.e_thr, p.e_angle/15.f};
 
         std::vector<float> res = nn.front_prop(inp, weights_biases);
         rocket_ref->update_params(ControlParams(
-            res[0], res[1],
-            res[2], res[3],
-            res[4], res[5],
-            res[6], res[7]
+            res[0], res[1]
         ));
     }
 
@@ -46,7 +40,7 @@ public:
     }
 
     void updateScore() {
-        score += abs(rocket_ref->getVelocity().y) * 10;
+        score += abs(rocket_ref->getVelocity().y) * 30;
         score += abs(rocket_ref->getVelocity().x) * 15;
         score += abs(rocket_ref->get_angular_vel()) * 10;
         score += 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   

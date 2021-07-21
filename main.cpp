@@ -10,6 +10,9 @@ int main()
     settings.antialiasingLevel= 8;
 
     Manager m {};
+    // while (1) {
+    //     m.update();
+    // }
     Camera c {};
     sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "", sf::Style::Default, settings);
     window.setFramerateLimit(10);
@@ -22,7 +25,8 @@ int main()
         }
         window.clear();
         m.update();
-        c.update_from_rocket(m.get_rocket_pos());
+        c.update();
+        // c.update_from_rocket(m.get_rocket_pos());
         m.draw(window);
         Env::restartc();
         window.display();

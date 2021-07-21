@@ -11,9 +11,10 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{14, 20, 8}, 
+        network(std::vector<int>{8, 8, 8, 2}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
-            NeuralNetwork::ActivationFuncs::tanh,
+            NeuralNetwork::ActivationFuncs::relu,
+            NeuralNetwork::ActivationFuncs::relu,
             NeuralNetwork::ActivationFuncs::tanh
         })
     {   
@@ -74,7 +75,7 @@ public:
                 rm.reset();
             }
 
-            if (Env::cycle_num%75==0) {
+            if (Env::cycle_num%100==0) {
                 std::cout << "\n\nSaving...\n\n";
                 std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
                 for (int i=0; i<30; i++) {
