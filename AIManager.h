@@ -30,18 +30,10 @@ public:
     void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
         std::vector<std::vector<Eigen::MatrixXf>> wts = network.get_wb_fromfile(filename);
         for (int i=0; i<rockets.size(); i++) {
-            if (i<wts.size()) {
-                networks.emplace_back(
-                    &rockets[i],
-                    wts[i]
-                );
-            }
-            else {
-                networks.emplace_back(
-                    &rockets[i],
-                    network.get_random_weights_biases()                    
-                );
-            }
+            networks.emplace_back(
+                &rockets[i],
+                wts[i % wts.size()]
+            );
         }
     }
 
@@ -51,10 +43,9 @@ public:
             rm.update_rocket(network);
             all_done = all_done && (rm.is_crashed() || rm.is_landed());
         }
-        totTime += Env::g_elapsed();
+
         if (all_done) {
             Env::cycle_num++;
-            totTime = 0;
             double tot = 0;
             int ct = 0;
             for (RocketManager& rm : networks) {
@@ -64,30 +55,25 @@ public:
                     ct++;
                 }
             }
+            
             sort(networks.begin(), networks.end(), [](const RocketManager& a, const RocketManager& b) {
                 return (a.getScore() < b.getScore());
             });
-            std::cout << "Iteration: " << iter++ << " Average score: " << tot/ct << "\n";
+            std::cout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
             
             // first remove the worst 90% of them, meanwhile also crosses best of them
             const int top_x = Env::num_rocks/10;
             for (int i=Env::num_rocks-1; i>top_x; i--) {
-                int a = int(rand()%top_x), b = int(rand()%top_x);
+                int a = Env::get_rand()%top_x, b = Env::get_rand()%top_x;
                 if (a==b) b++;
                 networks[i].get_wb() = do_cross_over(networks[a], networks[b]);
             }
-
-            // now cross best again
-            // for (int i=0; i<float(top_x)/3; i++) {
-            //     int a = int(rand()%top_x), b = int(rand()%top_x);
-            //     if (a==b) b++;
-            //     networks[a].get_wb() = do_cross_over(networks[a], networks[b]);
-            // }
 
             for (RocketManager& rm : networks) {
                 do_mutations(rm);
                 rm.reset();
             }
+
             if (Env::cycle_num%75==0) {
                 std::cout << "\n\nSaving...\n\n";
                 std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
@@ -109,8 +95,8 @@ public:
             int num_cols = a.get_wb()[layer].cols();
             Eigen::MatrixXf temp(num_rows, num_cols);
             for (int row=0; row<num_rows; row++) {
-                int splice_ind = (rand()%num_cols); // from [0, splice_ind], [splice_ind+1, num_rows-1]
-                if (rand()%2) {
+                int splice_ind = (Env::get_rand()%num_cols); // from [0, splice_ind], [splice_ind+1, num_rows-1]
+                if (Env::get_rand()%2) {
                     for (int i=0; i<=splice_ind; i++) {
                         temp(row, i) = a.get_wb()[layer](row, i);
                     }
@@ -137,8 +123,8 @@ public:
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
-                    if (float(rand())/RAND_MAX < mutation_chance)
-                        mat(i, j) += (rand()%2 ? 1 : -1) * float(rand())/(3*RAND_MAX);
+                    if (float(Env::get_rand())/INT_MAX < mutation_chance)
+                        mat(i, j) += (Env::get_rand()%2 ? 1 : -1) * double(Env::get_rand())/(3*INT_MAX);
                 }
             }
         }
@@ -147,6 +133,4 @@ public:
 private:
     NeuralNetwork network;
     std::vector<RocketManager> networks;
-    int iter = 0;
-    float totTime = 0;
 };

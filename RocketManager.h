@@ -28,13 +28,7 @@ public:
                                 p.e2_thr, p.e2_angle/15.f,
                                 p.e3_thr, p.e3_angle/15.f,
                                 p.uflp_angle/90.f, p.lflp_angle/90.f};
-        // std::vector<float> inp {p.posy, p.posx,
-        //                 p.vely, p.velx,
-        //                 p.angle, p.angle_vel,
-        //                 p.e1_thr, p.e1_angle,
-        //                 p.e2_thr, p.e2_angle,
-        //                 p.e3_thr, p.e3_angle,
-        //                 p.uflp_angle, p.lflp_angle};
+
         std::vector<float> res = nn.front_prop(inp, weights_biases);
         rocket_ref->update_params(ControlParams(
             res[0], res[1],

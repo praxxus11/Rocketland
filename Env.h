@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <utility>
+#include <random>
 
 class Env {
 public:
@@ -71,6 +72,15 @@ public:
 
     static int cycle_num;
     static int num_rocks;
+
+
+    // ranadom numbers
+    static std::random_device seed;
+    static std::mt19937 rng;
+    static std::uniform_int_distribution<int> rnd;
+    static int get_rand() {
+        return rnd(rng);
+    }
 };
 
 int Env::ww = 1100;
@@ -84,3 +94,7 @@ sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
 int Env::num_rocks = 1024;
+
+std::random_device Env::seed;
+std::mt19937 Env::rng(Env::seed());
+std::uniform_int_distribution<int> Env::rnd(0, INT_MAX);
