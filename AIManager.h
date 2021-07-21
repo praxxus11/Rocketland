@@ -124,7 +124,7 @@ public:
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
                     if (float(Env::get_rand())/INT_MAX < mutation_chance)
-                        mat(i, j) += (Env::get_rand()%2 ? 1 : -1) * double(Env::get_rand())/(3*INT_MAX);
+                        mat(i, j) += (Env::get_rand()%2 ? 1 : -1) * double(Env::get_rand())/(3.0*INT_MAX);
                 }
             }
         }
