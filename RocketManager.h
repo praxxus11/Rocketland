@@ -62,7 +62,7 @@ public:
             score = INT_MAX;
         }
         if (is_landed()) 
-            score = -1;
+            score -= 2000;
     }
     int getScore() const { return score; }
     
