@@ -9,7 +9,6 @@
 #include "Floor.h"
 #include "CollisionManager.h"
 #include "AIManager.h"
-#include <thread>
 
 class Manager {
     public:
@@ -21,15 +20,15 @@ class Manager {
         {
             rockets.reserve(Env::num_rocks);
             for (int i=0; i<Env::num_rocks; i++) {
-                const float fuel_amount = 100000;
+                const float fuel_amount = 50000;
                 const float rocket_mass = 77000;
                 const float inertia = 70000000 + (70000000/(90000 + 77000)) * (fuel_amount + rocket_mass - 90000 + 77000);
                 rockets.emplace_back(
-                    sf::Vector2f(rand()%10+40, 600),
+                    sf::Vector2f(rand()%10+40, rand()%10 + 1000),
                     sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120),
                     -90,
                     1120,
-                    sf::Vector2f(0, -100),
+                    sf::Vector2f(0, -80),
                     0,
                     0,
                     Rocket::Status::Regular,
@@ -42,8 +41,8 @@ class Manager {
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
             }
-            ai_manager.init(rockets);
-            // ai_manager.init_from_file(rockets, "C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num100.txt");
+            // ai_manager.init(rockets);
+            ai_manager.init_from_file(rockets, "C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/run5/cycle_num500.txt");
 
         }
         ~Manager() 

@@ -161,7 +161,7 @@ public:
             stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
             // std::cout << "Engine" << v.angular_accel << '\n';
-            updateFromWindResistence(v);
+            // updateFromWindResistence(v);
             // std::cout << "Wind" << v.angular_accel << '\n';
             updateFromGravity(v);
             // std::cout << "Gravity" << v.angular_accel << '\n';
@@ -240,9 +240,12 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%100 + 1000));
+        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 700));
         vel.x = rand()%20-10; vel.y = rand()%5-100;
-        setRotation(rand()%20-100); angular_vel = rand()%10-5;
+        setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
+        // setRotation(0);
+        
+        angular_vel = 0;
         status = Status::Regular;
         fuel_mass = rand()%100 + 50000;
     }

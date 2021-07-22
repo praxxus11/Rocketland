@@ -1,7 +1,7 @@
 #pragma once 
 
 #include <SFML/Graphics.hpp>
-#include <utility>
+#include <array>
 #include <random>
 
 class Env {
@@ -65,21 +65,26 @@ public:
 
     static sf::Clock clock;
     // static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
-    // static float g_elapsed() { return 0.2; }
-    static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
+    static float g_elapsed() { return 0.05; }
+    // static float g_elapsed() { return clock.getElapsedTime().asSeconds(); }
 
     static void restartc() { clock.restart(); }
 
     static int cycle_num;
     static int num_rocks;
 
-
     // ranadom numbers
     static std::random_device seed;
     static std::mt19937 rng;
     static std::uniform_int_distribution<int> rnd;
+    static std::array<int, 2> interval_grad;
+    static std::array<int, 2> weight_grad;
+    static std::piecewise_linear_distribution<float> grad_rnd;
     static int get_rand() {
         return rnd(rng);
+    }
+    static float get_grad_rand() {
+        return grad_rnd(rng);
     }
 };
 
@@ -93,8 +98,12 @@ sf::Clock Env::clock{};
 sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
-int Env::num_rocks = 1;
+int Env::num_rocks = 2000;
 
 std::random_device Env::seed;
 std::mt19937 Env::rng(Env::seed());
 std::uniform_int_distribution<int> Env::rnd(0, INT_MAX);
+
+std::array<int, 2> Env::interval_grad {0, Env::num_rocks/3};
+std::array<int, 2> Env::weight_grad {1, 0};
+std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), interval_grad.end(), weight_grad.begin());

@@ -13,7 +13,7 @@ public:
     {
     }
     void update_rocket(const NeuralNetwork& nn) {
-        if (rocket_ref->irlGetPosition().y > 1300 || abs(rocket_ref->irlGetPosition().x) > 1000) {
+        if (rocket_ref->irlGetPosition().y > 1500 || abs(rocket_ref->irlGetPosition().x) > 1100) {
             rocket_ref->setStatus(Rocket::Status::BlewUp);
             score = 1e7;
         }
@@ -40,19 +40,39 @@ public:
     }
 
     void updateScore() {
-        score += abs(rocket_ref->getVelocity().y) * 30;
-        score += abs(rocket_ref->getVelocity().x) * 15;
-        score += abs(rocket_ref->get_angular_vel()) * 10;
-        score += 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   
+        // cost from going too fast downards
+        const float vel_y_cost = abs(rocket_ref->getVelocity().y) * 30;
+
+        // cost from going too fast sideways 
+        const float vel_x_cost = abs(rocket_ref->getVelocity().x) * 20;
+
+        const float angle_vel_cost = abs(rocket_ref->get_angular_vel()) * 23;
+        
+        const float angle_cost = 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   
+        
+        const float temp_tot_score = vel_y_cost + vel_x_cost + angle_vel_cost + angle_cost;
+        const float distr = 1;
+
+        score += (distr * (vel_y_cost/temp_tot_score)) * vel_y_cost;
+        score += (distr * (vel_x_cost/temp_tot_score)) * vel_x_cost;
+        score += (distr * (angle_vel_cost/temp_tot_score)) * angle_vel_cost;
+        score += (distr * (angle_cost/temp_tot_score)) * angle_cost;
+
         if (!is_crashed() && !is_landed()) {
             score = INT_MAX;
         }
+        if (is_landed()) 
+            score = -1;
     }
     int getScore() const { return score; }
     
     void reset() {
         score = 0;
         rocket_ref->reset_rocket();
+    }
+
+    Rocket* get_rocket() {
+        return rocket_ref;
     }
 
     std::vector<Eigen::MatrixXf>& get_wb() {

@@ -11,10 +11,10 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{8, 8, 8, 2}, 
+        network(std::vector<int>{8, 12, 2}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
-            NeuralNetwork::ActivationFuncs::relu,
-            NeuralNetwork::ActivationFuncs::relu,
+            // NeuralNetwork::ActivationFuncs::tanh,
+            NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
         })
     {   
@@ -31,6 +31,7 @@ public:
     void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
         std::vector<std::vector<Eigen::MatrixXf>> wts = network.get_wb_fromfile(filename);
         for (int i=0; i<rockets.size(); i++) {
+            rockets[i].reset_rocket();
             networks.emplace_back(
                 &rockets[i],
                 wts[i % wts.size()]
@@ -56,24 +57,12 @@ public:
                     ct++;
                 }
             }
+            std::cout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
             
             sort(networks.begin(), networks.end(), [](const RocketManager& a, const RocketManager& b) {
                 return (a.getScore() < b.getScore());
             });
-            std::cout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
-            
-            // first remove the worst 90% of them, meanwhile also crosses best of them
-            const int top_x = Env::num_rocks/10;
-            for (int i=Env::num_rocks-1; i>top_x; i--) {
-                int a = Env::get_rand()%top_x, b = Env::get_rand()%top_x;
-                if (a==b) b++;
-                networks[i].get_wb() = do_cross_over(networks[a], networks[b]);
-            }
 
-            for (RocketManager& rm : networks) {
-                do_mutations(rm);
-                rm.reset();
-            }
 
             if (Env::cycle_num%100==0) {
                 std::cout << "\n\nSaving...\n\n";
@@ -85,6 +74,44 @@ public:
                     }
                     fout << '\n';
                 }
+            }
+
+            std::vector<RocketManager> temp_rcks;
+            for (RocketManager& rm : networks) {
+                int a = round(Env::get_grad_rand());
+                int b = round(Env::get_grad_rand());
+                temp_rcks.emplace_back(
+                    rm.get_rocket(),
+                    do_cross_over(networks[a], networks[b])
+                );
+            }
+            std::swap(temp_rcks, networks);
+
+            // first remove the worst 90% of them, meanwhile also crosses best of them
+            // const int top_x = Env::num_rocks/10;
+
+            // for (int i=Env::num_rocks-1; i>top_x; i--) {
+                // int a = Env::get_rand()%top_x, b = Env::get_rand()%top_x;
+                // networks[i].get_wb() = do_cross_over(networks[a], networks[b]);
+            // }
+
+            for (int i=Env::num_rocks-1; i>Env::num_rocks-50; i--) {
+                switch(rand()%3) {
+                    case 0:
+                        networks[i].get_wb() = do_cross_over(networks[0], networks[1]);
+                        break;
+                   case 1:
+                        networks[i].get_wb() = networks[0].get_wb();
+                        break;
+                   case 2:
+                        networks[i].get_wb() = networks[1].get_wb();
+                        break;
+                }
+            }
+
+            for (RocketManager& rm : networks) {
+                do_mutations(rm);
+                rm.reset();
             }
         }
     }
@@ -120,12 +147,12 @@ public:
     }
 
     void do_mutations(RocketManager& rm) {
-        const float mutation_chance = 0.03*exp(-0.01*Env::cycle_num) + 0.006;
+        const float mutation_chance = 0.05*exp(-0.01*Env::cycle_num) + 0.006;
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
                     if (float(Env::get_rand())/INT_MAX < mutation_chance)
-                        mat(i, j) += (Env::get_rand()%2 ? 1 : -1) * double(Env::get_rand())/(3.0*INT_MAX);
+                        mat(i, j) += (Env::get_rand()%2 ? 1 : -1) * double(Env::get_rand())/(INT_MAX);
                 }
             }
         }
