@@ -9,7 +9,7 @@ int main()
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
 
-    const bool show = 0;
+    const bool show = 1;
     Manager m {};
     if (!show) {
         while (1) {
