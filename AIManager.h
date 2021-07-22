@@ -40,7 +40,7 @@ public:
     }
 
     void update_rockets() {
-        int all_done = 1;
+        bool all_done = 1;
         for (RocketManager& rm : networks) {
             rm.update_rocket(network);
             all_done = all_done && (rm.is_crashed() || rm.is_landed());
@@ -82,7 +82,7 @@ public:
                 int b = round(Env::get_grad_rand());
                 temp_rcks.emplace_back(
                     rm.get_rocket(),
-                    do_cross_over_cols(networks[a], networks[b])
+                    do_cross_over(networks[a], networks[b])
                 );
             }
             std::swap(temp_rcks, networks);
@@ -95,19 +95,19 @@ public:
                 // networks[i].get_wb() = do_cross_over(networks[a], networks[b]);
             // }
 
-            // for (int i=Env::num_rocks-1; i>Env::num_rocks-50; i--) {
-            //     switch(rand()%3) {
-            //         case 0:
-            //             networks[i].get_wb() = do_cross_over(networks[0], networks[1]);
-            //             break;
-            //        case 1:
-            //             networks[i].get_wb() = networks[0].get_wb();
-            //             break;
-            //        case 2:
-            //             networks[i].get_wb() = networks[1].get_wb();
-            //             break;
-            //     }
-            // }
+            for (int i=Env::num_rocks-1; i>Env::num_rocks-50; i--) {
+                switch(rand()%3) {
+                    case 0:
+                        networks[i].get_wb() = do_cross_over(networks[0], networks[1]);
+                        break;
+                   case 1:
+                        networks[i].get_wb() = networks[0].get_wb();
+                        break;
+                   case 2:
+                        networks[i].get_wb() = networks[1].get_wb();
+                        break;
+                }
+            }
 
             for (RocketManager& rm : networks) {
                 do_mutations(rm);
@@ -119,8 +119,8 @@ public:
     std::vector<Eigen::MatrixXf> do_cross_over(RocketManager& a, RocketManager& b) {
         std::vector<Eigen::MatrixXf> res;
         for (int layer=0; layer<a.get_wb().size(); layer++) {
-            const int num_rows = a.get_wb()[layer].rows();
-            const int num_cols = a.get_wb()[layer].cols();
+            int num_rows = a.get_wb()[layer].rows();
+            int num_cols = a.get_wb()[layer].cols();
             Eigen::MatrixXf temp(num_rows, num_cols);
             for (int row=0; row<num_rows; row++) {
                 int splice_ind = (Env::get_rand()%num_cols); // from [0, splice_ind], [splice_ind+1, num_rows-1]
@@ -145,52 +145,9 @@ public:
         }
         return res;
     }
-    std::vector<Eigen::MatrixXf> do_cross_over_cols(RocketManager& a, RocketManager& b) {
-        const float cross_over_chance = 0.4;
-        std::vector<Eigen::MatrixXf> res;
-        for (int layer=0; layer<a.get_wb().size(); layer++) {
-            const int num_rows = a.get_wb()[layer].rows();
-            const int num_cols = a.get_wb()[layer].cols();
-            Eigen::MatrixXf temp(num_rows, num_cols);
-            for (int col=0; col<num_cols; col++) {
-                if (Env::get_rand()/double(INT_MAX) < cross_over_chance) {
-                    int splice_ind = (Env::get_rand()%num_rows); // from [0, splice_ind], [splice_ind+1, num_rows-1]
-                    if (Env::get_rand()%2) {
-                        for (int i=0; i<=splice_ind; i++) {
-                            temp(i, col) = a.get_wb()[layer](i, col);
-                        }
-                        for (int i=splice_ind+1; i<num_rows; i++) {
-                            temp(i, col) = b.get_wb()[layer](i, col);
-                        }
-                    }
-                    else {
-                        for (int i=0; i<=splice_ind; i++) {
-                            temp(i, col) = b.get_wb()[layer](i, col);
-                        }
-                        for (int i=splice_ind+1; i<num_rows; i++) {
-                            temp(i, col) = a.get_wb()[layer](i, col);
-                        }
-                    }
-                }
-                else {
-                    if (Env::get_rand()/double(INT_MAX) < 0.5) {
-                        for (int i=0; i<num_rows; i++) {
-                            temp(i, col) = a.get_wb()[layer](i, col);
-                        }
-                    }
-                    else {
-                        for (int i=0; i<num_rows; i++) {
-                            temp(i, col) = b.get_wb()[layer](i, col);
-                        }
-                    }
-                }
-            }
-            res.push_back(temp);
-        }
-        return res;
-    }
+
     void do_mutations(RocketManager& rm) {
-        const float mutation_chance = 0.04*exp(-0.01*Env::cycle_num) + 0.006;
+        const float mutation_chance = 0.05*exp(-0.01*Env::cycle_num) + 0.006;
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {

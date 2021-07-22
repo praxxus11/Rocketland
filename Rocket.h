@@ -247,7 +247,7 @@ public:
         
         angular_vel = 0;
         status = Status::Regular;
-        fuel_mass = rand()%100 + 20000;
+        fuel_mass = rand()%100 + 50000;
     }
 
 private:
