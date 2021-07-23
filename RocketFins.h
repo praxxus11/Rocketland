@@ -13,10 +13,6 @@ public:
         fin_type(type),
         radial_distance(rad_dist)
     {
-        ResourceManger::ResourceTypes load_type = (type == Type::Upper) ? 
-            ResourceManger::ResourceTypes::RocketUpperFin : 
-            ResourceManger::ResourceTypes::RocketLowerFin;
-        fin_sprite.setTexture(ResourceManger::getInstance()->getTexture(load_type));
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = fin_sprite.getLocalBounds();
@@ -67,7 +63,7 @@ private:
         states.transform *= parent->getTransform() * getTransform(); 
         target.draw(fin_sprite, states);
     }
-    sf::Sprite fin_sprite;
+    sf::RectangleShape fin_sprite;
     float angle;
     float angular_vel;
     Type fin_type;

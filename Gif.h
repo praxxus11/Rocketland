@@ -13,23 +13,13 @@ public:
         number_frames(frms),
         sprites(number_frames)
     {
-        try {
-            sprite_sheet.loadFromFile(sheet_loc);
-            const int imghei = sheet_height / number_frames;
-            for (int i=0; i<number_frames; i++) {
-                sprites[i] = sf::Sprite(sprite_sheet, sf::IntRect(0, i*imghei, sheet_width, imghei));
-            }
-        }
-        catch (...) {
-            std::cout << "Sprite sheet png not loaded";
-        }
     }
     sf::Sprite operator[](int i) const {
         return sprites[i];
     }
     int number_of_frames() const { return number_frames; }
 private:
-    sf::Texture sprite_sheet;
+    sf::RectangleShape sprite_sheet;
     int number_frames;
     int sheet_width;
     int sheet_height;

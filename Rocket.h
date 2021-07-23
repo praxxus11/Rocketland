@@ -89,7 +89,6 @@ public:
         fuel_mass(f_mass),
         angle_inertia(inertia)
     {
-        sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         setScale(scal);
         setRotation(rot);
         
@@ -111,7 +110,6 @@ public:
         angle_inertia(r.angle_inertia),
         engines(r.engines)
     {
-        sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
         setScale(r.getScale());
         setRotation(r.getRotation());
 
@@ -380,7 +378,7 @@ private:
         return mass + fuel_mass;
     }
 
-    sf::Sprite sprite;
+    sf::RectangleShape sprite = sf::RectangleShape(sf::Vector2f(210, 1120));
     sf::Vector2f vel;
     float angular_vel;
     Status status;
