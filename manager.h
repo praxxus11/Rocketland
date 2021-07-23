@@ -41,8 +41,8 @@ class Manager {
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
             }
-            ai_manager.init(rockets);
-            // ai_manager.init_from_file(rockets, "C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/Run9/cycle_num500.txt");
+            // ai_manager.init(rockets);
+            ai_manager.init_from_file(rockets, "C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/Run11/iteration4000.txt");
 
         }
         ~Manager() 
