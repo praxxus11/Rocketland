@@ -243,7 +243,6 @@ public:
         irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 700));
         vel.x = rand()%20-10; vel.y = rand()%5-100;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
-        // setRotation(0);
         
         angular_vel = 0;
         status = Status::Regular;

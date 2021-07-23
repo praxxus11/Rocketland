@@ -43,10 +43,15 @@ public:
         int all_done = 1;
         for (RocketManager& rm : networks) {
             rm.update_rocket(network);
-            all_done = all_done && (rm.is_crashed() || rm.is_landed());
+            all_done += (rm.is_crashed() || rm.is_landed());
         }
+        // Env::tempTm += Env::g_elapsed_real();
+        // if (Env::tempTm > 5) {
+        //     std::cout << all_done << '\n';
+        //     Env::tempTm = 0;
+        // }
 
-        if (all_done) {
+        if (all_done >= Env::num_rocks - 20) {
             Env::cycle_num++;
             double tot = 0;
             int ct = 0;
@@ -64,7 +69,7 @@ public:
             });
 
 
-            if (Env::cycle_num%100==0) {
+            if (Env::cycle_num%50==0) {
                 std::cout << "\n\nSaving...\n\n";
                 std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
                 for (int i=0; i<30; i++) {

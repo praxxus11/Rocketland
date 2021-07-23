@@ -9,11 +9,12 @@ int main()
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
 
-    const bool show = 1;
+    const bool show = 0;
     Manager m {};
     if (!show) {
         while (1) {
             m.update();
+            Env::restartc();
         }
     }
     else {
