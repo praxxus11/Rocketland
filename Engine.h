@@ -46,24 +46,6 @@ public:
 
         if (throttle_vel < 0) throttle = std::max(-1.f, throttle + throttle_vel * Env::g_elapsed());
         else throttle = std::min(1.f, throttle + throttle_vel * Env::g_elapsed());
-        // engine_on = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
-
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        //     angle = std::max(-15.f, angle-100*Env::g_elapsed());
-        // }
-        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        //     angle = std::min(15.f, angle+100*Env::g_elapsed());
-        // }
-        // else { 
-        //     angle -= 5*angle*Env::g_elapsed();
-        // }
-
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-        //     throttle = std::min(1.f, throttle + 1.f*Env::g_elapsed());
-        // }   
-        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-        //     throttle = std::max(0.4f, throttle - 1.f*Env::g_elapsed());
-        // }
     }
     float get_angle() const {
         return angle;

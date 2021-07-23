@@ -45,11 +45,6 @@ public:
             rm.update_rocket(network);
             all_done += (rm.is_crashed() || rm.is_landed());
         }
-        // Env::tempTm += Env::g_elapsed_real();
-        // if (Env::tempTm > 5) {
-        //     std::cout << all_done << '\n';
-        //     Env::tempTm = 0;
-        // }
 
         if (all_done >= Env::num_rocks - 20) {
             Env::cycle_num++;

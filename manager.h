@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 
+#define INT_MAX 2147483647
+
 #include "Env.h"
 #include "ResourceManager.h"
 #include "GameObject.h"
@@ -9,6 +11,7 @@
 #include "Floor.h"
 #include "CollisionManager.h"
 #include "AIManager.h"
+
 
 class Manager {
     public:
