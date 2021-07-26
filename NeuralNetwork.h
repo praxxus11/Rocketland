@@ -16,19 +16,21 @@ public:
     NeuralNetwork(std::vector<int> l_sizes,
         std::vector<ActivationFuncs> a_funcs
     ) : layer_sizes(l_sizes),
-        activation_funcs(a_funcs)
+        activation_funcs(a_funcs),
+        weights_ct(0),
+        biases_ct(0)
     {
         assert(layer_sizes.size() == 1+activation_funcs.size());
+        for (int i=0; i<layer_sizes.size() - 1; i++) {
+            weights_ct += layer_sizes[i] * layer_sizes[i + 1];
+            biases_ct += layer_sizes[i + 1];
+        }
     }
 
-    std::vector<Eigen::MatrixXf> get_random_weights_biases() {
-        std::vector<Eigen::MatrixXf> res;
-        for (int i=0; i<layer_sizes.size()-1; i++) {
-            // weights & bias from layer i to layer (i + 1)
-            // the last row are the biases for the layer
-            res.push_back(Eigen::MatrixXf::Random(layer_sizes[i] + 1, layer_sizes[i+1]));
+    void fill_random(float* arr, int n) {
+        for (int i=0; i<n; i++) {
+            arr[i] = float(2 * (float(Env::get_rand()) / INT_MAX) - 1); // -1 to 1
         }
-        return res;
     }
 
     std::vector<std::vector<Eigen::MatrixXf>> get_wb_fromfile(std::string filename) {
@@ -50,42 +52,56 @@ public:
         return res;
     }
 
-    std::vector<float> front_prop(const std::vector<float>& input_vector, const std::vector<Eigen::MatrixXf>& weights_biases) const {
-        assert(input_vector.size() == layer_sizes[0]);
-        assert(weights_biases.size() == layer_sizes.size() - 1);
-        for (int i=0; i<weights_biases.size(); i++) {
-            assert(weights_biases[i].rows() == layer_sizes[i] + 1);
-            assert(weights_biases[i].cols() == layer_sizes[i+1]);
-        }
+    void front_prop(float* input_vector, float* output_vector, float* weights, float* biases) const {
+        Eigen::Map<Eigen::MatrixXf> activations(input_vector, 1, layer_sizes[0]);
+        Eigen::MatrixXf activations_ref = activations;
+        std::vector<Eigen::MatrixXf> weights_vec;
+        std::vector<Eigen::MatrixXf> biases_vec;
+        int num_weights = 0;
+        int num_biases = 0;
+        for (int i=0; i < layer_sizes.size() - 1; i++) {
+            Eigen::Map<Eigen::MatrixXf> weight(weights + num_weights, layer_sizes[i + 1], layer_sizes[i]);
+            Eigen::Map<Eigen::MatrixXf> bias(biases + num_biases, 1, layer_sizes[i + 1]);
+            num_weights += layer_sizes[i + 1] * layer_sizes[i];
+            num_biases += layer_sizes[i + 1];
+            weights_vec.push_back(weight.transpose()); // because matrixes are stored in column major order in eigen
+            biases_vec.push_back(bias);
+        } 
 
-        Eigen::MatrixXf activations(1, input_vector.size() + 1);
-        for (int i=0; i<input_vector.size(); i++) {
-            activations(0, i) = input_vector[i];
-        }
-        activations(0, input_vector.size()) = 1; // constant for the bias term 
-        
-        for (int i=0; i<weights_biases.size(); i++) {
-            activations = activations * weights_biases[i];
+        for (int i=0; i<layer_sizes.size() - 1; i++) {
+            activations_ref *= weights_vec[i];
+            activations_ref += biases_vec[i];
             switch (activation_funcs[i]) {
                 case ActivationFuncs::relu:
-                    activations = activations.unaryExpr(relu_ff);
+                    activations_ref = activations_ref.unaryExpr(relu_ff);
                     break;
                 case ActivationFuncs::tanh:
-                    activations = activations.unaryExpr(tanh_ff);
+                    activations_ref = activations_ref.unaryExpr(tanh_ff);
                 defualt:
                     break;
             }
-            if (i < weights_biases.size()-1) { // then append a constant 1 term for the bias
-                activations.conservativeResize(1, activations.cols() + 1);
-                activations(0, activations.cols()-1) = 1; // constant for the bias term
-            }
         }
-        return std::vector<float>(activations.data(), activations.data() + activations.size());
+        output_vector[0] = activations_ref.data()[0];
+        output_vector[1] = activations_ref.data()[1];
+    }
+
+    const std::vector<int>& get_layer_sizes() const {
+        return layer_sizes;
+    }
+
+    int get_weights_ct() const {
+        return weights_ct;
+    }
+
+    int get_biases_ct() const {
+        return biases_ct;
     }
 
 private:
     std::function<float(float)> relu_ff = [](float x) { return std::max(0.f, x); };
     std::function<float(float)> tanh_ff = [](float x) { return tanh(x); };
     std::vector<int> layer_sizes;
+    int weights_ct;
+    int biases_ct;
     std::vector<ActivationFuncs> activation_funcs;
 };

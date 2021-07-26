@@ -86,9 +86,6 @@ public:
     static float get_grad_rand() {
         return grad_rnd(rng);
     }
-
-
-
     static float tempTm;
 };
 

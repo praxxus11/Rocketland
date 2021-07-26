@@ -5,14 +5,12 @@
 
 class RocketManager {
 public:
-    RocketManager(Rocket* rocket, 
-        const std::vector<Eigen::MatrixXf>& wb) :
-        weights_biases(wb),
+    RocketManager(Rocket* rocket) :
         rocket_ref(rocket),
         score(0)
     {
     }
-    void update_rocket(const NeuralNetwork& nn) {
+    void update_inputs(float* inp) {
         if (rocket_ref->irlGetPosition().y > 1500 || abs(rocket_ref->irlGetPosition().x) > 1100) {
             rocket_ref->setStatus(Rocket::Status::BlewUp);
             score = 1e7;
@@ -21,14 +19,19 @@ public:
         StateParams p = rocket_ref->get_rocket_params();
         float angle = p.angle;
         if (angle > 180) angle -= 360;
-        std::vector<float> inp {float(tanh(0.001 * p.posy)), float(tanh(0.01 * p.posx)),
-                                float(tanh(0.01 * p.vely)), float(tanh(0.01 * p.velx)),
-                                p.angle/180, float(tanh(0.005 * p.angle_vel)),
-                                p.e_thr, p.e_angle/15.f};
-
-        std::vector<float> res = nn.front_prop(inp, weights_biases);
+        inp[0] = tanh(0.001 * p.posy);
+        inp[1] = tanh(0.01 * p.posx);
+        inp[2] = tanh(0.01 * p.vely);
+        inp[3] = tanh(0.01 * p.velx);
+        inp[4] = p.angle / 180.f;
+        inp[5] = tanh(0.005 * p.angle_vel);
+        inp[6] = p.e_thr;
+        inp[7] = p.e_angle / 15.f;
+    }
+    
+    void update_outputs(float* oup) {
         rocket_ref->update_params(ControlParams(
-            res[0], res[1]
+            oup[0], oup[1]
         ));
     }
 
@@ -74,13 +77,7 @@ public:
     Rocket* get_rocket() {
         return rocket_ref;
     }
-
-    std::vector<Eigen::MatrixXf>& get_wb() {
-        return weights_biases;
-    }
-
 private:
     Rocket* rocket_ref;
-    std::vector<Eigen::MatrixXf> weights_biases;
     int score;
 };

@@ -1,10 +1,11 @@
 #include <iostream>
 #include <vector>
 
+#ifndef INT_MAX
 #define INT_MAX 2147483647
+#endif
 
 #include "Env.h"
-#include "ResourceManager.h"
 #include "GameObject.h"
 #include "Gif.h"
 #include "Rocket.h"
@@ -44,7 +45,7 @@ class Manager {
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
             }
-            ai_manager.init(rockets);
+            ai_manager.init_random(rockets);
             // ai_manager.init_from_file(rockets, "C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/Run9/cycle_num500.txt");
 
         }
