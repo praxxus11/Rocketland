@@ -13,7 +13,6 @@ public:
     AIManager() : 
         network(std::vector<int>{8, 4, 2}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
-            // NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
         })
@@ -33,16 +32,16 @@ public:
     }
 
     void init_random(std::vector<Rocket>& rockets) {
-        for (Rocket& rocket : rockets) {
-            networks.emplace_back(&rocket);
+        for (int i=0; i<rockets.size(); i++) {
+            networks.emplace_back(&rockets[i], i);
         }
         network.fill_random(weights, network.get_weights_ct() * Env::num_rocks);
         network.fill_random(biases, network.get_biases_ct() * Env::num_rocks);
     }
     
     void init_from_file(std::vector<Rocket> rockets, std::string filename) {
-        for (Rocket& rocket : rockets) {
-            networks.emplace_back(&rocket);
+        for (int i=0; i<rockets.size(); i++) {
+            networks.emplace_back(&rockets[i], i);
         }
         network.fill_from_file(weights, biases, filename);
     }
@@ -92,33 +91,34 @@ public:
                 std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
                 for (int r=0; r<Env::num_rocks/10; r++) {
                     for (int i=0; i<network.get_weights_ct(); i++) {
-                        fout << weights[r * network.get_weights_ct() + i] << " "; 
+                        fout << weights[networks[r].get_index() * network.get_weights_ct() + i] << " "; 
                     }
                     for (int i=0; i<network.get_biases_ct(); i++) {
-                        fout << biases[r * network.get_biases_ct() + i] << " ";
+                        fout << biases[networks[r].get_index() * network.get_biases_ct() + i] << " ";
                     }
                 }
                 fout << "\n\n";
-
             }
 
-            do_cross_over(0.4);
+            do_cross_over(0.4, networks);
             do_mutations(0.04*exp(-0.01*Env::cycle_num) + 0.006);
 
-            for (RocketManager& rm : networks) {
-                rm.reset();
+            for (int i=0; i<networks.size(); i++) {
+                networks[i].reset();
+                networks[i].set_index(i);
             }
+
         }
     }
 
-    void do_cross_over(float cross_over_chance) {
+    void do_cross_over(float cross_over_chance, const std::vector<RocketManager>& mans) {
         const auto& layers = network.get_layer_sizes();
         float* temp_weights = new float[network.get_weights_ct() * Env::num_rocks];
         float* temp_biases = new float[network.get_biases_ct() * Env::num_rocks];
 
         for (int r=0; r<Env::num_rocks; r++) { // need to fill temp with number of rockets
-            int a = round(Env::get_grad_rand());
-            int b = round(Env::get_grad_rand());
+            int a = mans[round(Env::get_grad_rand())].get_index();
+            int b = mans[round(Env::get_grad_rand())].get_index();
             float* a_weights = &weights[a * network.get_weights_ct()];
             float* b_weights = &weights[b * network.get_weights_ct()];
             float* a_biases = &biases[a * network.get_biases_ct()];
@@ -128,8 +128,10 @@ public:
             for (int l=0; l<layers.size()-1; l++) {
                 int cols = layers[l+1];
                 int rows = layers[l];
+
+                // doing biases
                 for (int col=0; col<cols; col++) {
-                    if (rand()%2) {
+                    if (Env::get_rand()%2) {
                         temp_biases[
                             r * network.get_biases_ct() + 
                             biases_so_far + 
@@ -150,6 +152,8 @@ public:
                         ];                   
                     }
                 }
+
+                // doing weights
                 for (int col=0; col<cols; col++) {
                     int splice_ind = -1;
                     if (Env::get_rand()/double(INT_MAX) < cross_over_chance) {

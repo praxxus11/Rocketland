@@ -5,8 +5,9 @@
 
 class RocketManager {
 public:
-    RocketManager(Rocket* rocket) :
+    RocketManager(Rocket* rocket, int ind) :
         rocket_ref(rocket),
+        index(ind),
         score(0)
     {
     }
@@ -74,10 +75,14 @@ public:
         rocket_ref->reset_rocket();
     }
 
-    Rocket* get_rocket() {
-        return rocket_ref;
+    int get_index() const {
+        return index;
+    }
+    void set_index(int i) {
+        index = i;
     }
 private:
     Rocket* rocket_ref;
     int score;
+    int index;
 };
