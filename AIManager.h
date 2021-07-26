@@ -11,7 +11,7 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{8, 12, 2}, 
+        network(std::vector<int>{8, 4, 2}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
             // NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh,
@@ -92,13 +92,14 @@ public:
                 std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
                 for (int r=0; r<Env::num_rocks/10; r++) {
                     for (int i=0; i<network.get_weights_ct(); i++) {
-                        std::cout << weights[r * network.get_weights_ct() + i] << " "; 
+                        fout << weights[r * network.get_weights_ct() + i] << " "; 
                     }
                     for (int i=0; i<network.get_biases_ct(); i++) {
-                        std::cout << biases[r * network.get_biases_ct() + i] << " ";
+                        fout << biases[r * network.get_biases_ct() + i] << " ";
                     }
-                    std::cout << "\n\n";
                 }
+                fout << "\n\n";
+
             }
 
             do_cross_over(0.4);
@@ -151,10 +152,10 @@ public:
                 }
                 for (int col=0; col<cols; col++) {
                     int splice_ind = -1;
-                    if (Env::get_rand()/float(INT_MAX) < cross_over_chance) {
+                    if (Env::get_rand()/double(INT_MAX) < cross_over_chance) {
                         splice_ind = (Env::get_rand() % rows);
                     }
-                    if (rand()%2) { // a first, then b
+                    if (Env::get_rand() % 2) { // a first, then b
                         for (int row=0; row<=splice_ind; row++) {
                             temp_weights[
                                 r * network.get_weights_ct() + 
@@ -181,6 +182,7 @@ public:
                         }
                     }
                     else { // b first, then a
+
                         for (int row=0; row<=splice_ind; row++) {
                             temp_weights[
                                 r * network.get_weights_ct() + 
