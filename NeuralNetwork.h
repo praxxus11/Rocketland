@@ -33,6 +33,30 @@ public:
         }
     }
 
+    void fill_from_file(float* weights, float* biases, std::string filename) {
+        std::ifstream fin(filename);
+        float* weight_temp = new float[30 * get_weights_ct()];
+        float* bias_temp = new float[30 * get_biases_ct()];
+        for (int r=0; r<30; r++) {
+            for (int i=0; i<get_weights_ct(); i++) fin >> weight_temp[r * get_weights_ct() + i];
+            for (int i=0; i<get_biases_ct(); i++) fin >> bias_temp[r * get_biases_ct() + i];
+        }
+        for (int r=0; r<Env::num_rocks; r++) {
+            const int prev_weights_ct = r * get_weights_ct();
+            const int prev_biases_ct = r * get_biases_ct();
+            const int weights_stored = 30 * get_weights_ct();
+            const int biases_stored = 30 * get_biases_ct();
+            for (int i=0; i<get_weights_ct(); i++) {
+                weights[prev_weights_ct + i] = weight_temp[(prev_weights_ct + i) % weights_stored];
+            }
+            for (int i=0; i<get_biases_ct(); i++) {
+                biases[prev_biases_ct + i] = bias_temp[(prev_biases_ct + i) % biases_stored];
+            }
+        }
+        delete[] weight_temp;
+        delete[] bias_temp;
+    }
+
     std::vector<std::vector<Eigen::MatrixXf>> get_wb_fromfile(std::string filename) {
         std::ifstream fin(filename);
         std::vector<std::vector<Eigen::MatrixXf>> res;

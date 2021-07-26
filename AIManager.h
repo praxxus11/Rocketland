@@ -40,16 +40,13 @@ public:
         network.fill_random(biases, network.get_biases_ct() * Env::num_rocks);
     }
     
-    // void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
-    //     std::vector<std::vector<Eigen::MatrixXf>> wts = network.get_wb_fromfile(filename);
-    //     for (int i=0; i<rockets.size(); i++) {
-    //         rockets[i].reset_rocket();
-    //         networks.emplace_back(
-    //             &rockets[i],
-    //             wts[i % wts.size()]
-    //         );
-    //     }
-    // }
+    void init_from_file(std::vector<Rocket> rockets, std::string filename) {
+        for (Rocket& rocket : rockets) {
+            networks.emplace_back(&rocket);
+        }
+        network.fill_from_file(weights, biases, filename);
+    }
+
     void print_arr(float* arr, int n) {
         for (int i=0; i<n; i++) std::cout << arr[i] << " ";
         std::cout << '\n';
@@ -90,21 +87,22 @@ public:
                 return (a.getScore() < b.getScore());
             });
 
+            if (Env::cycle_num%50==0) {
+                std::cout << "\n\nSaving...\n\n";
+                std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
+                for (int r=0; r<Env::num_rocks/10; r++) {
+                    for (int i=0; i<network.get_weights_ct(); i++) {
+                        std::cout << weights[r * network.get_weights_ct() + i] << " "; 
+                    }
+                    for (int i=0; i<network.get_biases_ct(); i++) {
+                        std::cout << biases[r * network.get_biases_ct() + i] << " ";
+                    }
+                    std::cout << "\n\n";
+                }
+            }
+
             do_cross_over(0.4);
-            // do_mutations(0.04*exp(-0.01*Env::cycle_num) + 0.006);
-
-
-            // if (Env::cycle_num%50==0) {
-            //     std::cout << "\n\nSaving...\n\n";
-            //     std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
-            //     for (int i=0; i<30; i++) {
-            //         auto& hi = networks[i].get_wb();
-            //         for (const auto& eigen_mat : hi) {
-            //             fout << eigen_mat << '\n';
-            //         }
-            //         fout << '\n';
-            //     }
-            // }
+            do_mutations(0.04*exp(-0.01*Env::cycle_num) + 0.006);
 
             for (RocketManager& rm : networks) {
                 rm.reset();
