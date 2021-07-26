@@ -260,9 +260,32 @@ public:
 private:
     NeuralNetwork network;
     std::vector<RocketManager> networks;
+
+    // all inputs are stored as vectors next to each other
+    // if inputs are [(1, 2), (4, 5), (3, 2)], rocket_inputs will be
+    // [1, 2, 4, 5, 3, 2]
+    // SIZE: number of rockets * number of inputs
     float* rocket_inputs;
+
+    // all outputs are stored as vectors next to each other
+    // if outputs are (1, 2), (4, 5), (3, 2), rocket_outputs will be
+    // [1, 2, 4, 5, 3, 2]
+    // SIZE: number of rockets * number of outputs
     float* rocket_outputs;
 
+    // for each rocket: 
+    // for each layer:
+    // matrixes are stored in row major order, with each
+    // matrix for every layer sotred next to each other, and 
+    // with complete weights for each layer for each rocket
+    // stored next to each other
+    // SIZE: number of rockets * number of weights in all layers
     float* weights;
+
+    // for each rocket:
+    // for each layer:
+    // each bias vector for each layer for each rocket is stored next
+    // to each other
+    // SIZE: number of rockets * number of biases in all layers
     float* biases;
 };
