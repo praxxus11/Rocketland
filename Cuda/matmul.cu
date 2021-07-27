@@ -1,6 +1,7 @@
 // SHOULD BE COMPIL ED WITH NVCC SO NO INCLUDES
 #include "matmul.h"
 #include <stdio.h>
+// include <cublas_v2.h>
 #include <iostream>
 
 #define checkCudaErrors(call)                                      \
@@ -13,6 +14,13 @@
         }                                                          \
     } while (0)
 
+__global__ void elemwise_tanh(float* activations, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    const int stride = blockDim.x * gridDim.x;
+    for (; i < n; i += stride) {
+        activations[i] = tanh(activations[i]);
+    }
+}
 
 void matmul(
     const float* weights,  const float* biases, 
@@ -63,29 +71,36 @@ void matmul(
         
         
         const float m = 1.f;
-        const float n = l_sizes[layer + 1];
+        const float n = l_sizes[layer+1];
         const float k = l_sizes[layer];
 
         const float alpha = 1.f;
-        const float lda = m;
         const long long int strideA = l_sizes[layer];
 
-        const float ldb = k;
         const long long int strideB = weight_bytes / (sizeof(float) * batches);
         const long long int startB = weights_so_far;
 
         const float beta = 0.f;
 
-        const float ldc = m;
         const long long int strideC = l_sizes[layer + 1];
 
-        status = cublasSgemmStridedBatched(handle, CUBLAS_OP_N, CUBLAS_OP_N, 
+        // first do all matrix multiplications
+        status = cublasSgemmStridedBatched(handle, CUBLAS_OP_T, CUBLAS_OP_T, 
                             m, n, k,
-                            &alpha, d_inputs, lda, strideA, 
-                            d_weights + startB, ldb, strideB,
-                            &beta, d_outputs, ldc, strideC,
+                            &alpha, d_inputs, k, strideA, 
+                            d_weights + startB, n, strideB,
+                            &beta, d_outputs, m, strideC,
                             batches);
         cudaDeviceSynchronize();
+
+
+        // appply activation func
+        const int activations_len = l_sizes[layer + 1] * batches;
+        const int threads_tanh = 256;
+        const int blocks_tanh = (activations_len + threads_tanh - 1) / threads_tanh;
+        elemwise_tanh<<<blocks_tanh, threads_tanh>>>(d_outputs, l_sizes[layer + 1] * batches);
+        cudaDeviceSynchronize();
+
         if (status != CUBLAS_STATUS_SUCCESS) {
             printf("Failed.");
             return;

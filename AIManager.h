@@ -11,7 +11,7 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{8, 12, 2}, 
+        network(std::vector<int>{8, 4, 2}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
             NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
@@ -23,6 +23,11 @@ public:
 
         weights = new float[network.get_weights_ct() * Env::num_rocks];
         biases = new float[network.get_biases_ct() * Env::num_rocks];
+
+        ri2 = new float[layers[0] * Env::num_rocks];
+        ro2 = new float[layers[layers.size()-1] * Env::num_rocks];
+        w = new float[network.get_weights_ct() * Env::num_rocks];
+        b = new float[network.get_biases_ct() * Env::num_rocks];
     }
     ~AIManager() {
         delete[] rocket_inputs;
@@ -37,6 +42,8 @@ public:
         }
         network.fill_random(weights, network.get_weights_ct() * Env::num_rocks);
         network.fill_random(biases, network.get_biases_ct() * Env::num_rocks);
+        network.fill_copy(w, weights, network.get_weights_ct() * Env::num_rocks);
+        network.fill_copy(b, biases, network.get_biases_ct() * Env::num_rocks);
     }
     
     void init_from_file(std::vector<Rocket> rockets, std::string filename) {
@@ -46,17 +53,47 @@ public:
         network.fill_from_file(weights, biases, filename);
     }
 
-
+    void print_arr(float* arr, int n) {
+        for (int i=0; i<n; i++) std::cout << arr[i] << " ";
+        std::cout << '\n';
+    }
     void update_rockets() {
-        for (int i=0; i<networks.size(); i++) {
-            networks[i].update_inputs(&rocket_inputs[i * 8]);
-        }
-        network.front_prop(rocket_inputs, rocket_outputs, weights, biases);
         int all_done = 1;
         for (int i=0; i<networks.size(); i++) {
-            networks[i].update_outputs(&rocket_outputs[i * 2]);
-            all_done += (networks[i].is_crashed() || networks[i].is_landed());
+            networks[i].update_inputs(&rocket_inputs[i * 8]);
+            /////////////////////////////////
+            // here should be convert to gpu
+            // network.front_prop2(
+            //     &ri2[i * 8], 
+            //     &ro2[i * 2],
+            //     &w[i * network.get_weights_ct()], 
+            //     &b[i * network.get_biases_ct()]
+            // );
+            // ////////////////////////////////
+
+            // networks[i].update_outputs(&rocket_outputs[i * 2]);
+            // all_done += (networks[i].is_crashed() || networks[i].is_landed());
         }
+        network.fill_copy(w, weights, network.get_weights_ct() * Env::num_rocks);
+        network.fill_copy(b, biases, network.get_biases_ct() * Env::num_rocks);
+        network.fill_copy(ri2, rocket_inputs, 8 * Env::num_rocks);
+
+        for (int i=0; i<networks.size(); i++) {
+            network.front_prop2(
+                &ri2[i * 8], 
+                &ro2[i * 2],
+                &w[i * network.get_weights_ct()], 
+                &b[i * network.get_biases_ct()]
+            );
+        }
+        network.front_prop(rocket_inputs, rocket_outputs, weights, biases);
+        for (int i=0; i<1; i++) {
+            std::cout << "Correct:" << ro2[i] << " Wrong: " << rocket_outputs[i] << '\n';
+        }
+        for (int i=0; i<networks.size(); i++) {
+            networks[i].update_outputs(&rocket_outputs[i * 2]);
+        }
+
 
         if (all_done >= Env::num_rocks) {
             Env::cycle_num++;
@@ -96,6 +133,7 @@ public:
                 networks[i].reset();
                 networks[i].set_index(i);
             }
+
         }
     }
 
@@ -254,12 +292,14 @@ private:
     // [1, 2, 4, 5, 3, 2]
     // SIZE: number of rockets * number of inputs
     float* rocket_inputs;
+    float* ri2;
 
     // all outputs are stored as vectors next to each other
     // if outputs are (1, 2), (4, 5), (3, 2), rocket_outputs will be
     // [1, 2, 4, 5, 3, 2]
     // SIZE: number of rockets * number of outputs
     float* rocket_outputs;
+    float* ro2;
 
     // for each rocket: 
     // for each layer:
@@ -269,6 +309,7 @@ private:
     // stored next to each other
     // SIZE: number of rockets * number of weights in all layers
     float* weights;
+    float* w;
 
     // for each rocket:
     // for each layer:
@@ -276,4 +317,5 @@ private:
     // to each other
     // SIZE: number of rockets * number of biases in all layers
     float* biases;
+    float* b;
 };
