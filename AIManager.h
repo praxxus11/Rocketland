@@ -11,7 +11,7 @@
 class AIManager {
 public:
     AIManager() : 
-        network(std::vector<int>{8, 4, 2}, 
+        network(std::vector<int>{8, 12, 2}, 
         std::vector<NeuralNetwork::ActivationFuncs>{
             NeuralNetwork::ActivationFuncs::tanh,
             NeuralNetwork::ActivationFuncs::tanh
@@ -46,10 +46,7 @@ public:
         network.fill_from_file(weights, biases, filename);
     }
 
-    void print_arr(float* arr, int n) {
-        for (int i=0; i<n; i++) std::cout << arr[i] << " ";
-        std::cout << '\n';
-    }
+
     void update_rockets() {
         int all_done = 1;
         for (int i=0; i<networks.size(); i++) {
@@ -69,8 +66,10 @@ public:
             // all_done += (networks[i].is_crashed() || networks[i].is_landed());
         }
         network.front_prop(rocket_inputs, rocket_outputs, weights, biases);
+
         for (int i=0; i<networks.size(); i++) {
-            networks[i].update_inputs(&rocket_outputs[i * 2]);
+            networks[i].update_outputs(&rocket_outputs[i * 2]);
+            all_done += (networks[i].is_crashed() || networks[i].is_landed());
         }
 
         if (all_done >= Env::num_rocks) {
