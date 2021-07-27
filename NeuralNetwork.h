@@ -8,6 +8,8 @@
 #include <string>
 #include <fstream>
 
+#include "../Cuda/matmul.h"
+
 class NeuralNetwork {
 public:
     enum class ActivationFuncs {
@@ -77,36 +79,7 @@ public:
     }
 
     void front_prop(float* input_vector, float* output_vector, float* weights, float* biases) const {
-        Eigen::Map<Eigen::MatrixXf> activations(input_vector, 1, layer_sizes[0]);
-        Eigen::MatrixXf activations_ref = activations;
-        std::vector<Eigen::MatrixXf> weights_vec;
-        std::vector<Eigen::MatrixXf> biases_vec;
-        int num_weights = 0;
-        int num_biases = 0;
-        for (int i=0; i < layer_sizes.size() - 1; i++) {
-            Eigen::Map<Eigen::MatrixXf> weight(weights + num_weights, layer_sizes[i + 1], layer_sizes[i]);
-            Eigen::Map<Eigen::MatrixXf> bias(biases + num_biases, 1, layer_sizes[i + 1]);
-            num_weights += layer_sizes[i + 1] * layer_sizes[i];
-            num_biases += layer_sizes[i + 1];
-            weights_vec.push_back(weight.transpose()); // because matrixes are stored in column major order in eigen
-            biases_vec.push_back(bias);
-        } 
-
-        for (int i=0; i<layer_sizes.size() - 1; i++) {
-            activations_ref *= weights_vec[i];
-            activations_ref += biases_vec[i];
-            switch (activation_funcs[i]) {
-                case ActivationFuncs::relu:
-                    activations_ref = activations_ref.unaryExpr(relu_ff);
-                    break;
-                case ActivationFuncs::tanh:
-                    activations_ref = activations_ref.unaryExpr(tanh_ff);
-                defualt:
-                    break;
-            }
-        }
-        output_vector[0] = activations_ref.data()[0];
-        output_vector[1] = activations_ref.data()[1];
+        matmul(weights, biases, input_vector, output_vector, layer_sizes.size(), layer_sizes.data(), Env::num_rocks);
     }
 
     const std::vector<int>& get_layer_sizes() const {
