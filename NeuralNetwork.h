@@ -33,20 +33,45 @@ public:
 
     std::vector<std::vector<Eigen::MatrixXf>> get_wb_fromfile(std::string filename) {
         std::ifstream fin(filename);
+        int weightspr = 0;
+        int biasespr = 0;
+        for (int i=0; i<layer_sizes.size()-1; i++) {
+            weightspr += layer_sizes[i] * layer_sizes[i+1];
+            biasespr += layer_sizes[i+1];
+        }
+        const int size = 1540/10;
+        float* weights = new float[size * weightspr];
+        float* biases = new float[size * biasespr];
+        for (int i=0; i<1540/10; i++) {
+            for (int j=0; j<weightspr; j++) fin >> weights[weightspr * i + j];
+            for (int j=0; j<biasespr; j++) {
+                fin >> biases[biasespr * i + j];
+            }
+        }
+        std::cout << weightspr * size << " " << biasespr * size << '\n';
+        int w = 0, b = 0;
         std::vector<std::vector<Eigen::MatrixXf>> res;
-        for (int num=0; num<30; num++) {
+        for (int num=0; num<size; num++) {
             std::vector<Eigen::MatrixXf> temp;
             for (int layer=0; layer<layer_sizes.size()-1; layer++) {
                 Eigen::MatrixXf weights_biases(layer_sizes[layer]+1, layer_sizes[layer+1]);
                 for (int i=0; i<layer_sizes[layer]+1; i++) {
                     for (int j=0; j<layer_sizes[layer+1]; j++) {
-                        fin >> weights_biases(i, j);
+                        if (i == layer_sizes[layer]) {
+                            weights_biases(i, j) = biases[b++];
+                        }
+                        else {
+                            weights_biases(i, j) = weights[w++];
+                        }
                     }
                 }
                 temp.push_back(weights_biases);
             }
             res.push_back(temp);
         }
+        std::cout << w << " " << b << " ";
+        delete[] weights;
+        delete[] biases;
         return res;
     }
 
