@@ -1,7 +1,7 @@
 // SHOULD BE COMPIL ED WITH NVCC SO NO INCLUDES
 #include "matmul.h"
 #include <stdio.h>
-// include <cublas_v2.h>
+// #include <cublas_v2.h>
 #include <iostream>
 
 #define checkCudaErrors(call)                                      \
@@ -19,6 +19,16 @@ __global__ void elemwise_tanh(float* activations, int n) {
     const int stride = blockDim.x * gridDim.x;
     for (; i < n; i += stride) {
         activations[i] = tanh(activations[i]);
+    }
+}
+
+__global__ void biases_add(float* activations, float* biases, int batches, int activations_per_batch, int bias_stride, int bias_start) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    const int stride = blockDim.x * gridDim.x;
+    for (; i < batches; i += stride) { // i represents which batch you're on
+        for (int j = 0; j < activations_per_batch; j++) {
+            activations[i * activations_per_batch + j] += biases[i * bias_stride + j + bias_start];
+        }
     }
 }
 
@@ -65,6 +75,7 @@ void matmul(
     }
 
     int weights_so_far = 0;
+    int biases_so_far = 0;
     for (int layer = 0; layer < num_layers - 1; layer++) {
         int curr_output_bytes = l_sizes[layer + 1] * batches * sizeof(float);
         checkCudaErrors(cudaMalloc(&d_outputs, curr_output_bytes));
@@ -86,18 +97,27 @@ void matmul(
 
         // first do all matrix multiplications
         status = cublasSgemmStridedBatched(handle, CUBLAS_OP_T, CUBLAS_OP_T, 
-                            m, n, k,
-                            &alpha, d_inputs, k, strideA, 
-                            d_weights + startB, n, strideB,
-                            &beta, d_outputs, m, strideC,
-                            batches);
+                                            m, n, k,
+                                            &alpha, d_inputs, k, strideA, 
+                                            d_weights + startB, n, strideB,
+                                            &beta, d_outputs, m, strideC,
+                                            batches);
         cudaDeviceSynchronize();
 
+        // add biases onto it
+        const int threads_biasadd = 64;
+        const int blocks_biasadd = (batches + threads_biasadd - 1) / threads_biasadd;
+        biases_add<<<blocks_biasadd, threads_biasadd>>>(d_outputs, 
+                                                        d_biases, 
+                                                        batches, 
+                                                        l_sizes[layer + 1], 
+                                                        bias_bytes / (batches * sizeof(float)),
+                                                        biases_so_far);
+        cudaDeviceSynchronize();
 
         // appply activation func
-        const int activations_len = l_sizes[layer + 1] * batches;
         const int threads_tanh = 256;
-        const int blocks_tanh = (activations_len + threads_tanh - 1) / threads_tanh;
+        const int blocks_tanh = ((l_sizes[layer + 1] * batches) + threads_tanh - 1) / threads_tanh;
         elemwise_tanh<<<blocks_tanh, threads_tanh>>>(d_outputs, l_sizes[layer + 1] * batches);
         cudaDeviceSynchronize();
 
@@ -113,6 +133,7 @@ void matmul(
             checkCudaErrors(cudaFree(d_outputs));
         }
         weights_so_far += l_sizes[layer+1] * l_sizes[layer];
+        biases_so_far += l_sizes[layer+1];
     }
     checkCudaErrors(cudaMemcpy(outputs, d_outputs, output_bytes, cudaMemcpyDeviceToHost));
 

@@ -106,16 +106,16 @@ public:
 
         for (int i=0; i<layer_sizes.size() - 1; i++) {
             activations_ref *= weights_vec[i];
-            // activations_ref += biases_vec[i];
-            // switch (activation_funcs[i]) {
-            //     case ActivationFuncs::relu:
-            //         activations_ref = activations_ref.unaryExpr(relu_ff);
-            //         break;
-            //     case ActivationFuncs::tanh:
-            //         activations_ref = activations_ref.unaryExpr(tanh_ff);
-            //     defualt:
-            //         break;
-            // }
+            activations_ref += biases_vec[i];
+            switch (activation_funcs[i]) {
+                case ActivationFuncs::relu:
+                    activations_ref = activations_ref.unaryExpr(relu_ff);
+                    break;
+                case ActivationFuncs::tanh:
+                    activations_ref = activations_ref.unaryExpr(tanh_ff);
+                defualt:
+                    break;
+            }
         }
         output_vector[0] = activations_ref.data()[0];
         output_vector[1] = activations_ref.data()[1];
