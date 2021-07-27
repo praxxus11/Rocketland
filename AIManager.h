@@ -48,25 +48,11 @@ public:
 
 
     void update_rockets() {
-        int all_done = 1;
         for (int i=0; i<networks.size(); i++) {
             networks[i].update_inputs(&rocket_inputs[i * 8]);
-
-            /////////////////////////////////
-            // here should be convert to gpu
-            // network.front_prop(
-            //     &rocket_inputs[i * 8], 
-            //     &rocket_outputs[i * 2],
-            //     &weights[i * network.get_weights_ct()], 
-            //     &biases[i * network.get_biases_ct()]
-            // );
-            // ////////////////////////////////
-
-            // networks[i].update_outputs(&rocket_outputs[i * 2]);
-            // all_done += (networks[i].is_crashed() || networks[i].is_landed());
         }
         network.front_prop(rocket_inputs, rocket_outputs, weights, biases);
-
+        int all_done = 1;
         for (int i=0; i<networks.size(); i++) {
             networks[i].update_outputs(&rocket_outputs[i * 2]);
             all_done += (networks[i].is_crashed() || networks[i].is_landed());
@@ -110,7 +96,6 @@ public:
                 networks[i].reset();
                 networks[i].set_index(i);
             }
-
         }
     }
 
