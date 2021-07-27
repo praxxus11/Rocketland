@@ -13,26 +13,44 @@ struct StateParams {
         float a, float b,
         float c, float d,
         float e, float f, 
-        float g, float h) :
+        float g, float h, 
+        float i, float j, 
+        float k, float l,
+        float m, float n) :
         posy(a), posx(b),
         vely(c), velx(d),
         angle(e), angle_vel(f),
-        e_thr(g), e_angle(h)
+        e1_thr(g), e1_angle(h),
+        e2_thr(i), e2_angle(j),
+        e3_thr(k), e3_angle(l),
+        uflp_angle(m), lflp_angle(n)
     {
     }
     float posy, posx;
     float vely, velx;
     float angle, angle_vel;
-    float e_thr, e_angle;
+    float e1_thr, e1_angle;
+    float e2_thr, e2_angle;
+    float e3_thr, e3_angle;
+    float uflp_angle, lflp_angle;
 };
 
 struct ControlParams {
     ControlParams(
-        float e1t, float e1a) :
-        e_thr_vel(e1t), e_angle_vel(e1a)
+        float e1t, float e1a,
+        float e2t, float e2a, 
+        float e3t, float e3a, 
+        float uflp, float lflp) :
+        e1_thr_vel(e1t), e1_angle_vel(e1a),
+        e2_thr_vel(e2t), e2_angle_vel(e2a),
+        e3_thr_vel(e3t), e3_angle_vel(e3a),
+        uflp_angle_vel(uflp), lflp_angle_vel(lflp)
     {
     }
-    float e_thr_vel, e_angle_vel;
+    float e1_thr_vel, e1_angle_vel;
+    float e2_thr_vel, e2_angle_vel;
+    float e3_thr_vel, e3_angle_vel;
+    float uflp_angle_vel, lflp_angle_vel;
 };
 
 
@@ -161,7 +179,7 @@ public:
             stateVector v(0, 0, 0, 0);
             updateFromEngine(v);
             // std::cout << "Engine" << v.angular_accel << '\n';
-            // updateFromWindResistence(v);
+            updateFromWindResistence(v);
             // std::cout << "Wind" << v.angular_accel << '\n';
             updateFromGravity(v);
             // std::cout << "Gravity" << v.angular_accel << '\n';
@@ -224,19 +242,25 @@ public:
             position.y, position.x,
             vel.y, vel.x,
             getRotation(), angular_vel,
-            engines[0].get_throttle(), engines[0].get_angle()
+            engines[0].get_throttle(), engines[0].get_angle(),
+            engines[1].get_throttle(), engines[1].get_angle(),
+            engines[2].get_throttle(), engines[2].get_angle(),
+            upper_fin.get_angle(), lower_fin.get_angle()
         );
     }
 
     void update_params(const ControlParams& contr) {
-        engines[0].set_throttle_vel(contr.e_thr_vel);
-        engines[0].set_angle_vel(contr.e_angle_vel * 100);
+        engines[0].set_throttle_vel(contr.e1_thr_vel);
+        engines[0].set_angle_vel(contr.e1_angle_vel * 100);
 
-        engines[1].set_throttle_vel(contr.e_thr_vel);
-        engines[1].set_angle_vel(contr.e_angle_vel * 100);
+        engines[1].set_throttle_vel(contr.e2_thr_vel);
+        engines[1].set_angle_vel(contr.e2_angle_vel * 100);
 
-        engines[2].set_throttle_vel(contr.e_thr_vel);
-        engines[2].set_angle_vel(contr.e_angle_vel * 100);
+        engines[2].set_throttle_vel(contr.e3_thr_vel);
+        engines[2].set_angle_vel(contr.e3_angle_vel * 100);
+
+        upper_fin.set_angular_vel(contr.uflp_angle_vel * 300);
+        lower_fin.set_angular_vel(contr.lflp_angle_vel * 300);
     }
     
     void reset_rocket() {
