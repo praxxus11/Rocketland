@@ -25,6 +25,7 @@ public:
                 &rocket,
                 network.get_random_weights_biases()
             );
+            rocket.reset_rocket();
         }
     }
     
