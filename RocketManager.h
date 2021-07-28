@@ -23,10 +23,10 @@ public:
         if (angle > 180) angle -= 360;
         std::vector<float> inp {float(tanh(0.001 * p.posy)), float(tanh(0.01 * p.posx)),
                                 float(tanh(0.01 * p.vely)), float(tanh(0.01 * p.velx)),
-                                p.angle/180, float(tanh(0.005 * p.angle_vel)),
+                                p.angle/180.f, float(tanh(0.005 * p.angle_vel)),
                                 p.e1_thr, p.e1_angle/15.f,
                                 p.e2_thr, p.e2_angle/15.f,
-                                p.e2_thr, p.e2_angle/15.f,
+                                p.e3_thr, p.e3_angle/15.f,
                                 p.uflp_angle/90.f, p.lflp_angle/90.f};
 
         std::vector<float> res = nn.front_prop(inp, weights_biases);

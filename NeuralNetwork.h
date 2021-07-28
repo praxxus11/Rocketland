@@ -39,14 +39,12 @@ public:
             weightspr += layer_sizes[i] * layer_sizes[i+1];
             biasespr += layer_sizes[i+1];
         }
-        const int size = 1540/10;
+        const int size = Env::num_rocks/10;
         float* weights = new float[size * weightspr];
         float* biases = new float[size * biasespr];
-        for (int i=0; i<1540/10; i++) {
+        for (int i=0; i<Env::num_rocks/10; i++) {
             for (int j=0; j<weightspr; j++) fin >> weights[weightspr * i + j];
-            for (int j=0; j<biasespr; j++) {
-                fin >> biases[biasespr * i + j];
-            }
+            for (int j=0; j<biasespr; j++) fin >> biases[biasespr * i + j];
         }
         std::cout << weightspr * size << " " << biasespr * size << '\n';
         int w = 0, b = 0;
@@ -90,7 +88,7 @@ public:
         activations(0, input_vector.size()) = 1; // constant for the bias term 
         
         for (int i=0; i<weights_biases.size(); i++) {
-            activations = activations * weights_biases[i];
+            activations *= weights_biases[i];
             switch (activation_funcs[i]) {
                 case ActivationFuncs::relu:
                     activations = activations.unaryExpr(relu_ff);

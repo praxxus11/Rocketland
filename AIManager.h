@@ -51,7 +51,7 @@ public:
         //     Env::tempTm = 0;
         // }
 
-        if (all_done >= Env::num_rocks - 20) {
+        if (all_done >= Env::num_rocks) {
             Env::cycle_num++;
             double tot = 0;
             int ct = 0;
