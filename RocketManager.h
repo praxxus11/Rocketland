@@ -72,17 +72,16 @@ public:
         score += (distr * (angle_vel_cost/temp_tot_score)) * angle_vel_cost;
         score += (distr * (angle_cost/temp_tot_score)) * angle_cost;
 
-        if (!is_crashed() && !is_landed()) {
-            score = INT_MAX;
-        }
-        if (is_landed()) 
-            score -= 2000;
-
         // heuristics
         // want all engines to be equally on
         std::sort(engine_used.begin(), engine_used.end());
         float diff_norm = float(engine_used[2] - engine_used[0]) / engine_used[2];
-        score += 5 * (pow(60.f, diff_norm) - 1);
+        score += (5 * (pow(60.f, diff_norm) - 1));
+
+        if (!is_crashed() && !is_landed()) 
+            score = INT_MAX;
+        if (is_landed()) 
+            score -= 2000;
     }
 
     int getScore() const { return score; }
@@ -90,6 +89,7 @@ public:
     void reset() {
         score = 0;
         rocket_ref->reset_rocket();
+        for (int& ct : engine_used) ct = 0;
     }
 
     Rocket* get_rocket() {
