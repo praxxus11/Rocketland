@@ -6,12 +6,6 @@
 
 int main()
 {
-    #if DEVICE == CPU
-        std::cout << "CPU";
-    #else
-        std::cout << "GPU";
-    #endif
-
     srand(time(nullptr));
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
