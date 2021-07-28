@@ -1,10 +1,17 @@
 #include <SFML/Graphics.hpp>
 
+#include "Preprocessing.h"
 #include "manager.h"
 #include "Camera.h"
 
 int main()
 {
+    #if DEVICE == CPU
+        std::cout << "CPU";
+    #else
+        std::cout << "GPU";
+    #endif
+
     srand(time(nullptr));
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
