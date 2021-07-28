@@ -2,6 +2,7 @@
 #include <iostream>
 #include <math.h>
 #include <Eigen/Dense>
+#include <algorithm>
 
 class RocketManager {
 public:
@@ -36,6 +37,13 @@ public:
             res[4], res[5],
             res[6], res[7]
         ));
+
+        //heuristic
+        for (int i=0; i<3; i++) {
+            if (rocket_ref->is_engine_on(i)) {
+                engine_used[i]++;
+            }
+        }
     }
 
     bool is_crashed() const {
@@ -69,7 +77,14 @@ public:
         }
         if (is_landed()) 
             score -= 2000;
+
+        // heuristics
+        // want all engines to be equally on
+        std::sort(engine_used.begin(), engine_used.end());
+        float diff_norm = float(engine_used[2] - engine_used[0]) / engine_used[2];
+        score += 5 * (pow(60.f, diff_norm) - 1);
     }
+
     int getScore() const { return score; }
     
     void reset() {
@@ -89,4 +104,5 @@ private:
     Rocket* rocket_ref;
     std::vector<Eigen::MatrixXf> weights_biases;
     int score;
+    std::array<int, 3> engine_used = {0, 0, 0};
 };

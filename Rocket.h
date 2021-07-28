@@ -265,14 +265,17 @@ public:
     
     void reset_rocket() {
         irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 700));
-        vel.x = rand()%20-10; vel.y = rand()%5-100;
+        vel.x = rand()%20-10; vel.y = rand()%5-130;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
         
-        angular_vel = 0;
+        angular_vel = rand()%30-15;
         status = Status::Regular;
         fuel_mass = rand()%100 + 20000;
     }
 
+    float is_engine_on(int i) const {
+        return engines[i].is_engine_on();
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {
