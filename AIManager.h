@@ -196,7 +196,7 @@ public:
         return res;
     }
     void do_mutations(RocketManager& rm) {
-        const float mutation_chance = 0.04*exp(-0.01*Env::cycle_num) + 0.006;
+        const float mutation_chance = 0.04*exp(-0.001*Env::cycle_num) + 0.006;
         for (Eigen::MatrixXf& mat : rm.get_wb()) {
             for (int i=0; i<mat.rows(); i++) {
                 for (int j=0; j<mat.cols(); j++) {
