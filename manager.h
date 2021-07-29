@@ -18,11 +18,14 @@
 
 class Manager {
     public:
-        Manager() :
+        Manager() 
+#if defined(CPU)
+        :
             exframes(128, 
                 3328,
                 26,
                 "imgs/explosion_sheet.png")
+#endif        
         {
             rockets.reserve(Env::num_rocks);
             for (int i=0; i<Env::num_rocks; i++) {
@@ -84,7 +87,9 @@ class Manager {
             return rockets[0].irlGetPosition();
         }
     private:
+#if defined(CPU)
         Frames exframes;
+#endif
         std::vector<Rocket> rockets;
         Floor f;
         CollisionManager cm;
