@@ -64,7 +64,8 @@ public:
         }
     }
 #elif defined(GPU)
-    void init_from_file(std::vector<Rocket>& rockets, std::string filename) {	
+    void init_from_file(std::vector<Rocket>& rockets, std::string filename) {
+        rockets[i].reset_rocket();
         for (int i=0; i<rockets.size(); i++) {	
             networks.emplace_back(&rockets[i], i);	
         }	

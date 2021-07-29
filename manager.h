@@ -8,11 +8,13 @@
 #include "Env.h"
 #if defined(CPU)
     #include "ResourceManager.h"
-    #include "Gif.h"
 #endif
 #include "GameObject.h"
 #include "Rocket.h"
 #include "Floor.h"
+#if defined(CPU)
+    #include "Gif.h"
+#endif
 #include "CollisionManager.h"
 #include "AIManager.h"
 
