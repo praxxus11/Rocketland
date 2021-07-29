@@ -1,1 +1,1 @@
-#define DEVICE CPU
+#define CPU 1

@@ -1,8 +1,14 @@
 #include <iostream>
 #include <vector>
 
+#ifndef INT_MAX
+#define INT_MAX 2147483647
+#endif
+
 #include "Env.h"
-#include "ResourceManager.h"
+#if defined(CPU)
+    #include "ResourceManager.h"
+#endif
 #include "GameObject.h"
 #include "Gif.h"
 #include "Rocket.h"
@@ -41,9 +47,13 @@ class Manager {
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
             }
-            // ai_manager.init(rockets);
-            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration12600.txt");
-
+#if defined(CPU)
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3900.txt");
+#elif defined(GPU)
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "../saves/iteration3900.txt");
+#endif
         }
         ~Manager() 
         {
