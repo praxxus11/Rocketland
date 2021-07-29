@@ -274,7 +274,7 @@ public:
         
         angular_vel = rand()%30-15;
         status = Status::Regular;
-        fuel_mass = rand()%100 + 15000;
+        fuel_mass = rand()%100 + 30000;
     }
 
     float is_engine_running(int i) const {

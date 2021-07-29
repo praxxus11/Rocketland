@@ -111,7 +111,7 @@ public:
                     tot += rm.getScore();
                     ct++;
                     if (rm.getScore() < -2000) {
-                        std::cout << rm.getScore() << '\n';
+                        // std::cout << rm.getScore() << '\n';
                     }
                 }
             }

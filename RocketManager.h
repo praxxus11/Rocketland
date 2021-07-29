@@ -130,7 +130,10 @@ public:
         // heuristics
         // want all engines to be equally on
         std::sort(engine_used.begin(), engine_used.end());
-        float diff_norm = float(engine_used[2] - engine_used[0]) / engine_used[2];
+        float diff_norm;
+        if (engine_used[2] == 0) diff_norm = 1;
+        else diff_norm = float(engine_used[2] - engine_used[0]) / engine_used[2];
+        
         score += (5 * (pow(60.f, diff_norm) - 1));
 
         if (!is_crashed() && !is_landed()) {
