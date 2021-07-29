@@ -8,9 +8,9 @@
 #include "Env.h"
 #if defined(CPU)
     #include "ResourceManager.h"
+    #include "Gif.h"
 #endif
 #include "GameObject.h"
-#include "Gif.h"
 #include "Rocket.h"
 #include "Floor.h"
 #include "CollisionManager.h"

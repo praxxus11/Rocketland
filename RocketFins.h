@@ -34,25 +34,6 @@ public:
 
         if (angular_vel < 0) angle = std::max(-90.f, angle + angular_vel * Env::g_elapsed());
         else angle = std::min(90.f, angle + angular_vel * Env::g_elapsed());
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-        //     // angle = fin_type == Type::Upper ? 
-        //     //     std::max(-90.f, angle - 300 * Env::g_elapsed()) :
-        //     //     std::min(90.f, angle + 300 * Env::g_elapsed());
-        //     angle = 1 ? 
-        //         std::max(-90.f, angle - 300 * Env::g_elapsed()) :
-        //         std::min(90.f, angle + 300 * Env::g_elapsed());
-        // }
-        // else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-        //     // angle = fin_type == Type::Upper ?
-        //     //     std::min(90.f, angle + 300 * Env::g_elapsed()) : 
-        //     //     std::max(-90.f, angle - 300 * Env::g_elapsed());
-        //     angle = 1 ?
-        //         std::min(90.f, angle + 300 * Env::g_elapsed()) : 
-        //         std::max(-90.f, angle - 300 * Env::g_elapsed());
-        // }
-        // else { 
-        //     angle -= 5 * angle * Env::g_elapsed();
-        // }
     }
     float get_angle() const {
         return angle;

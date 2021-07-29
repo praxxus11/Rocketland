@@ -3,7 +3,7 @@
 #include "Preprocessing.h"
 #include "manager.h"
 
-#ifdef CPU
+#if defined(CPU)
     #include "Camera.h"
 #endif
 
