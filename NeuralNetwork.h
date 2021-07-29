@@ -65,11 +65,10 @@ public:
         const int size = Env::load_rocks/10;
         float* weights = new float[size * weightspr];
         float* biases = new float[size * biasespr];
-        for (int i=0; i<Env::load_rocks/10; i++) {
+        for (int i=0; i<size; i++) {
             for (int j=0; j<weightspr; j++) fin >> weights[weightspr * i + j];
             for (int j=0; j<biasespr; j++) fin >> biases[biasespr * i + j];
         }
-        std::cout << weightspr * size << " " << biasespr * size << '\n';
         int w = 0, b = 0;
         std::vector<std::vector<Eigen::MatrixXf>> res;
         for (int num=0; num<size; num++) {
@@ -90,7 +89,6 @@ public:
             }
             res.push_back(temp);
         }
-        std::cout << w << " " << b << " ";
         delete[] weights;
         delete[] biases;
         return res;

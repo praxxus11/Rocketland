@@ -1,0 +1,3 @@
+THIS FILE IS FOR THE TIMES WHEN GPU AND CPU DONT SYNC UP
+LOG ALL CHANGES MADE TO EITHER HERE!!!!
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

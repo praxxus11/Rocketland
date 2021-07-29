@@ -155,16 +155,6 @@ public:
         switch (status) {
         case Status::Regular: {
 
-
-            ////////////////////////////
-            // totTime += Env::g_elapsed();
-            // timeSoFar += Env::g_elapsed();
-            // if (timeSoFar > 8) {
-            //     std::ofstream fout("python/datas.txt", std::ios_base::app);
-            //     timeSoFar = 0;
-            //     fout << totTime << " " << position.y << " " << vel.y << " " << vel.x << " " << getRotation() << '\n';
-            // }
-            ////////////////////////////
             irlSetPosition(sf::Vector2f(position.x + vel.x*elap, position.y + vel.y*elap));
             setRotation(getRotation() + angular_vel*elap);
             setScale(sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120));
@@ -173,9 +163,9 @@ public:
                 engine.update();
             }
 
-            engines[0].irlSetDisplacement(sf::Vector2f(7/getScale().x, 48/getScale().x));
-            engines[1].irlSetDisplacement(sf::Vector2f(4.5/getScale().x, 48/getScale().x));
-            engines[2].irlSetDisplacement(sf::Vector2f(2/getScale().x, 48/getScale().x));
+            engines[0].irlSetDisplacement(sf::Vector2f(7/getScale().x, 48/getScale().x)); // right engine 2.5m right
+            engines[1].irlSetDisplacement(sf::Vector2f(4.5/getScale().x, 48/getScale().x)); // middle engine 9m/2 = middle
+            engines[2].irlSetDisplacement(sf::Vector2f(2/getScale().x, 48/getScale().x)); // left engine 2.5m left from middle
 
             upper_fin.update();
             lower_fin.update();
@@ -280,6 +270,9 @@ public:
     float is_engine_running(int i) const {
         return fuel_mass && engines[i].is_engine_on();
     }
+    float get_fuel() const {
+        return fuel_mass;
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {
@@ -355,7 +348,7 @@ private:
             
             const float air_push_rock_h = -r_push_air_h;
             const float air_push_rock_v = -r_push_air_v;
-            const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v);
+            const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v) + 0.00000001;
 
             const float max_force_from_air = 1e6; // newtons, 1/2 of an engine
 

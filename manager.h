@@ -53,11 +53,11 @@ class Manager {
                 rockets[i].setRotation(rockets[i].getRotation());
             }
 #if defined(CPU)
-            ai_manager.init_random(rockets);
-            // ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3900.txt");
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration9000.txt");
 #elif defined(GPU)
-            ai_manager.init_random(rockets);
-            // ai_manager.init_from_file(rockets, "../saves/iteration3900.txt");
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "../saves/iteration9000.txt");
 #endif
         }
         ~Manager() 

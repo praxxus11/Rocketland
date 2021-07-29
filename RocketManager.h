@@ -59,7 +59,7 @@ public:
     }
 #elif defined(GPU)
       void update_inputs(float* inp) {	
-        if (rocket_ref->irlGetPosition().y > 1500 || abs(rocket_ref->irlGetPosition().x) > 1100) {	
+        if (rocket_ref->irlGetPosition().y > 2000 || abs(rocket_ref->irlGetPosition().x) > 1100) {	
             rocket_ref->setStatus(Rocket::Status::BlewUp);	
             score = 1e7;	
         }	
@@ -97,10 +97,11 @@ public:
         }
     }
 #endif
-    // void print_engine_stats() const {
-    //     for (int i : engine_used) std::cout << i << " ";
-    //     std::cout << '\n';
-    // }
+    void print_engine_stats() const {
+        for (int i : engine_used) std::cout << i << " ";;
+        std::cout << "Fuel:" << rocket_ref->get_fuel() << "height: " << rocket_ref->irlGetPosition().y << " x: " 
+            << rocket_ref->irlGetPosition().x << " angle: " << rocket_ref->getRotation() << " vely " << rocket_ref->getVelocity().y << '\n';
+    }
     bool is_crashed() const {
         return (rocket_ref->getStatus() == Rocket::Status::BlewUp);
     }

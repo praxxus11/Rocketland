@@ -21,7 +21,7 @@ int main()
 #elif defined(CPU)
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
-    const bool show = 0;
+    const bool show = 1;
     if (!show) {
         while (1) {
             m.update();
