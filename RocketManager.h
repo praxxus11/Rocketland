@@ -11,7 +11,7 @@ public:
 #if defined(CPU)
         const std::vector<Eigen::MatrixXf>& wb
 #elif defined(GPU)
-        , int ind
+        int ind
 #endif
         ) :
         rocket_ref(rocket),
@@ -19,7 +19,7 @@ public:
 #if defined(CPU)
         weights_biases(wb)
 #elif defined(GPU)
-        , index(ind)
+        index(ind)
 #endif
     {
     }
@@ -154,8 +154,11 @@ public:
 #endif
 
 #if defined(GPU)
-    void set_index(int i) {	
-        index = i;	
+    int get_index() const {
+        return index;
+    }
+    void set_index(int i) {
+        index = i;
     }
 #endif
 
