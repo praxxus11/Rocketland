@@ -48,9 +48,8 @@ public:
 
         if (angle_vel < 0) angle = std::max(-15.f, angle + angle_vel * Env::g_elapsed());
         else angle = std::min(15.f, angle + angle_vel * Env::g_elapsed());
-        // std::cout << angle_vel << "\n";
 
-        if (throttle_vel < 0) throttle = std::max(-1.f, throttle + throttle_vel * Env::g_elapsed());
+        if (throttle_vel < 0) throttle = std::max(0.f, throttle + throttle_vel * Env::g_elapsed());
         else throttle = std::min(1.f, throttle + throttle_vel * Env::g_elapsed());
     }
     float get_angle() const {

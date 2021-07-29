@@ -91,6 +91,16 @@ public:
             all_done += (networks[i].is_crashed() || networks[i].is_landed());	
         }
 #endif
+        // Env::tempTm += Env::g_elapsed_real();
+        // if (Env::tempTm>3) {
+        //     Env::tempTm = 0;
+        //     std::cout << all_done << '\n';
+        //     for (int i=0; i<networks.size(); i++) {	
+        //         if (!(networks[i].is_crashed() || networks[i].is_landed())) {
+        //             networks[i].print_engine_stats();
+        //         }
+        //     }
+        // }
         if (all_done >= Env::num_rocks) {
             Env::cycle_num++;
             double tot = 0;
@@ -100,6 +110,9 @@ public:
                 if (rm.getScore() < 5e6) {
                     tot += rm.getScore();
                     ct++;
+                    if (rm.getScore() < -2000) {
+                        std::cout << rm.getScore() << '\n';
+                    }
                 }
             }
             std::cout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
@@ -153,7 +166,7 @@ public:
             }
 #elif defined(GPU)
             do_cross_over(0.4, networks);	
-            do_mutations(0.04*exp(-0.001*Env::cycle_num) + 0.006);
+            do_mutations(0.02*exp(-0.005*Env::cycle_num) + 0.006);
             for (int i=0; i<networks.size(); i++) {	
                 networks[i].reset();	
                 networks[i].set_index(i);	

@@ -26,7 +26,7 @@ public:
 
 #if defined(CPU)
     void update_rocket(const NeuralNetwork& nn) {
-        if (rocket_ref->irlGetPosition().y > 1500 || abs(rocket_ref->irlGetPosition().x) > 1100) {
+        if (rocket_ref->irlGetPosition().y > 2000 || abs(rocket_ref->irlGetPosition().x) > 1100) {
             rocket_ref->setStatus(Rocket::Status::BlewUp);
             score = 1e7;
         }
@@ -52,7 +52,7 @@ public:
 
         //heuristic
         for (int i=0; i<3; i++) {
-            if (rocket_ref->is_engine_on(i)) {
+            if (rocket_ref->is_engine_running(i)) {
                 engine_used[i]++;
             }
         }
@@ -91,13 +91,16 @@ public:
             oup[6], oup[7]	
         ));	
         for (int i=0; i<3; i++) {
-            if (rocket_ref->is_engine_on(i)) {
+            if (rocket_ref->is_engine_running(i)) {
                 engine_used[i]++;
             }
         }
     }
 #endif
-
+    // void print_engine_stats() const {
+    //     for (int i : engine_used) std::cout << i << " ";
+    //     std::cout << '\n';
+    // }
     bool is_crashed() const {
         return (rocket_ref->getStatus() == Rocket::Status::BlewUp);
     }
@@ -130,8 +133,9 @@ public:
         float diff_norm = float(engine_used[2] - engine_used[0]) / engine_used[2];
         score += (5 * (pow(60.f, diff_norm) - 1));
 
-        if (!is_crashed() && !is_landed()) 
+        if (!is_crashed() && !is_landed()) {
             score = INT_MAX;
+        }
         if (is_landed()) 
             score -= 2000;
     }

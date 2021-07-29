@@ -62,10 +62,10 @@ public:
             weightspr += layer_sizes[i] * layer_sizes[i+1];
             biasespr += layer_sizes[i+1];
         }
-        const int size = Env::num_rocks/10;
+        const int size = Env::load_rocks/10;
         float* weights = new float[size * weightspr];
         float* biases = new float[size * biasespr];
-        for (int i=0; i<Env::num_rocks/10; i++) {
+        for (int i=0; i<Env::load_rocks/10; i++) {
             for (int j=0; j<weightspr; j++) fin >> weights[weightspr * i + j];
             for (int j=0; j<biasespr; j++) fin >> biases[biasespr * i + j];
         }
@@ -99,7 +99,7 @@ public:
 #elif defined(GPU)
     void fill_from_file(float* weights, float* biases, std::string filename) {	
         std::ifstream fin(filename);	
-        const int tot_saved = Env::num_rocks/10;	
+        const int tot_saved = Env::load_rocks/10;	
         float* weight_temp = new float[tot_saved * get_weights_ct()];	
         float* bias_temp = new float[tot_saved * get_biases_ct()];	
         for (int r=0; r<tot_saved; r++) {	

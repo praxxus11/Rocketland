@@ -72,13 +72,14 @@ public:
 
     static int cycle_num;
     static int num_rocks;
+    static int load_rocks;
 
     // ranadom numbers
     static std::random_device seed;
     static std::mt19937 rng;
     static std::uniform_int_distribution<int> rnd;
-    static std::array<int, 2> interval_grad;
-    static std::array<int, 2> weight_grad;
+    static std::array<int, 3> interval_grad;
+    static std::array<int, 3> weight_grad;
     static std::piecewise_linear_distribution<float> grad_rnd;
     static int get_rand() {
         return rnd(rng);
@@ -102,14 +103,15 @@ sf::Clock Env::clock{};
 sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
-int Env::num_rocks = 250;
+int Env::num_rocks = 200;
+int Env::load_rocks = 250;
 
 std::random_device Env::seed;
 std::mt19937 Env::rng(Env::seed());
 std::uniform_int_distribution<int> Env::rnd(0, INT_MAX);
 
-std::array<int, 2> Env::interval_grad {0, Env::num_rocks/3};
-std::array<int, 2> Env::weight_grad {1, 0};
+std::array<int, 3> Env::interval_grad {0, Env::num_rocks/6, Env::num_rocks/3};
+std::array<int, 3> Env::weight_grad {3, 1, 0};
 std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), interval_grad.end(), weight_grad.begin());
 
 float Env::tempTm = 0;
