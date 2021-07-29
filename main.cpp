@@ -4,7 +4,7 @@
 #include "manager.h"
 
 #ifdef CPU
-#include "Camera.h"
+    #include "Camera.h"
 #endif
 
 int main()
@@ -12,12 +12,12 @@ int main()
     srand(time(nullptr));
     Manager m {};
     
-    #if defined(GPU)
+#if defined(GPU)
     while (1) {
         m.update();
     }
 
-    #elif defined(CPU)
+#elif defined(CPU)
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
     const bool show = 1;
@@ -47,7 +47,7 @@ int main()
             window.display();
         }
     }
-    #endif
+#endif
 
     return 0;
 }
