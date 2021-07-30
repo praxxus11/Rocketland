@@ -78,8 +78,8 @@ public:
     static std::random_device seed;
     static std::mt19937 rng;
     static std::uniform_int_distribution<int> rnd;
-    static std::array<int, 3> interval_grad;
-    static std::array<int, 3> weight_grad;
+    static std::array<int, 2> interval_grad;
+    static std::array<int, 2> weight_grad;
     static std::piecewise_linear_distribution<float> grad_rnd;
     static int get_rand() {
         return rnd(rng);
@@ -110,8 +110,8 @@ std::random_device Env::seed;
 std::mt19937 Env::rng(Env::seed());
 std::uniform_int_distribution<int> Env::rnd(0, INT_MAX);
 
-std::array<int, 3> Env::interval_grad {0, Env::num_rocks/10, Env::num_rocks/6};
-std::array<int, 3> Env::weight_grad {3, 1, 0};
+std::array<int, 2> Env::interval_grad {0, Env::num_rocks/3};
+std::array<int, 2> Env::weight_grad {1, 0};
 std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), interval_grad.end(), weight_grad.begin());
 
 float Env::tempTm = 0;

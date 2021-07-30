@@ -41,8 +41,8 @@ int main()
             }
             window.clear();
             m.update();
-            // c.update();
-            c.update_from_rocket(m.get_rocket_pos());
+            c.update();
+            // c.update_from_rocket(m.get_rocket_pos());
             m.draw(window);
             Env::restartc();
             window.display();

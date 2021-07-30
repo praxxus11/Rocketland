@@ -31,3 +31,26 @@ Manager -> now loads in iteration 3000
 RocketManager -> removed penalty for off center
 RocketManager -> added penalty for fuel
 Rockeet -> added attribute reset fuel mass: gives amoutn of fuel upon reset (for making penalty see ratio of howmuch fiel elft)
+
+~~~~~~
+decreased penalty for fuel usage
+increased penalty to 30 m/s & 10 deg
+
+~~~~~~~~~~~~~
+Experimentally removed triple gradients in choosing a dn b for crossover
+
+~~~~~~~~~~~~~
+gpu starts off with 450
+changed to 15m/s & 7 deg
+
+
+~~~~~~~~~~~~~
+try to make it only use one rocket
+
+gpu starts off with 300
+changed to 7 m/s and 3 deg
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+changed to 3m/s, 2m/s, and 2 deg
+make new folder in saves on gpus that saves best ierations
