@@ -1,3 +1,33 @@
 THIS FILE IS FOR THE TIMES WHEN GPU AND CPU DONT SYNC UP
 LOG ALL CHANGES MADE TO EITHER HERE!!!!
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+CHANGES TO BOTH
+~~~~~~~~~~~~~~
+ResetRocket -> vely to -160 m/s, decreased height to 1000m
+RocketManager -> used angle -360 for both now!
+Manager -> now init_from_random instead from file
+Env -> increased number of rockerts to 300
+
+
+~~~~~~~~~~
+Manager -> for cpu, changed file to 4500
+Main -> changed show to true
+
+
+FOR BOTH
+~~~~~~~~~~
+Env -> Changed to top 1/10 saved, then 1/6
+Env -> Chnaged load rocks to 300
+main -> now folow rocket
+
+
+~~~~~~~~~~~~~~
+CollisionManager -> Decreased limit to 50m/s, 25 deg
+RocketManager (calculating score of rocket): -> now takes into accoout how far rockets are away from x=0m (pos_x_cost)
+Manager -> now loads in iteration 3000
+
+~~~~~~~~~~~~~~~
+RocketManager -> removed penalty for off center
+RocketManager -> added penalty for fuel
+Rockeet -> added attribute reset fuel mass: gives amoutn of fuel upon reset (for making penalty see ratio of howmuch fiel elft)

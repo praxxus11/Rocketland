@@ -36,7 +36,7 @@ public:
         if (angle > 180) angle -= 360;
         std::vector<float> inp {float(tanh(0.001 * p.posy)), float(tanh(0.01 * p.posx)),
                                 float(tanh(0.01 * p.vely)), float(tanh(0.01 * p.velx)),
-                                p.angle/180.f, float(tanh(0.005 * p.angle_vel)),
+                                angle/180.f, float(tanh(0.005 * p.angle_vel)),
                                 p.e1_thr, p.e1_angle/15.f,
                                 p.e2_thr, p.e2_angle/15.f,
                                 p.e3_thr, p.e3_angle/15.f,
@@ -71,7 +71,7 @@ public:
         inp[1] = tanh(0.01 * p.posx);	
         inp[2] = tanh(0.01 * p.vely);	
         inp[3] = tanh(0.01 * p.velx);	
-        inp[4] = p.angle / 180.f;	
+        inp[4] = angle / 180.f;	
         inp[5] = tanh(0.005 * p.angle_vel);	
         inp[6] = p.e1_thr;	
         inp[7] = p.e1_angle / 15.f;	
@@ -120,9 +120,14 @@ public:
         
         const float angle_cost = 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   
         
-        const float temp_tot_score = vel_y_cost + vel_x_cost + angle_vel_cost + angle_cost;
+        // cost from using too much fuel
+        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 500;
+
+        const float temp_tot_score = fuel_cost + vel_y_cost + vel_x_cost + angle_vel_cost + angle_cost;
+
         const float distr = 1;
 
+        score += (distr * (fuel_cost/temp_tot_score)) * fuel_cost;
         score += (distr * (vel_y_cost/temp_tot_score)) * vel_y_cost;
         score += (distr * (vel_x_cost/temp_tot_score)) * vel_x_cost;
         score += (distr * (angle_vel_cost/temp_tot_score)) * angle_vel_cost;
@@ -137,7 +142,7 @@ public:
         
         score += (5 * (pow(60.f, diff_norm) - 1));
 
-        if (!is_crashed() && !is_landed()) {
+        if (!is_crashed() && !is_landed()) { // only relevant when restarting while rockets still on field
             score = INT_MAX;
         }
         if (is_landed()) 

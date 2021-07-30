@@ -258,13 +258,13 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 1100));
-        vel.x = rand()%20-10; vel.y = rand()%5-130;
+        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 1000));
+        vel.x = rand()%20-10; vel.y = rand()%5-160;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
         
         angular_vel = rand()%30-15;
         status = Status::Regular;
-        fuel_mass = rand()%100 + 30000;
+        fuel_mass = rand()%100 + get_reset_fuel_mass();
     }
 
     float is_engine_running(int i) const {
@@ -272,6 +272,9 @@ public:
     }
     float get_fuel() const {
         return fuel_mass;
+    }
+    float get_reset_fuel_mass() const {
+        return reset_fuel_mass;
     }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
@@ -387,7 +390,7 @@ private:
 
             const float torque = realized_force_from_air * (3.f/4) * abs(fin->get_radial_dist()); // torque = F*r
             
-            if (air_push_rock_h*lineH_ref2 + air_push_rock_v*lineV_ref2 < 0)  // torque and rotation opposite direction
+            if (air_push_rock_h*lineH_ref2 + air_push_rock_v*lineV_ref2 < 0)  // torque and rotation opposite direction (dot product)
                 res.angular_accel += (angular_vel > 0 ? -1 : 1) * (torque / angle_inertia);
             else // torque and rotation same direction
                 res.angular_accel += (angular_vel > 0 ? 1 : -1) * (torque / angle_inertia);
@@ -421,5 +424,6 @@ private:
 
     float mass;
     float fuel_mass;
+    float reset_fuel_mass = 30000;
     float angle_inertia;
 };

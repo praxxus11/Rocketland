@@ -103,14 +103,14 @@ sf::Clock Env::clock{};
 sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
-int Env::num_rocks = 200;
-int Env::load_rocks = 200;
+int Env::num_rocks = 300;
+int Env::load_rocks = 300;
 
 std::random_device Env::seed;
 std::mt19937 Env::rng(Env::seed());
 std::uniform_int_distribution<int> Env::rnd(0, INT_MAX);
 
-std::array<int, 3> Env::interval_grad {0, Env::num_rocks/6, Env::num_rocks/3};
+std::array<int, 3> Env::interval_grad {0, Env::num_rocks/10, Env::num_rocks/6};
 std::array<int, 3> Env::weight_grad {3, 1, 0};
 std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), interval_grad.end(), weight_grad.begin());
 
