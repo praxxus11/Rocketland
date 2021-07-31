@@ -19,6 +19,7 @@
 #include "AIManager.h"
 #if defined(CPU)
     #include "DecorationsManager.h"
+    #include "NNDrawer.h"
 #endif
 
 class Manager {
@@ -26,10 +27,8 @@ class Manager {
         Manager() 
 #if defined(CPU)
         :
-            exframes(128, 
-                3328,
-                26,
-                "imgs/explosion_sheet.png")
+            exframes(128, 3328, 26, "imgs/explosion_sheet.png"),
+            nndr(sf::Vector2f(50, 50), ai_manager.get_layer_sizes())
 #endif        
         {
             rockets.reserve(Env::num_rocks);
@@ -76,6 +75,7 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
+            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations());
 #if defined(CPU)
             dm.update();
 #endif
@@ -85,6 +85,7 @@ class Manager {
             win.draw(f);
 #if defined(CPU)
             dm.draw(win);
+            win.draw(nndr);
 #endif
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
@@ -106,8 +107,8 @@ class Manager {
         Floor f;
         CollisionManager cm;
         AIManager ai_manager;
-
 #if defined(CPU)
         DecorationsManager dm;
+        NNDrawer nndr;
 #endif
 };

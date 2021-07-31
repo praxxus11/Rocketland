@@ -378,7 +378,16 @@ public:
         }	
     }
 #endif
+    const std::vector<int>& get_layer_sizes() const {	
+        return network.get_layer_sizes();	
+    }
 
+    std::vector<Eigen::MatrixXf>& get_wb() {
+        return networks[0].get_wb();
+    }
+    const std::vector<std::vector<float>>& get_lbl_activations() const { // lbl = layer by layer
+        return networks[0].get_lbl_activations();
+    }
 private:
     NeuralNetwork network;
     std::vector<RocketManager> networks;

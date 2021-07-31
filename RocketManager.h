@@ -22,6 +22,12 @@ public:
         index(ind)
 #endif
     {
+#if defined(CPU)
+        layer_activations.push_back(std::vector<float>(wb[0].cols(), 0));
+        for (int i=0; i<wb.size(); i++) {
+            layer_activations.push_back(std::vector<float>(wb[i].rows(), 0));
+        }
+#endif
     }
 
 #if defined(CPU)
@@ -42,7 +48,7 @@ public:
                                 p.e3_thr, p.e3_angle/15.f,
                                 p.uflp_angle/90.f, p.lflp_angle/90.f};
 
-        std::vector<float> res = nn.front_prop(inp, weights_biases);
+        std::vector<float> res = nn.front_prop(inp, weights_biases, layer_activations);
         rocket_ref->update_params(ControlParams(
             res[0], res[1],
             res[2], res[3],
@@ -161,6 +167,9 @@ public:
     std::vector<Eigen::MatrixXf>& get_wb() {
         return weights_biases;
     }
+    const std::vector<std::vector<float>>& get_lbl_activations() const { // lbl = layer by layer
+        return layer_activations;
+    }
     Rocket* get_rocket() {
         return rocket_ref;
     }
@@ -181,6 +190,7 @@ private:
     std::array<int, 3> engine_used = {0, 0, 0};
 #if defined(CPU)
     std::vector<Eigen::MatrixXf> weights_biases;
+    std::vector<std::vector<float>> layer_activations;
 #elif defined(GPU)
     int index;
 #endif

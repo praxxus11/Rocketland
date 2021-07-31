@@ -122,7 +122,9 @@ public:
 #endif
 
 #if defined(CPU)
-    std::vector<float> front_prop(const std::vector<float>& input_vector, const std::vector<Eigen::MatrixXf>& weights_biases) const {
+    std::vector<float> front_prop(const std::vector<float>& input_vector, 
+    const std::vector<Eigen::MatrixXf>& weights_biases, 
+    std::vector<std::vector<float>>& layer_activations) const {
         assert(input_vector.size() == layer_sizes[0]);
         assert(weights_biases.size() == layer_sizes.size() - 1);
         for (int i=0; i<weights_biases.size(); i++) {
@@ -133,6 +135,7 @@ public:
         Eigen::MatrixXf activations(1, input_vector.size() + 1);
         for (int i=0; i<input_vector.size(); i++) {
             activations(0, i) = input_vector[i];
+            layer_activations[0][i] = input_vector[i];
         }
         activations(0, input_vector.size()) = 1; // constant for the bias term 
         
@@ -147,6 +150,9 @@ public:
                 defualt:
                     break;
             }
+            for (int j=0; j<activations.cols(); j++) {
+                layer_activations[i+1][j] = activations(0, j);
+            }
             if (i < weights_biases.size()-1) { // then append a constant 1 term for the bias
                 activations.conservativeResize(1, activations.cols() + 1);
                 activations(0, activations.cols()-1) = 1; // constant for the bias term
@@ -158,10 +164,7 @@ public:
 #elif defined(GPU)
     void front_prop(float* input_vector, float* output_vector, float* weights, float* biases)  {	
         matmul(weights, biases, input_vector, output_vector, layer_sizes.size(), layer_sizes.data(), Env::num_rocks);	
-    }	
-    const std::vector<int>& get_layer_sizes() const {	
-        return layer_sizes;	
-    }	
+    }		
     int get_weights_ct() const {	
         return weights_ct;	
     }	
@@ -169,7 +172,9 @@ public:
         return biases_ct;	
     }
 #endif
-
+    const std::vector<int>& get_layer_sizes() const {	
+        return layer_sizes;	
+    }
 private:
     std::function<float(float)> relu_ff = [](float x) { return std::max(0.f, x); };
     std::function<float(float)> tanh_ff = [](float x) { return tanh(x); };
