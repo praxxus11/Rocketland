@@ -75,7 +75,7 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
-            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations());
+            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
 #if defined(CPU)
             dm.update();
 #endif
@@ -85,7 +85,6 @@ class Manager {
             win.draw(f);
 #if defined(CPU)
             dm.draw(win);
-            win.draw(nndr);
 #endif
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
@@ -93,6 +92,8 @@ class Manager {
                     // win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
+            win.draw(nndr);
+
         }
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }

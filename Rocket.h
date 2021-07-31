@@ -276,6 +276,28 @@ public:
     float get_reset_fuel_mass() const {
         return reset_fuel_mass;
     }
+    sf::Vector2f get_flap_position(RocketFins::Type type) const {
+        sf::Vector2f res;
+        if (type == RocketFins::Type::Upper) {
+            sf::Vector2f pt(0, 20);
+            pt = upper_fin.getTransform().transformPoint(pt);
+            pt = getTransform().transformPoint(pt);
+            res = pt;
+        }
+        else if (type == RocketFins::Type::Lower) {
+            sf::Vector2f pt(0, 20);
+            pt = lower_fin.getTransform().transformPoint(pt);
+            pt = getTransform().transformPoint(pt);
+            res = pt;
+        }
+        return res;
+    }
+    sf::Vector2f get_engine_position(int i) const {
+        sf::Vector2f pt(0, 0);
+        pt = engines[i].getTransform().transformPoint(pt);
+        pt = getTransform().transformPoint(pt);
+        return pt;
+    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         if (status == Status::Regular || status == Status::Landed) {

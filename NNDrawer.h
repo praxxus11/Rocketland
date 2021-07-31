@@ -32,7 +32,7 @@ class NNDrawer : public sf::Drawable {
 public:
     NNDrawer(const sf::Vector2f& pos, const std::vector<int>& l_sizes) :
         layer_sizes(l_sizes),
-        connections_to_rckt(l_sizes[l_sizes.size()-1])
+        connections_to_rckt(l_sizes[l_sizes.size()-1], sf::VertexArray(sf::Lines, 2))
     {
         const int inner_circle_rad = 7;
         const int out_circle_rad = 15;
@@ -67,7 +67,9 @@ public:
         }
     }   
 
-    void update(const std::vector<Eigen::MatrixXf>& wb, const std::vector<std::vector<float>>& lbl_activations) {
+    void update(const std::vector<Eigen::MatrixXf>& wb, // to didplay lines between nodes
+    const std::vector<std::vector<float>>& lbl_activations, // to display node colors
+    const Rocket& rocket_ref) { // to display lines from output to rocket itself
         for (int i=0; i<layer_sizes.size()-1; i++) {
             for (int j=0; j<layer_sizes[i]; j++) {
                 for (int k=0; k<layer_sizes[i+1]; k++) {
@@ -80,11 +82,29 @@ public:
                 }
             }
         }
+        for (int i=0; i<connections_to_rckt.size(); i++) {
+            connections_to_rckt[i][0].position = nodes[nodes.size()-1][i].getPosition();
+            
+            const float activation_val = lbl_activations[lbl_activations.size()-1][i];
+            const int red  = int(255 * (1 / (1 + exp(-2 * activation_val))));
+            const int green  = int(255 * (1 / (1 - exp(-2 * activation_val))));
+            connections_to_rckt[i][0].color = sf::Color(red, green, 0, 200);
+        }
+
+        connections_to_rckt[0][1].position = rocket_ref.get_engine_position(0); // engine number 1
+        connections_to_rckt[1][1].position = rocket_ref.get_engine_position(0); // engine number 1
+        connections_to_rckt[2][1].position = rocket_ref.get_engine_position(1); // engine number 2
+        connections_to_rckt[3][1].position = rocket_ref.get_engine_position(1); // engine number 2
+        connections_to_rckt[4][1].position = rocket_ref.get_engine_position(2); // engine number 3
+        connections_to_rckt[5][1].position = rocket_ref.get_engine_position(2); // engine number 1
+        connections_to_rckt[6][1].position = rocket_ref.get_flap_position(RocketFins::Type::Upper); // upper flap angle
+        connections_to_rckt[7][1].position = rocket_ref.get_flap_position(RocketFins::Type::Lower); // lower flap angle
+        
         for (int i=0; i<nodes.size(); i++) {
             for (int j=0; j<nodes[i].size(); j++) {
                 const float activation_val = lbl_activations[i][j];
-                const int red  = int(255 * (1 / (1 + exp(-0.2 * activation_val))));
-                const int green  = int(255 * (1 / (1 - exp(-0.2 * activation_val))));
+                const int red  = int(255 * (1 / (1 + exp(-2 * activation_val))));
+                const int green  = int(255 * (1 / (1 - exp(-2 * activation_val))));
                 nodes[i][j].set_outer_circle_color(sf::Color(red, green, 0, 200));
             }
         }
@@ -99,6 +119,11 @@ private:
                 }
             }
         }
+
+        for (const auto& connection : connections_to_rckt) {
+            target.draw(connection);
+        }
+
         for (const auto& column : nodes) {
             for (const auto& node : column) {
                 target.draw(node);
