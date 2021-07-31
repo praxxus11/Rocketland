@@ -1,13 +1,5 @@
 Video paramters: 14 12 8
-300 rockets each iteration
+250 rockets each iteration
 ~~~~~~~~~~~~~~~~
-Iteration: 0-2700
-65m/s: x & y, 30deg.
-Starts off with random
-Number rockets == 250
-
-~~~~~~~~~~~~~~~~~~~~
-Iteration 2700-XXX
-Added additional +0.000001 to rocket
-Start of with 2700
-55m/s, 25degs
+Iteration 0-
+75m/s 30deg
