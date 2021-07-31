@@ -56,6 +56,7 @@ class Manager {
                 rockets[i].setRotation(rockets[i].getRotation());
             }
 #if defined(CPU)
+            dm.init_rocket_labels(rockets);
             // ai_manager.init_random(rockets);
             ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3000.txt");
 #elif defined(GPU)

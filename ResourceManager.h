@@ -6,7 +6,7 @@
 class ResourceManger {
 public:
     enum class ResourceTypes {
-        RocketImg, RocketFlame, RocketUpperFin, RocketLowerFin,Haze
+        RocketImg, RocketFlame, RocketUpperFin, RocketLowerFin, Haze, MathFont
     };
     ResourceManger() 
     {
@@ -15,6 +15,7 @@ public:
         filepaths[ResourceTypes::RocketLowerFin] = "imgs/rocket_lower_fin.png";
         filepaths[ResourceTypes::RocketUpperFin] = "imgs/rocket_upper_fin.png";
         filepaths[ResourceTypes::Haze] = "imgs/Haze3.png";
+        filepaths[ResourceTypes::MathFont] = "imgs/MathFont.ttf";
     }
     ~ResourceManger() {
         delete instance;
@@ -31,6 +32,18 @@ public:
             return textureFound->second;
         }
     }
+
+    sf::Font& getFont(ResourceTypes resource) {
+        const auto& fontFound = fonts.find(resource);
+        if (fontFound == fonts.end()) {
+            sf::Font& font = fonts[resource];
+            font.loadFromFile(filepaths[resource]);
+            return font;
+        }
+        else {
+            return fontFound->second;
+        }
+    }
     static ResourceManger* getInstance() {
         if (!instance) 
             instance = new ResourceManger();
@@ -39,6 +52,7 @@ public:
 private:
     std::map<ResourceTypes, std::string> filepaths;
     std::map<ResourceTypes, sf::Texture> textures;
+    std::map<ResourceTypes, sf::Font> fonts;
     static ResourceManger* instance;
 };
 
