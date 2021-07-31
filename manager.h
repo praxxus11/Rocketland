@@ -17,6 +17,9 @@
 #endif
 #include "CollisionManager.h"
 #include "AIManager.h"
+#if defined(CPU)
+    #include "DecorationsManager.h"
+#endif
 
 class Manager {
     public:
@@ -72,10 +75,16 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
+#if defined(CPU)
+            dm.update();
+#endif
         }
 
         void draw(sf::RenderWindow& win) const {
             win.draw(f);
+#if defined(CPU)
+            dm.draw(win);
+#endif
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
                 // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
@@ -96,4 +105,8 @@ class Manager {
         Floor f;
         CollisionManager cm;
         AIManager ai_manager;
+
+#if defined(CPU)
+        DecorationsManager dm;
+#endif
 };

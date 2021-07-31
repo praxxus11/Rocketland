@@ -91,6 +91,11 @@ public:
 
 
     static float tempTm;
+
+
+    // stuff that relates to video mode
+    static bool show_clouds;
+    static bool show_rocket_stats;
 };
 
 int Env::ww = 1100;
@@ -115,3 +120,6 @@ std::array<int, 2> Env::weight_grad {1, 0};
 std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), interval_grad.end(), weight_grad.begin());
 
 float Env::tempTm = 0;
+
+bool Env::show_clouds = 1;
+bool Env::show_rocket_stats = 1;

@@ -6,7 +6,7 @@
 class ResourceManger {
 public:
     enum class ResourceTypes {
-        RocketImg, RocketFlame, RocketUpperFin, RocketLowerFin
+        RocketImg, RocketFlame, RocketUpperFin, RocketLowerFin,Haze
     };
     ResourceManger() 
     {
@@ -14,6 +14,7 @@ public:
         filepaths[ResourceTypes::RocketFlame] = "imgs/flame.png";
         filepaths[ResourceTypes::RocketLowerFin] = "imgs/rocket_lower_fin.png";
         filepaths[ResourceTypes::RocketUpperFin] = "imgs/rocket_upper_fin.png";
+        filepaths[ResourceTypes::Haze] = "imgs/Haze3.png";
     }
     ~ResourceManger() {
         delete instance;

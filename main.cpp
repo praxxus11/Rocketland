@@ -33,6 +33,8 @@ int main()
         sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "", sf::Style::Default, settings);
         window.setFramerateLimit(40);
         window.setPosition(sf::Vector2i(1920-m.get_window_width(), 0));
+        sf::RectangleShape sky_blue(sf::Vector2f(float(window.getSize().x), float(window.getSize().y))); // color to reset board
+        sky_blue.setFillColor(sf::Color(135, 206, 235));
         while (window.isOpen()) {
             sf::Event event;
             while (window.pollEvent(event)) {
@@ -40,6 +42,7 @@ int main()
                     window.close();
             }
             window.clear();
+            window.draw(sky_blue);
             m.update();
             // c.update();
             c.update_from_rocket(m.get_rocket_pos());

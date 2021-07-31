@@ -16,7 +16,6 @@ public:
 #if defined(CPU)
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
 #endif
-        
         flame_sprite.setOrigin(522/2, 0);
     }
     Engine(const Engine& e) :
