@@ -301,7 +301,7 @@ private:
                 // see imgs/referenceImage1
                 const float angleA = engine.get_angle();
                 const float angleB = 90 - angleA;
-                const float angleC = 180/Env::PI * atan2(engine_displacement_x, 25);
+                const float angleC = 180/Env::PI * atan2(engine_displacement_x, 25); // 25 meters veritcally frm center
                 const float angleD = 90 - angleC;
                 const float angleE = 180 - angleD - angleB;
 
@@ -345,7 +345,7 @@ private:
 
             // imgs/ReferenceImage3
             const float const_mul = (hori_vel_comb*lineH_ref2 + vert_vel_comb*lineV_ref2) / 
-                (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2);
+                (lineH_ref2*lineH_ref2 + lineV_ref2*lineV_ref2 + 0.0000000001);
             const float r_push_air_h = const_mul * lineH_ref2;
             const float r_push_air_v = const_mul * lineV_ref2;
             
