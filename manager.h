@@ -75,16 +75,21 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
-            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
 #if defined(CPU)
-            dm.update();
+            if (Env::show_rocket_stats && Env::show_clouds) {
+                dm.update();
+            }
+            if (Env::show_nn) {
+                nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
+            }
 #endif
         }
 
         void draw(sf::RenderWindow& win) const {
             win.draw(f);
 #if defined(CPU)
-            dm.draw(win);
+            if (Env::show_rocket_stats && Env::show_clouds)
+                dm.draw(win);
 #endif
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
@@ -92,8 +97,8 @@ class Manager {
                     // win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
-            win.draw(nndr);
-
+            if (Env::show_nn)
+                win.draw(nndr);
         }
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }

@@ -96,6 +96,7 @@ public:
     // stuff that relates to video mode
     static bool show_clouds;
     static bool show_rocket_stats;
+    static bool show_nn;
 };
 
 int Env::ww = 1100;
@@ -123,3 +124,4 @@ float Env::tempTm = 0;
 
 bool Env::show_clouds = 1;
 bool Env::show_rocket_stats = 1;
+bool Env::show_nn = 1;
