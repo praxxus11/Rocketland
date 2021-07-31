@@ -54,3 +54,14 @@ changed to 7 m/s and 3 deg
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 changed to 3m/s, 2m/s, and 2 deg
 make new folder in saves on gpus that saves best ierations
+
+~~~~~~~~~~~~
+Chanfged both to ster i3300
+changed to 1.2m/s, 0.7m/s, and 1 deg
+
+
+
+~~~~~~~~~~~~~~~~~~
+changed to iter 3300
+changed to 3m/s, 1deg
+changed to 1 rocketcamera follow rocket
