@@ -102,7 +102,6 @@ public:
         //     }
         // }
         if (all_done >= Env::num_rocks) {
-            Env::cycle_num++;
             double tot = 0;
             int ct = 0;
             for (RocketManager& rm : networks) {
@@ -116,7 +115,13 @@ public:
                 }
             }
             std::cout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
-            
+#if defined(CPU)
+            std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/save_scores.txt", std::ios::app);
+            fout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
+#elif defined(GPU)
+            std::ofstream fout("../saves/save_scores.txt", std::ios::app);
+            fout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
+#endif
             sort(networks.begin(), networks.end(), [](const RocketManager& a, const RocketManager& b) {
                 return (a.getScore() < b.getScore());
             });
@@ -134,7 +139,7 @@ public:
                 }
             }
 #elif defined(GPU)
-            if (Env::cycle_num%150==0) {	
+            if ((Env::cycle_num <= 400 && Env::cycle_num%30==0) || (Env::cycle_num <= 800 && Env::cycle_num%60==0) || Env::cycle_num%150==0) {	
                 std::cout << "\n\nSaving...\n\n";	
                 std::ofstream fout("../saves/iteration" + std::to_string(Env::cycle_num) + ".txt");	
                 for (int r=0; r<Env::num_rocks/10; r++) {	
@@ -172,6 +177,7 @@ public:
                 networks[i].set_index(i);	
             }
 #endif
+            Env::cycle_num++;
         }
     }
 
