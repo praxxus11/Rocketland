@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
 
 class RocketStats : public GameObject {
 public:
@@ -46,6 +47,32 @@ public:
         vel_x.setFillColor(abs(rocket_ref->getVelocity().x)<8 ? sf::Color(0, 100, 0) : sf::Color::Red);        
         const auto& bb = rocket_ref->getGlobalBounds();
         irlSetPosition(sf::Vector2f(bb.left+bb.width/2, bb.top+4));
+
+
+        const float rspeed = sqrt(pow(rocket_ref->getVelocity().x, 2.f) + pow(rocket_ref->getVelocity().y, 2.f));
+        const float cred = 255 / (1 + exp(-0.2 * (rspeed - 20)));
+        const float cblue = 255 / (1 + exp(0.2 * (rspeed - 20)));
+        const sf::Color col = sf::Color(cred, 0, cblue);
+        if (past_pos.size()==0) {
+            sf::VertexArray arr(sf::Lines, 2);
+            arr[0].position = rocket_ref->irlGetPosition();
+            arr[1].position = rocket_ref->irlGetPosition();
+            arr[0].color = col;
+            arr[1].color = col;
+            past_pos.push_back(arr);
+        }
+        else {
+            sf::VertexArray arr(sf::Lines, 2);
+            if (abs(rocket_ref->getPosition().y - past_pos[past_pos.size()-1][1].position.y) > 500) {
+                past_pos.clear();
+                return;
+            }
+            arr[0].position = past_pos[past_pos.size()-1][1].position;
+            arr[1].position = rocket_ref->irlGetPosition();
+            arr[0].color = col;
+            arr[1].color = col;
+            past_pos.push_back(arr);
+        }
     }
 private:  
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
@@ -55,6 +82,12 @@ private:
         target.draw(vel_x, states);
         target.draw(height, states);
         target.draw(fuel, states);
+
+        for (sf::VertexArray arr : past_pos) {
+            arr[0].position = Env::metersToPixels(arr[0].position);
+            arr[1].position = Env::metersToPixels(arr[1].position);
+            target.draw(arr);
+        }
     }
 
     Rocket* rocket_ref; // drawing on top of rocket bounding box
@@ -62,4 +95,5 @@ private:
     sf::Text vel_x;
     sf::Text height;
     sf::Text fuel;
+    std::vector<sf::VertexArray> past_pos;
 };
