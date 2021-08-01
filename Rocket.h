@@ -259,7 +259,7 @@ public:
     
     void reset_rocket() {
         irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 1000));
-        vel.x = rand()%20-10; vel.y = rand()%5-160;
+        vel.x = rand()%20-10; vel.y = rand()%5-110;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
         
         angular_vel = rand()%30-15;
@@ -353,7 +353,7 @@ private:
             const float air_push_rock_v = -r_push_air_v;
             const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v) + 0.00000001;
 
-            const float max_force_from_air = 1e6; // newtons, 1/2 of an engine
+            const float max_force_from_air = 3e6; // newtons, 1/2 of an engine
 
             float force_multiplier = 1;
             sf::Vector2f initial_pt(0, 0);
@@ -365,14 +365,26 @@ private:
             sf::Vector2f diff(final_pt-initial_pt);
 
             // Reference Image 4
+            // if (diff.x*air_push_rock_h + diff.y*air_push_rock_v < 0) { 
+            // // differenet direction than movement of rocket, means less force
+            //     force_multiplier = 1 - 0.01*abs(lower_fin.get_angle());
+            // }
+            // //Reference Image 5
+            // else { 
+            // // same direction as movement, more force
+            //     force_multiplier = 1 - 0.0044*abs(lower_fin.get_angle());
+            // }
+
+            // Reference Image 7
             if (diff.x*air_push_rock_h + diff.y*air_push_rock_v < 0) { 
             // differenet direction than movement of rocket, means less force
-                force_multiplier = 1 - 0.01*abs(lower_fin.get_angle());
+                force_multiplier = -0.1 * exp(0.07 * (abs(fin->get_angle()) - 57.5)) + 1;
+                std::cout << force_multiplier << " ";
             }
-            //Reference Image 5
+            // Reference Image 8
             else { 
             // same direction as movement, more force
-                force_multiplier = 1 - 0.0044*abs(lower_fin.get_angle());
+                force_multiplier = -0.05 * exp(0.05 * (abs(fin->get_angle()) - 57.5)) + 1;
             }
             const float realized_force_from_air = ((air_speed*air_speed) / (90*90)) * max_force_from_air * force_multiplier;
 

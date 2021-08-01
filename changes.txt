@@ -1,15 +1,8 @@
-Video paramters: 14 12 8
-250 rockets each iteration
-~~~~~~~~~~~~~~~~
-Iteration 1 (pres1)
-60m/s 25deg
-~~~~~~~~~~~~~~
-Iteratiom 2 (pres2)
-45m/s 20deg
-~~~~~~~~~~~~~
-Iteration 3 (pres3)
-30m/s 15deg
-~~~~~~~~~~~~~~~
-Iteration 4
-25m/s 12deg
-300 rockets
+~~~~~~
+After commit 1
+~~~~~~~~
+25 deg, 55m/s
+changsd 160m/s to 110m/s
+changed to init-from-random
+Increased force from air to 3e6 N
+Changed curves for force depending on flap angle (see refimg 7-8)
