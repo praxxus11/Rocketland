@@ -1,5 +1,14 @@
 Video paramters: 14 12 8
 250 rockets each iteration
 ~~~~~~~~~~~~~~~~
-Iteration 0-
-75m/s 30deg
+Iteration 1 (pres1)
+60m/s 25deg
+~~~~~~~~~~~~~~
+Iteratiom 2 (pres2)
+45m/s 20deg
+~~~~~~~~~~~~~
+Iteration 3 (pres3)
+30m/s 15deg
+~~~~~~~~~~~~~~~
+Iteration 4
+25m/s 12deg
