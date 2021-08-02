@@ -91,16 +91,16 @@ public:
             all_done += (networks[i].is_crashed() || networks[i].is_landed());	
         }
 #endif
-        // Env::tempTm += Env::g_elapsed_real();
-        // if (Env::tempTm>10) {
-        //     Env::tempTm = 0;
-        //     std::cout << all_done << '\n';
-        //     for (int i=0; i<networks.size(); i++) {	
-        //         if (!(networks[i].is_crashed() || networks[i].is_landed())) {
-        //             networks[i].print_engine_stats();
-        //         }
-        //     }
-        // }
+        Env::tempTm += Env::g_elapsed_real();
+        if (Env::tempTm>10 && all_done > 235) {
+            Env::tempTm = 0;
+            std::cout << all_done << '\n';
+            for (int i=0; i<networks.size(); i++) {	
+                if (!(networks[i].is_crashed() || networks[i].is_landed())) {
+                    networks[i].print_engine_stats();
+                }
+            }
+        }
         if (all_done >= Env::num_rocks) {
             double tot = 0;
             int ct = 0;

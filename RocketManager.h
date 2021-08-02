@@ -100,7 +100,8 @@ public:
     void print_engine_stats() const {
         for (int i : engine_used) std::cout << i << " ";;
         std::cout << "Fuel:" << rocket_ref->get_fuel() << "height: " << rocket_ref->irlGetPosition().y << " x: " 
-            << rocket_ref->irlGetPosition().x << " angle: " << rocket_ref->getRotation() << " vely " << rocket_ref->getVelocity().y << '\n';
+            << rocket_ref->irlGetPosition().x << " angle: " << rocket_ref->getRotation() << " vely " << rocket_ref->getVelocity().y <<
+            " velx " << rocket_ref->getVelocity().x << '\n';
     }
     bool is_crashed() const {
         return (rocket_ref->getStatus() == Rocket::Status::BlewUp);
@@ -121,7 +122,7 @@ public:
         const float angle_cost = 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   
         
         // cost from using too much fuel
-        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 100;
+        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 250;
 
         const float temp_tot_score = fuel_cost + vel_y_cost + vel_x_cost + angle_vel_cost + angle_cost;
 

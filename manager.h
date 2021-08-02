@@ -54,10 +54,10 @@ class Manager {
             }
 #if defined(CPU)
             // ai_manager.init_random(rockets);
-            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration1650.txt");
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3000.txt");
 #elif defined(GPU)
             // ai_manager.init_random(rockets);
-            ai_manager.init_from_file(rockets, "../saves/pres1/iteration1650.txt");
+            ai_manager.init_from_file(rockets, "../saves/pres5/iteration1200.txt");
 #endif
         }
         ~Manager() 
