@@ -1,9 +1,10 @@
 ~~~~~~
 After commit 1
 ~~~~~~~~
-25 deg, 55m/s
+35 deg, 40m/s
 changsd 160m/s to 130m/s
 changed to init-from-random
 Increased force from air to 3e6 N
 Changed curves for force depending on flap angle (see refimg 7-8)
 changed to 700m
+Removed restriction on fuel
