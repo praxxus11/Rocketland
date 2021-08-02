@@ -121,7 +121,7 @@ public:
         const float angle_cost = 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   
         
         // cost from using too much fuel
-        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 0;
+        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 100;
 
         const float temp_tot_score = fuel_cost + vel_y_cost + vel_x_cost + angle_vel_cost + angle_cost;
 
