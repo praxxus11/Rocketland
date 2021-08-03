@@ -190,6 +190,7 @@ public:
             vel.x = 0;
             vel.y = 0;
             angular_vel = 0;
+            for (Engine& e : engines) e.shut_off();
             irlSetPosition(sf::Vector2f(position.x, position.y));
             setScale(sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120));
             for (Engine& engine : engines) {

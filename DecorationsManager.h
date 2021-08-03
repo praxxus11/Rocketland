@@ -19,17 +19,21 @@ public:
         }
     }
     void update() {
-        for (Cloud& cloud : clouds) {
-            cloud.irlSetPosition(cloud.irlGetPosition());
-            cloud.setScale(sf::Vector2f(2000.f * Env::pixpmeter / 1120, 2000.f * Env::pixpmeter / 1120));
+        if (Env::show_clouds) {
+            for (Cloud& cloud : clouds) {
+                cloud.irlSetPosition(cloud.irlGetPosition());
+                cloud.setScale(sf::Vector2f(2000.f * Env::pixpmeter / 1120, 2000.f * Env::pixpmeter / 1120));
+            }
         }
         for (RocketStats& stat : labels) {
             stat.update();
         }
     }
     void draw(sf::RenderWindow& win) const {
-        for (const Cloud& cloud : clouds) {
-            win.draw(cloud);
+        if (Env::show_clouds) {
+            for (const Cloud& cloud : clouds) {
+                win.draw(cloud);
+            }
         }
         for (const RocketStats& stat : labels) {
             win.draw(stat);

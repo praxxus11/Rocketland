@@ -70,6 +70,7 @@ public:
     void update(const std::vector<Eigen::MatrixXf>& wb, // to didplay lines between nodes
     const std::vector<std::vector<float>>& lbl_activations, // to display node colors
     const Rocket& rocket_ref) { // to display lines from output to rocket itself
+        if (!Env::show_nn) return;
         for (int i=0; i<layer_sizes.size()-1; i++) {
             for (int j=0; j<layer_sizes[i]; j++) {
                 for (int k=0; k<layer_sizes[i+1]; k++) {
@@ -112,6 +113,7 @@ public:
 private:
     // struct NestedCircle;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+        if (!Env::show_nn) return;
         for (const auto& layer : connections) {
             for (const auto& column : layer) {
                 for (const auto& connection : column) {
