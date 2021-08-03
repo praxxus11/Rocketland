@@ -36,7 +36,7 @@ public:
     {
         const int inner_circle_rad = 7;
         const int out_circle_rad = 15;
-        const int space_layer = 90;
+        const int space_layer = 60;
         const int space_nodes = 35;
     
         for (int i=0; i<layer_sizes.size(); i++) {
