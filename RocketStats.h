@@ -8,7 +8,6 @@ public:
         GameObject(pos),
         rocket_ref(ref)
     {
-#if defined(CPU)
         height.setFont(ResourceManger::getInstance()->getFont(ResourceManger::ResourceTypes::MathFont));
         vel_y.setFont(ResourceManger::getInstance()->getFont(ResourceManger::ResourceTypes::MathFont));
         vel_x.setFont(ResourceManger::getInstance()->getFont(ResourceManger::ResourceTypes::MathFont));
@@ -28,7 +27,6 @@ public:
         vel_y.setPosition(sf::Vector2f(0, -2*font_size));
         vel_x.setPosition(sf::Vector2f(0, -font_size));
         fuel.setPosition(sf::Vector2f(0, 0));
-#endif
     }
     sf::FloatRect getGlobalBounds() const override {
         sf::FloatRect ir = vel_y.getLocalBounds();

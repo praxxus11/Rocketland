@@ -13,9 +13,7 @@ public:
         throttle_vel(0),
         max_thrust(2.3e6)
     {
-#if defined(CPU)
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
-#endif
         flame_sprite.setOrigin(522/2, 0);
     }
     Engine(const Engine& e) :
@@ -24,10 +22,7 @@ public:
         throttle(e.throttle),
         max_thrust(e.max_thrust)
     {
-#if defined(CPU)
         flame_sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketFlame));
-#endif
-    
         flame_sprite.setOrigin(522/2, 0);
     }
     sf::FloatRect getGlobalBounds() const override {
@@ -77,11 +72,8 @@ private:
             target.draw(flame_sprite, states);
         }
     }
-#if defined(CPU)
     sf::Sprite flame_sprite;
-#elif defined(GPU)
-    sf::RectangleShape flame_sprite = sf::RectangleShape(sf::Vector2f(522, 1783));
-#endif
+
 
     float angle; // -45 -> 45 degress, where 0 degrees is downward
     float throttle; // 0.05 -> 1.0

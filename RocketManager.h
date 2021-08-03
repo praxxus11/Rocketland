@@ -8,29 +8,20 @@ class RocketManager {
 public:
     RocketManager(
         Rocket* rocket, 
-#if defined(CPU)
         const std::vector<Eigen::MatrixXf>& wb
-#elif defined(GPU)
-        int ind
-#endif
+
         ) :
         rocket_ref(rocket),
         score(0),
-#if defined(CPU)
         weights_biases(wb)
-#elif defined(GPU)
-        index(ind)
-#endif
+
     {
-#if defined(CPU)
         layer_activations.push_back(std::vector<float>(wb[0].cols(), 0));
         for (int i=0; i<wb.size(); i++) {
             layer_activations.push_back(std::vector<float>(wb[i].rows(), 0));
         }
-#endif
     }
 
-#if defined(CPU)
     void update_rocket(const NeuralNetwork& nn) {
         if (rocket_ref->irlGetPosition().y > 2000 || abs(rocket_ref->irlGetPosition().x) > 1100) {
             rocket_ref->setStatus(Rocket::Status::BlewUp);
@@ -63,46 +54,6 @@ public:
             }
         }
     }
-#elif defined(GPU)
-      void update_inputs(float* inp) {	
-        if (rocket_ref->irlGetPosition().y > 2000 || abs(rocket_ref->irlGetPosition().x) > 1100) {	
-            rocket_ref->setStatus(Rocket::Status::BlewUp);	
-            score = 1e7;	
-        }	
-        if (rocket_ref->getStatus() != Rocket::Status::Regular) return;	
-        StateParams p = rocket_ref->get_rocket_params();	
-        float angle = p.angle;	
-        if (angle > 180) angle -= 360;	
-        inp[0] = tanh(0.001 * p.posy);	
-        inp[1] = tanh(0.01 * p.posx);	
-        inp[2] = tanh(0.01 * p.vely);	
-        inp[3] = tanh(0.01 * p.velx);	
-        inp[4] = angle / 180.f;	
-        inp[5] = tanh(0.005 * p.angle_vel);	
-        inp[6] = p.e1_thr;	
-        inp[7] = p.e1_angle / 15.f;	
-        inp[8] = p.e2_thr;	
-        inp[9] = p.e2_angle / 15.f;	
-        inp[10] = p.e3_thr;	
-        inp[11] = p.e3_angle / 15.f;	
-        inp[12] = p.uflp_angle / 90.f;	
-        inp[13] = p.lflp_angle / 90.f;	
-    }	
-    	
-    void update_outputs(float* oup) {	
-        rocket_ref->update_params(ControlParams(	
-            oup[0], oup[1],	
-            oup[2], oup[3],	
-            oup[4], oup[5],	
-            oup[6], oup[7]	
-        ));	
-        for (int i=0; i<3; i++) {
-            if (rocket_ref->is_engine_running(i)) {
-                engine_used[i]++;
-            }
-        }
-    }
-#endif
     void print_engine_stats() const {
         for (int i : engine_used) std::cout << i << " ";;
         std::cout << "Fuel:" << rocket_ref->get_fuel() << "height: " << rocket_ref->irlGetPosition().y << " x: " 
@@ -163,7 +114,6 @@ public:
         for (int& ct : engine_used) ct = 0;
     }
 
-#if defined(CPU)
     std::vector<Eigen::MatrixXf>& get_wb() {
         return weights_biases;
     }
@@ -173,25 +123,14 @@ public:
     Rocket* get_rocket() {
         return rocket_ref;
     }
-#endif
 
-#if defined(GPU)
-    int get_index() const {
-        return index;
-    }
-    void set_index(int i) {
-        index = i;
-    }
-#endif
+
 
 private:
     Rocket* rocket_ref;
     int score;
     std::array<int, 3> engine_used = {0, 0, 0};
-#if defined(CPU)
     std::vector<Eigen::MatrixXf> weights_biases;
     std::vector<std::vector<float>> layer_activations;
-#elif defined(GPU)
-    int index;
-#endif
+
 };

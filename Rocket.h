@@ -107,9 +107,7 @@ public:
         fuel_mass(f_mass),
         angle_inertia(inertia)
     {
-#if defined(CPU)
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
-#endif
         setScale(scal);
         setRotation(rot);
         
@@ -131,9 +129,7 @@ public:
         angle_inertia(r.angle_inertia),
         engines(r.engines)
     {
-#if defined(CPU)
         sprite.setTexture(ResourceManger::getInstance()->getTexture(ResourceManger::ResourceTypes::RocketImg));
-#endif  
         setScale(r.getScale());
         setRotation(r.getRotation());
 
@@ -386,15 +382,14 @@ private:
         
             sf::Vector2f diff(final_pt-initial_pt);
 
-            // Reference Image 4
             if (diff.x*air_push_rock_h + diff.y*air_push_rock_v < 0) { 
             // differenet direction than movement of rocket, means less force
-                force_multiplier = 1 - 0.01*abs(lower_fin.get_angle());
+                force_multiplier = -0.1 * exp(0.07 * (abs(fin->get_angle()) - 57.5)) + 1;
             }
-            //Reference Image 5
+            // Reference Image 8
             else { 
             // same direction as movement, more force
-                force_multiplier = 1 - 0.0044*abs(lower_fin.get_angle());
+                force_multiplier = -0.05 * exp(0.05 * (abs(fin->get_angle()) - 57.5)) + 1;
             }
             const float realized_force_from_air = ((air_speed*air_speed) / (90*90)) * max_force_from_air * force_multiplier;
 
@@ -428,11 +423,8 @@ private:
     float get_total_mass() const {
         return mass + fuel_mass;
     }
-#if defined(CPU)
     sf::Sprite sprite;
-#elif defined(GPU)
-    sf::RectangleShape sprite = sf::RectangleShape(sf::Vector2f(210, 1120));   
-#endif 
+
     sf::Vector2f vel;
     float angular_vel;
     Status status;
