@@ -160,7 +160,6 @@ public:
         }
         return std::vector<float>(activations.data(), activations.data() + activations.size());
     }
-
 #elif defined(GPU)
     void front_prop(float* input_vector, float* output_vector, float* weights, float* biases)  {	
         matmul(weights, biases, input_vector, output_vector, layer_sizes.size(), layer_sizes.data(), Env::num_rocks);	

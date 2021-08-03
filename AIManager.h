@@ -122,17 +122,17 @@ public:
             });
 
 #if defined(CPU)
-            if (Env::cycle_num%150==0) {
-                std::cout << "\n\nSaving...\n\n";
-                std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
-                for (int i=0; i<Env::num_rocks/10; i++) {
-                    auto& hi = networks[i].get_wb();
-                    for (const auto& eigen_mat : hi) {
-                        fout << eigen_mat << '\n';
-                    }
-                    fout << '\n';
-                }
-            }
+            // if (Env::cycle_num%150==0) {
+            //     std::cout << "\n\nSaving...\n\n";
+            //     std::ofstream fout("C:/Users/Eric/ProgrammingProjectsCpp/RocketSaves/cycle_num" + std::to_string(Env::cycle_num) + ".txt");
+            //     for (int i=0; i<Env::num_rocks/10; i++) {
+            //         auto& hi = networks[i].get_wb();
+            //         for (const auto& eigen_mat : hi) {
+            //             fout << eigen_mat << '\n';
+            //         }
+            //         fout << '\n';
+            //     }
+            // }
 #elif defined(GPU)
             if (Env::cycle_num%150==0) {	
                 std::cout << "\n\nSaving...\n\n";	

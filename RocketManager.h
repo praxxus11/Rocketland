@@ -9,16 +9,14 @@ public:
     RocketManager(
         Rocket* rocket, 
         const std::vector<Eigen::MatrixXf>& wb
-
         ) :
         rocket_ref(rocket),
         score(0),
         weights_biases(wb)
-
     {
-        layer_activations.push_back(std::vector<float>(wb[0].cols(), 0));
+        layer_activations.push_back(std::vector<float>(wb[0].rows(), 0));
         for (int i=0; i<wb.size(); i++) {
-            layer_activations.push_back(std::vector<float>(wb[i].rows(), 0));
+            layer_activations.push_back(std::vector<float>(wb[i].cols(), 0));
         }
     }
 
@@ -38,8 +36,8 @@ public:
                                 p.e2_thr, p.e2_angle/15.f,
                                 p.e3_thr, p.e3_angle/15.f,
                                 p.uflp_angle/90.f, p.lflp_angle/90.f};
-
         std::vector<float> res = nn.front_prop(inp, weights_biases, layer_activations);
+        // std::vector<float> res = nn.front_prop(inp, weights_biases);
         rocket_ref->update_params(ControlParams(
             res[0], res[1],
             res[2], res[3],
