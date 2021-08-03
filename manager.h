@@ -49,7 +49,7 @@ class Manager {
             }
             dm.init_rocket_labels(rockets);
             // ai_manager.init_random(rockets);
-            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration2700.txt");
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3300.txt");
         }
         ~Manager() 
         {

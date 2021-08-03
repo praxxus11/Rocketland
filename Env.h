@@ -110,7 +110,7 @@ sf::Clock Env::clock{};
 sf::Vector2f Env::origin(Env::ww/2, Env::wh/2); // (position (0, 0))
 sf::Vector2f Env::camera_pos(0, 0);
 int Env::cycle_num = 0;
-int Env::num_rocks = 100;
+int Env::num_rocks = 1;
 int Env::load_rocks = 300;
 
 std::random_device Env::seed;
@@ -124,6 +124,6 @@ std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), i
 float Env::tempTm = 0;
 
 bool Env::show_clouds = 1;
-bool Env::show_rocket_stats = 0;
-bool Env::show_nn = 0;
-bool Env::show_trails = 0;
+bool Env::show_rocket_stats = 1;
+bool Env::show_nn = 1;
+bool Env::show_trails = 1;

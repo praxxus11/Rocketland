@@ -211,6 +211,7 @@ public:
             irlSetPosition(sf::Vector2f(position.x, position.y));
             setScale(sf::Vector2f(50.f * Env::pixpmeter / 1120, 50.f * Env::pixpmeter / 1120));
             for (Engine& engine : engines) {
+                engine.shut_down();
                 engine.update();
             }
             upper_fin.update();
@@ -404,15 +405,15 @@ private:
         
             sf::Vector2f diff(final_pt-initial_pt);
 
-            // Reference Image 4
+             // Reference Image 7
             if (diff.x*air_push_rock_h + diff.y*air_push_rock_v < 0) { 
             // differenet direction than movement of rocket, means less force
-                force_multiplier = 1 - 0.01*abs(lower_fin.get_angle());
+                force_multiplier = -0.1 * exp(0.07 * (abs(fin->get_angle()) - 57.5)) + 1;
             }
-            //Reference Image 5
+            // Reference Image 8
             else { 
             // same direction as movement, more force
-                force_multiplier = 1 - 0.0044*abs(lower_fin.get_angle());
+                force_multiplier = -0.05 * exp(0.05 * (abs(fin->get_angle()) - 57.5)) + 1;
             }
             const float realized_force_from_air = ((air_speed*air_speed) / (90*90)) * max_force_from_air * force_multiplier;
 
