@@ -94,6 +94,7 @@ public:
             if (rocket_ref->is_engine_running(i)) {
                 engine_used[i]++;
             }
+            if (engine_used[i] > 20000) Env::breaker = 1;
         }
     }
 #endif
@@ -101,7 +102,7 @@ public:
         for (int i : engine_used) std::cout << i << " ";;
         std::cout << "Fuel:" << rocket_ref->get_fuel() << "height: " << rocket_ref->irlGetPosition().y << " x: " 
             << rocket_ref->irlGetPosition().x << " angle: " << rocket_ref->getRotation() << " vely " << rocket_ref->getVelocity().y <<
-            " velx " << rocket_ref->getVelocity().x << '\n';
+            " velx " << rocket_ref->getVelocity().x << " " << " LB: " << rocket_ref->get_landed_before() << '\n';
     }
     bool is_crashed() const {
         return (rocket_ref->getStatus() == Rocket::Status::BlewUp);
@@ -122,7 +123,7 @@ public:
         const float angle_cost = 100 * (-abs(180 - rocket_ref->getRotation()) + 180);   
         
         // cost from using too much fuel
-        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 175;
+        const float fuel_cost = (1 - (rocket_ref->get_fuel() / rocket_ref->get_reset_fuel_mass())) * 200;
 
         const float temp_tot_score = fuel_cost + vel_y_cost + vel_x_cost + angle_vel_cost + angle_cost;
 

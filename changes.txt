@@ -34,3 +34,28 @@ decreased mut rate 0.04
 speed to 155m/s
 height to 920m
 start from pres3/390
+
+~~~~~~~~~~~~~~~~~~
+Pres5
+4 deg, 6m/s
+increased fuel (200)
+speed to 160 m/s
+height to 1000m
+start from pres4/1050
+
+~~~~~~~~~~~~~~~~~
+Pres5.5
+2deg, 3.5m/s
+start from pres5/1200
+----- error gcp shut down: start from 456, /iteration450
+-----error again start 724
+
+~~~~~~~~~~~~~~~~~~
+Pres6 
+same, start from pres5.5/780
+decreased mut count
+
+~~~~~~~~~~~~~~~~~~
+pres7
+1.5 deg, 2.5m/see
+pres6/540

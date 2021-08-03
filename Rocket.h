@@ -191,6 +191,7 @@ public:
             break;
         }
         case Status::Landed: {
+            landed_before = 1;
             vel.x = 0;
             vel.y = 0;
             angular_vel = 0;
@@ -258,8 +259,8 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 920));
-        vel.x = rand()%20-10; vel.y = rand()%5-155;
+        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 1000));
+        vel.x = rand()%20-10; vel.y = rand()%5-160;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
         
         angular_vel = rand()%30-15;
@@ -275,6 +276,9 @@ public:
     }
     float get_reset_fuel_mass() const {
         return reset_fuel_mass;
+    }
+    bool get_landed_before() const {
+        return landed_before;
     }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
@@ -293,6 +297,13 @@ private:
     }
     void updateFromEngine(stateVector& res) {
         for (const Engine& engine : engines) {
+            Env::tempTm2 += Env::g_elapsed_real();
+            if (Env::tempTm2>10) {
+                Env::tempTm2 = 0;
+                if (Env::breaker) {
+                    // std::cout << " Breaker:  ?: " << (engine.is_engine_on() && fuel_mass) << " ";
+                }   
+            }
             if (engine.is_engine_on() && fuel_mass) {
                 const float engine_force = engine.get_thrust();
                 const float rocket_center = 4.5; // horizontal center of the rocket (meters)
@@ -437,4 +448,6 @@ private:
     float fuel_mass;
     float reset_fuel_mass = 30000;
     float angle_inertia;
+
+    bool landed_before = 0;
 };

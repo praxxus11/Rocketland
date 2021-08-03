@@ -91,6 +91,8 @@ public:
 
 
     static float tempTm;
+    static float tempTm2;
+    static bool breaker;
 };
 
 int Env::ww = 1100;
@@ -115,3 +117,5 @@ std::array<int, 2> Env::weight_grad {1, 0};
 std::piecewise_linear_distribution<float> Env::grad_rnd(interval_grad.begin(), interval_grad.end(), weight_grad.begin());
 
 float Env::tempTm = 0;
+float Env::tempTm2 = 0;
+bool Env::breaker = 0;
