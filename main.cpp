@@ -3,22 +3,13 @@
 #include "Preprocessing.h"
 #include "manager.h"
 
-#if defined(CPU)
-    #include "Camera.h"
-#endif
+#include "Camera.h"
 
 int main()
 {
     srand(time(nullptr));
     Manager m {};
     
-#if defined(GPU)
-    while (1) {
-        m.update();
-        Env::restartc();
-    }
-
-#elif defined(CPU)
     sf::ContextSettings settings;
     settings.antialiasingLevel= 8;
     const bool show = 1;
@@ -51,7 +42,5 @@ int main()
             window.display();
         }
     }
-#endif
-
     return 0;
 }
