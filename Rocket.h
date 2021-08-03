@@ -258,8 +258,8 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 1000));
-        vel.x = rand()%20-10; vel.y = rand()%5-160;
+        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 920));
+        vel.x = rand()%20-10; vel.y = rand()%5-155;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
         
         angular_vel = rand()%30-15;
@@ -353,7 +353,7 @@ private:
             const float air_push_rock_v = -r_push_air_v;
             const float air_speed = sqrt(air_push_rock_h*air_push_rock_h + air_push_rock_v*air_push_rock_v) + 0.00000001;
 
-            const float max_force_from_air = 3e6; // newtons, 1/2 of an engine
+            const float max_force_from_air = 1e6; // newtons, 1/2 of an engine
 
             float force_multiplier = 1;
             sf::Vector2f initial_pt(0, 0);

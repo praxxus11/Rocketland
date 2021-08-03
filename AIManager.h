@@ -171,7 +171,7 @@ public:
             }
 #elif defined(GPU)
             do_cross_over(0.4, networks);	
-            do_mutations(0.05*exp(-0.001*Env::cycle_num) + 0.006);
+            do_mutations(0.04*exp(-0.001*Env::cycle_num) + 0.006);
             for (int i=0; i<networks.size(); i++) {	
                 networks[i].reset();	
                 networks[i].set_index(i);	

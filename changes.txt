@@ -5,47 +5,32 @@ Pres1
 
 35 deg, 40m/s
 changsd 160m/s to 130m/s
-Increased force from air to 3e6 N
 Changed curves for force depending on flap angle (see refimg 7-8)
 changed to 700m
 Removed restriction on fuel
 Increased mutation ct
 
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 Pres2
 
-25 deg, 30m/s
-Added back restriction on fuel (100 only)
-Decreaed mutation ct
-Starts from pres1/1650
+20deg, 30m/s
+added restruction fuel (75)
+increased mut rate 0.06
 
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~
 Pres3
+10 deg, 16m/s
+increased fuel (150)
+decreased mut rate 0.045
+Speed to 145m/s
+Height to 900
+start from pres2/1050
 
-15 deg, 20m/s
-fuel restriction now 150
-Starts from pres2/1050
-
-~~~~~~~~~~~~~~~~~~~~~~~~~
-Pres4
-
+~~~~~~~~~~~~~~~
+Pres4 
 7 deg, 10m/s
-fuel restriction now 200
-Starts from pres3/1050
-Increased to 1000m, 130m/s
-
-~~~~~~~~~~~~~~~~~~~~~
-
-Pres5
-
-5 deg, 7 m/s
-start from pres4/300.txt
-Changed start to 357
-
-~~~~~~~~~~~~~~~~~~~~~
-Pres6
-
-3 deg, 4m/s
-start from pres5/1200.txt
-Revert back to start = 0
-Fuel increased to 250
+increased fuel (175)
+decreased mut rate 0.04
+speed to 155m/s
+height to 920m
+start from pres3/390
