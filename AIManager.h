@@ -44,6 +44,7 @@ public:
 
 
     void update_rockets() {
+        if (all_landed) return;
         int all_done = 0;
         for (RocketManager& rm : networks) {
             rm.update_rocket(network);
@@ -61,6 +62,7 @@ public:
         //     }
         // }
         if (all_done >= Env::num_rocks) {
+            all_landed = 1;
             Env::cycle_num++;
             double tot = 0;
             int ct = 0;
@@ -105,7 +107,7 @@ public:
             std::swap(temp_rcks, networks);
             for (RocketManager& rm : networks) {
                 do_mutations(rm);
-                rm.reset();
+                // rm.reset();
             }
 
         }
@@ -184,5 +186,5 @@ public:
 private:
     NeuralNetwork network;
     std::vector<RocketManager> networks;
-
+    bool all_landed = 0;
 };

@@ -8,9 +8,9 @@
 #include "Env.h"
 #include "ResourceManager.h"
 #include "GameObject.h"
+#include "Gif.h"
 #include "Rocket.h"
 #include "Floor.h"
-#include "Gif.h"
 #include "CollisionManager.h"
 #include "AIManager.h"
 #include "DecorationsManager.h"
@@ -36,6 +36,7 @@ class Manager {
                     sf::Vector2f(0, -80),
                     0,
                     0,
+                    Gif(3, exframes),
                     Rocket::Status::Regular,
                     rocket_mass, // assume has mass of 7.7e4 kg = around 85 tons
                     fuel_amount, // assume has initial fuel of 9.0e4 kg - around 100 tons 
@@ -47,8 +48,8 @@ class Manager {
                 rockets[i].setRotation(rockets[i].getRotation());
             }
             dm.init_rocket_labels(rockets);
-            ai_manager.init_random(rockets);
-            // ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3000.txt");
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration2700.txt");
         }
         ~Manager() 
         {
@@ -62,26 +63,20 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
-            if (Env::show_rocket_stats && Env::show_clouds) {
-                dm.update();
-            }
-            if (Env::show_nn) {
-                nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
-            }
+            dm.update();
+            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
         }
 
         void draw(sf::RenderWindow& win) const {
             win.draw(f);
-            if (Env::show_rocket_stats && Env::show_clouds)
-                dm.draw(win);
+            dm.draw(win);
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
                 // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
                     // win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
-            if (Env::show_nn)
-                win.draw(nndr);
+            win.draw(nndr);
         }
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }
