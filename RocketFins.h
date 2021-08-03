@@ -50,8 +50,11 @@ private:
         states.transform *= parent->getTransform() * getTransform(); 
         target.draw(fin_sprite, states);
     }
+#if defined(CPU)
     sf::Sprite fin_sprite;
-
+#elif defined(GPU)
+    sf::RectangleShape fin_sprite;
+#endif
 
     float angle;
     float angular_vel;

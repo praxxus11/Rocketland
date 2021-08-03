@@ -6,22 +6,30 @@
 #endif
 
 #include "Env.h"
-#include "ResourceManager.h"
+#if defined(CPU)
+    #include "ResourceManager.h"
+#endif
 #include "GameObject.h"
 #include "Rocket.h"
 #include "Floor.h"
-#include "Gif.h"
+#if defined(CPU)
+    #include "Gif.h"
+#endif
 #include "CollisionManager.h"
 #include "AIManager.h"
-#include "DecorationsManager.h"
-#include "NNDrawer.h"
+#if defined(CPU)
+    #include "DecorationsManager.h"
+    #include "NNDrawer.h"
+#endif
 
 class Manager {
     public:
         Manager() 
+#if defined(CPU)
         :
             exframes(128, 3328, 26, "imgs/explosion_sheet.png"),
             nndr(sf::Vector2f(50, 50), ai_manager.get_layer_sizes())
+#endif        
         {
             rockets.reserve(Env::num_rocks);
             for (int i=0; i<Env::num_rocks; i++) {
@@ -46,9 +54,14 @@ class Manager {
                 rockets[i].setScale(rockets[i].getScale());
                 rockets[i].setRotation(rockets[i].getRotation());
             }
+#if defined(CPU)
             dm.init_rocket_labels(rockets);
             // ai_manager.init_random(rockets);
-            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration660.txt");
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration3000.txt");
+#elif defined(GPU)
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "../saves/goodsaves/iteration3300.txt");
+#endif
         }
         ~Manager() 
         {
@@ -62,20 +75,30 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
-            dm.update();
-            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
+#if defined(CPU)
+            if (Env::show_rocket_stats && Env::show_clouds) {
+                dm.update();
+            }
+            if (Env::show_nn) {
+                nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
+            }
+#endif
         }
 
         void draw(sf::RenderWindow& win) const {
             win.draw(f);
-            dm.draw(win);
+#if defined(CPU)
+            if (Env::show_rocket_stats && Env::show_clouds)
+                dm.draw(win);
+#endif
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
                 // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
                     // win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
-            win.draw(nndr);
+            if (Env::show_nn)
+                win.draw(nndr);
         }
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }
@@ -83,11 +106,15 @@ class Manager {
             return rockets[0].irlGetPosition();
         }
     private:
+#if defined(CPU)
         Frames exframes;
+#endif
         std::vector<Rocket> rockets;
         Floor f;
         CollisionManager cm;
         AIManager ai_manager;
+#if defined(CPU)
         DecorationsManager dm;
         NNDrawer nndr;
+#endif
 };
