@@ -92,7 +92,7 @@ public:
         }
 #endif
         Env::tempTm += Env::g_elapsed_real();
-        if (Env::tempTm>10 && all_done > 235) {
+        if (Env::tempTm>10 && all_done > 495) {
             Env::tempTm = 0;
             std::cout << all_done << '\n';
             for (int i=0; i<networks.size(); i++) {	
@@ -101,7 +101,7 @@ public:
                 }
             }
         }
-        if (all_done >= Env::num_rocks) {
+        if (all_done >= Env::num_rocks - 3) {
             double tot = 0;
             int ct = 0;
             for (RocketManager& rm : networks) {

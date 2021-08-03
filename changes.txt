@@ -56,6 +56,12 @@ same, start from pres5.5/780
 decreased mut count
 
 ~~~~~~~~~~~~~~~~~~
-pres7
+pres6 (oops)
 1.5 deg, 2.5m/see
 pres6/540
+
+~~~~~~~~~~~~~~~~~~
+1 deg, 2m/s
+pres6/5250
+Starts at 170m/s
+changef Env::grdeint to /2, num_rocks to 500

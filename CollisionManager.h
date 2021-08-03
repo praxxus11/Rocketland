@@ -22,7 +22,7 @@ public:
         if (sf::FloatRect(rr.left, rr.top-rr.height, rr.width, rr.top)
             .intersects(sf::FloatRect(fr.left, fr.top-fr.height, fr.width, fr.height)) || 
             rr.top - rr.height < fr.top) {
-            if ((r.getRotation() < 1.5 || r.getRotation() > 358.5) && abs(r.getVelocity().y) < 2.5 && abs(r.getVelocity().x) < 2.5) {
+            if ((r.getRotation() < 1 || r.getRotation() > 359) && abs(r.getVelocity().y) < 2 && abs(r.getVelocity().x) < 2) {
                 return Rocket::Status::Landed;
             } 
             return Rocket::Status::Explode;
