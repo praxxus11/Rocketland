@@ -64,9 +64,6 @@ public:
     void set_angle_vel(float av) {
         angle_vel = av;
     }
-    void shut_off() {
-        angle = throttle = angle_vel = throttle_vel = 0;
-    }
 private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
         // take note that the order in which the transforms are applied DOES matter

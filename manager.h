@@ -47,8 +47,8 @@ class Manager {
                 rockets[i].setRotation(rockets[i].getRotation());
             }
             dm.init_rocket_labels(rockets);
-            ai_manager.init_random(rockets);
-            // ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration660.txt");
+            // ai_manager.init_random(rockets);
+            ai_manager.init_from_file(rockets, "C:\\Users\\Eric\\ProgrammingProjectsCpp\\RocketSaves\\V2Run1\\iteration660.txt");
         }
         ~Manager() 
         {
@@ -62,20 +62,20 @@ class Manager {
 
             f.update(); // make sure to update rocket before floor
             ai_manager.update_rockets();
-            // dm.update();
-            // nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
+            dm.update();
+            nndr.update(ai_manager.get_wb(), ai_manager.get_lbl_activations(), rockets[0]);
         }
 
         void draw(sf::RenderWindow& win) const {
             win.draw(f);
-            // dm.draw(win);
+            dm.draw(win);
             // win.draw(*f.getBoundingBox().get());
             for (const Rocket& r : rockets) {
                 // if (r.getStatus() != Rocket::Status::Explode && r.getStatus() != Rocket::Status::BlewUp)
                     // win.draw(*r.getBoundingBox().get());
                 win.draw(r);
             }
-            // win.draw(nndr);
+            win.draw(nndr);
         }
         int get_window_width() const { return Env::ww; }
         int get_window_height() const { return Env::wh; }
