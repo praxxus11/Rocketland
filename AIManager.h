@@ -42,9 +42,21 @@ public:
         }
     }
 
+    void replace_network_from_file(std::string filename) {
+        std::vector<std::vector<Eigen::MatrixXf>> wts = network.get_wb_fromfile(filename);
+        std::vector<RocketManager> new_networks;
+        for (int i=0; i<networks.size(); i++) {
+            new_networks.emplace_back(
+                networks[i].get_rocket(),
+                wts[i % wts.size()]
+            );
+        }
+        std::swap(networks, new_networks);
+    }
+
 
     void update_rockets() {
-        if (all_landed) return;
+        // if (all_landed) return;
         int all_done = 0;
         for (RocketManager& rm : networks) {
             rm.update_rocket(network);
@@ -76,11 +88,11 @@ public:
                     }
                 }
             }
-            std::cout << "Iteration: " << Env::cycle_num << " Average score: " << tot/ct << "\n";
+            std::cout << "Iteration: " << Env::cycle_num * 150<< " Average score: " << tot/ct << "\n";
             
-            sort(networks.begin(), networks.end(), [](const RocketManager& a, const RocketManager& b) {
-                return (a.getScore() < b.getScore());
-            });
+            // sort(networks.begin(), networks.end(), [](const RocketManager& a, const RocketManager& b) {
+            //     return (a.getScore() < b.getScore());
+            // });
 
             // if (Env::cycle_num%150==0) {
             //     std::cout << "\n\nSaving...\n\n";
@@ -95,19 +107,24 @@ public:
             // }
 
 
-            std::vector<RocketManager> temp_rcks;
-            for (RocketManager& rm : networks) {
-                int a = round(Env::get_grad_rand());
-                int b = round(Env::get_grad_rand());
-                temp_rcks.emplace_back(
-                    rm.get_rocket(),
-                    do_cross_over(networks[a], networks[b])
-                );
+            // std::vector<RocketManager> temp_rcks;
+            // for (RocketManager& rm : networks) {
+            //     int a = round(Env::get_grad_rand());
+            //     int b = round(Env::get_grad_rand());
+            //     temp_rcks.emplace_back(
+            //         rm.get_rocket(),
+            //         do_cross_over(networks[a], networks[b])
+            //     );
+            // }
+            // std::swap(temp_rcks, networks);
+            if (150 * Env::cycle_num < 150 * Env::load_count) {
+                std::string fp = Env::load_base_fp + "iteration" + std::to_string(Env::cycle_num * 150) + ".txt";
+                std::cout << fp << "\n";
+                replace_network_from_file(fp);
             }
-            std::swap(temp_rcks, networks);
             for (RocketManager& rm : networks) {
-                do_mutations(rm);
-                // rm.reset();
+                // do_mutations(rm);
+                rm.reset();
             }
 
         }
