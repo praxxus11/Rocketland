@@ -32,11 +32,14 @@ int main()
                 if (event.type == sf::Event::Closed || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
                     window.close();
             }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) Env::start_fall = 1;
             window.clear();
             window.draw(sky_blue);
             m.update();
-            // c.update();
-            c.update_from_rocket(m.get_rocket_pos());
+            if (!Env::follow)
+                c.update();
+            else
+                c.update_from_rocket(m.get_rocket_pos());
             m.draw(window);
             Env::restartc();
             window.display();

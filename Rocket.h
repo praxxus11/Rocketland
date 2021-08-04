@@ -273,13 +273,15 @@ public:
     }
     
     void reset_rocket() {
-        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 1000));
-        vel.x = rand()%20-10; vel.y = rand()%5-160;
+        irlSetPosition(sf::Vector2f(rand()%10-5, rand()%400 + 600));
+        vel.x = rand()%20-10; vel.y = rand()%5-150;
         setRotation((rand()%2 ? 1 : -1) * (rand()%20-100));
         
         angular_vel = rand()%30-15;
         status = Status::Regular;
         fuel_mass = rand()%100 + get_reset_fuel_mass();
+        explosion_anim.reset();
+        explosion_initialized = 0;
     }
 
     float is_engine_running(int i) const {

@@ -6,7 +6,7 @@ class Camera {
 public:
     Camera() {}
     void update() const {
-        const int move_amt = 300;
+        const int move_amt = 150;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
             Env::camera_pos.y += Env::g_elapsed() * move_amt;
         }
@@ -26,7 +26,7 @@ public:
         update_zoom();
     }
     void update_zoom() const {
-        const float zoom_amt = 5;
+        const float zoom_amt = 0.5;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Equal)) {
             Env::pixpmeter += Env::g_elapsed() * zoom_amt;
         }
