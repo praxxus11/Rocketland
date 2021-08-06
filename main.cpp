@@ -22,7 +22,7 @@ int main()
     else {
         Camera c {};
         sf::RenderWindow window(sf::VideoMode(m.get_window_width(), m.get_window_height()), "", sf::Style::Default, settings);
-        window.setFramerateLimit(30);
+        window.setFramerateLimit(60);
         window.setPosition(sf::Vector2i(1920-m.get_window_width(), 0));
         sf::RectangleShape sky_blue(sf::Vector2f(float(window.getSize().x), float(window.getSize().y))); // color to reset board
         sky_blue.setFillColor(sf::Color(135, 206, 235));
@@ -40,7 +40,7 @@ int main()
                     window.close();
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) Env::start_fall = 1;
-            iteration_count.setString("Iteration: " + std::to_string(150*Env::cycle_num));
+            iteration_count.setString("Iteration: " + std::to_string(600*Env::cycle_num + 12000));
             window.clear();
             window.draw(sky_blue);
             m.update();
@@ -49,7 +49,7 @@ int main()
             else
                 c.update_from_rocket(m.get_rocket_pos());
             m.draw(window);
-            window.draw(iteration_count);
+            // window.draw(iteration_count);
             Env::restartc();
             window.display();
         }

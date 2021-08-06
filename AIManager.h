@@ -56,7 +56,7 @@ public:
 
 
     void update_rockets() {
-        // if (all_landed) return;
+        if (all_landed) return;
         int all_done = 0;
         for (RocketManager& rm : networks) {
             rm.update_rocket(network);
@@ -117,14 +117,14 @@ public:
             //     );
             // }
             // std::swap(temp_rcks, networks);
-            if (150 * Env::cycle_num < 150 * Env::load_count) {
-                std::string fp = Env::load_base_fp + "iteration" + std::to_string(Env::cycle_num * 150) + ".txt";
+            if (600 * Env::cycle_num < 600 * Env::load_count) {
+                std::string fp = Env::load_base_fp + "iteration" + std::to_string(Env::cycle_num * 600) + ".txt";
                 std::cout << fp << "\n";
                 replace_network_from_file(fp);
             }
             for (RocketManager& rm : networks) {
                 // do_mutations(rm);
-                rm.reset();
+                // rm.reset();
             }
 
         }

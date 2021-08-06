@@ -21,7 +21,7 @@ public:
     }
 
     void update_rocket(const NeuralNetwork& nn) {
-        if (rocket_ref->irlGetPosition().y > 2000 || abs(rocket_ref->irlGetPosition().x) > 1100) {
+        if (rocket_ref->irlGetPosition().y > 10000 || abs(rocket_ref->irlGetPosition().x) > 1100) {
             rocket_ref->setStatus(Rocket::Status::BlewUp);
             score = 1e7;
         }
