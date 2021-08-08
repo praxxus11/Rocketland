@@ -7,5 +7,5 @@ This is branch *autoColabMerge*. This contains both CPU and GPU code and can be 
 
 ## Dependencies
 
-This project uses SFML 2.5.1 and Eigen 3.3.9. You must have the CUDA toolkit installed with the nvcc compiler if gpu use is desired.
+This project uses SFML 2.5.1 and Eigen 3.3.9. You must have the CUDA toolkit installed with the nvcc compiler if usage with GPU is desired.
 
